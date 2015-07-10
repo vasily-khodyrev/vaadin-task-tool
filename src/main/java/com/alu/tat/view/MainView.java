@@ -75,10 +75,13 @@ public class MainView extends VerticalLayout implements View {
         Button loginButton = new Button("Sign in");
         Button createButton = new Button("Create task");
         Button deleteButton = new Button("Delete task");
+        Button schemaButton = new Button("Create Schema");
 
         buttonPanel.addComponent(loginButton);
         buttonPanel.addComponent(createButton);
         buttonPanel.addComponent(deleteButton);
+        buttonPanel.addComponent(schemaButton);
+
 
         container.addComponent(buttonPanel);
         container.addComponent(grid);
@@ -108,6 +111,13 @@ public class MainView extends VerticalLayout implements View {
                 Task t = (Task) grid.getSelectedRow();
                 taskService.removeTask(t.getId());
                 navigator.navigateTo(Main.MAIN_VIEW);
+            }
+        });
+
+        schemaButton.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                navigator.navigateTo(Main.CREATE_SCHEMA);
             }
         });
 

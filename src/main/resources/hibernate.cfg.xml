@@ -19,6 +19,7 @@
 
         <mapping class="com.alu.tat.entity.User"/>
         <mapping class="com.alu.tat.entity.Task"/>
+        <mapping class="com.alu.tat.entity.schema.Schema"/>
 
     </session-factory>
 
