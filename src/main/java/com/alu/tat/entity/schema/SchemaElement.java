@@ -24,6 +24,17 @@ public class SchemaElement {
     @Column(name = "multiplier")
     private Integer multiplier;
 
+    public SchemaElement() {
+
+    }
+
+    public SchemaElement(String name, String desc, SchemaElement.ElemType type, Integer multi) {
+        this.name = name;
+        this.description = desc;
+        this.type = type;
+        this.multiplier = multi;
+    }
+
     public enum ElemType {
         BOOLEAN("BOOLEAN"), STRING("STRING"), INTEGER("INTEGER"), DOMAIN("DOMAIN");
 

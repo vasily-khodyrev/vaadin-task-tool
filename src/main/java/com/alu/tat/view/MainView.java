@@ -4,20 +4,15 @@ import java.util.Collection;
 
 import com.alu.tat.Main;
 import com.alu.tat.entity.Task;
+import com.alu.tat.entity.schema.Schema;
+import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Tree;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 
 /**
  * Created by imalolet on 6/10/2015.
@@ -27,10 +22,12 @@ public class MainView extends VerticalLayout implements View {
     private Navigator navigator;
 
     private TaskService taskService = TaskService.getInstance();
+    private SchemaService schemaService = SchemaService.getInstance();
 
     final Grid grid = new Grid();
     final Panel infoPanel = new Panel("Info");
-    final Tree tree = new Tree();
+    final Tree taskTree = new Tree();
+    final Tree schemaTree = new Tree();
 
 
     @Override
@@ -54,14 +51,33 @@ public class MainView extends VerticalLayout implements View {
 
     }
 
-    private Panel getLeftPanel() {
+    private Component getTasksTreeMenu() {
         Layout container = new VerticalLayout();
 
-        configureTree(tree, infoPanel);
+        configureTaskTree(taskTree, infoPanel);
 
-        container.addComponent(tree);
+        container.addComponent(taskTree);
 
-        return new Panel("Menu", container);
+        return container;
+    }
+
+    private Component getSchemasTreeMenu() {
+        Layout container = new VerticalLayout();
+
+        configureSchemaTree(schemaTree, infoPanel);
+
+        container.addComponent(schemaTree);
+
+        return container;
+    }
+
+    private Panel getLeftPanel() {
+        TabSheet tabsheet = new TabSheet();
+        tabsheet.addTab(getTasksTreeMenu(),"Tasks");
+        tabsheet.addTab(getSchemasTreeMenu(),"Schemas");
+        tabsheet.addTab(new VerticalLayout());
+
+        return new Panel("Menu",tabsheet);
     }
 
 
@@ -124,7 +140,7 @@ public class MainView extends VerticalLayout implements View {
         return new Panel("Content", container);
     }
 
-    private void configureTree(Tree tree, Panel infoPanel) {
+    private void configureTaskTree(Tree tree, Panel infoPanel) {
         final Collection<Task> tasks = taskService.getTasks();
 
         String root = "Release";
@@ -145,6 +161,24 @@ public class MainView extends VerticalLayout implements View {
         }
 
         tree.addItemClickListener(new TastItemClickListener());
+
+    }
+
+    private void configureSchemaTree(Tree tree, Panel infoPanel) {
+        final Collection<Schema> schemas = schemaService.getSchemas();
+
+        String root = "Schemas";
+
+        tree.addItem(root);
+        tree.expandItem(root);
+
+        for (Schema t : schemas) {
+            tree.addItem(t);
+            tree.setParent(t, root);
+            tree.setChildrenAllowed(t, false);
+        }
+
+        tree.addItemClickListener(new SchemaItemClickListener());
 
     }
 
@@ -188,6 +222,34 @@ public class MainView extends VerticalLayout implements View {
 
                 container.addComponent(name);
                 container.addComponent(release);
+                container.addComponent(descr);
+
+                infoPanel.setSizeFull();
+                infoPanel.setContent(container);
+            }
+        }
+    }
+
+    private class SchemaItemClickListener implements ItemClickEvent.ItemClickListener {
+
+        @Override
+        public void itemClick(ItemClickEvent event) {
+            if (!(event.getItemId() instanceof Schema)) {
+                System.out.println("Not an Schema instance - exiting");
+                return;
+            }
+            if (event.isDoubleClick()) {
+                final Schema schema = (Schema) event.getItemId();
+                getSession().setAttribute("schema", schema.getId());
+                navigator.navigateTo(Main.CREATE_SCHEMA);
+            } else {
+                final Schema schema = (Schema) event.getItemId();
+                VerticalLayout container = new VerticalLayout();
+
+                Label name = new Label("Name: " + schema.getName());
+                Label descr = new Label("Description: " + schema.getDescription());
+
+                container.addComponent(name);
                 container.addComponent(descr);
 
                 infoPanel.setSizeFull();

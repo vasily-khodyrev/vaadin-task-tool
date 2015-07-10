@@ -3,6 +3,7 @@ package com.alu.tat.view;
 import com.alu.tat.Main;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.schema.Schema;
+import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.UserService;
 import com.vaadin.data.util.BeanItemContainer;
@@ -30,20 +31,18 @@ public class SchemaView extends VerticalLayout implements View {
         navigator = getUI().getNavigator();
 
         FormLayout form = new FormLayout();
-        final TextField crId = new TextField("Name");
-        final TextField author = new TextField("Author");
-        final TextField descr = new TextField("Description");
-        final ComboBox release = new ComboBox("Release");
+        final TextField schemaName = new TextField("Name");
+        final TextField schemaDesc = new TextField("Description");
+        final ComboBox elemType = new ComboBox("ElementType");
 
-        for (Task.Release r : Task.Release.values()) {
-            release.addItem(r);
+        for (SchemaElement.ElemType r : SchemaElement.ElemType.values()) {
+            elemType.addItem(r);
         }
-        release.setNullSelectionAllowed(false);
+        elemType.setNullSelectionAllowed(false);
 
-        form.addComponent(crId);
-        form.addComponent(author);
-        form.addComponent(descr);
-        form.addComponent(release);
+        form.addComponent(schemaName);
+        form.addComponent(schemaDesc);
+        form.addComponent(elemType);
 
         Button create = new Button(id != null ? "Save" : "Create");
         Button back = new Button("Back");
@@ -54,16 +53,17 @@ public class SchemaView extends VerticalLayout implements View {
         //load task fields if its for edit
         if (id != null) {
             getSession().setAttribute("item", null);
-            Schema task = schemaService.getSchema(id);
-            crId.setValue(String.valueOf(task.getId()));
-            author.setValue(UserService.currentUser().getName());
+            Schema schema = schemaService.getSchema(id);
+            schemaName.setValue(String.valueOf(schema.getId()));
+            schemaDesc.setValue(schema.getDescription());
+
         }
 
         create.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 Schema t = new Schema();
-                t.setName(crId.getValue());
+                t.setName(schemaName.getValue());
 
                 if (id != null) {
                     t.setId(id);
