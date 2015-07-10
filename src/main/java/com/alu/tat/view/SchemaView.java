@@ -14,6 +14,8 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by
@@ -23,40 +25,35 @@ import java.util.Collection;
 public class SchemaView extends VerticalLayout implements View {
     private Navigator navigator;
     private SchemaService schemaService = SchemaService.getInstance();
+    private Grid grid = new Grid();
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        final Long id = (Long) getSession().getAttribute("item");
+        final Long id = (Long) getSession().getAttribute("schema");
 
         navigator = getUI().getNavigator();
 
-        FormLayout form = new FormLayout();
+        VerticalLayout form = new VerticalLayout();
         final TextField schemaName = new TextField("Name");
         final TextField schemaDesc = new TextField("Description");
-        final ComboBox elemType = new ComboBox("ElementType");
-
-        for (SchemaElement.ElemType r : SchemaElement.ElemType.values()) {
-            elemType.addItem(r);
-        }
-        elemType.setNullSelectionAllowed(false);
+        configureGrid(grid,id);
 
         form.addComponent(schemaName);
         form.addComponent(schemaDesc);
-        form.addComponent(elemType);
+        form.addComponent(grid);
 
         Button create = new Button(id != null ? "Save" : "Create");
         Button back = new Button("Back");
 
         HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
         form.addComponent(buttonGroup);
-
+        form.setExpandRatio(grid, 4);
         //load task fields if its for edit
         if (id != null) {
-            getSession().setAttribute("item", null);
+            getSession().setAttribute("schema", null);
             Schema schema = schemaService.getSchema(id);
-            schemaName.setValue(String.valueOf(schema.getId()));
+            schemaName.setValue(schema.getName());
             schemaDesc.setValue(schema.getDescription());
-
         }
 
         create.addClickListener(new Button.ClickListener() {
@@ -86,28 +83,31 @@ public class SchemaView extends VerticalLayout implements View {
         addComponent(form);
     }
 
-    private void configureGrid(Grid grid, final Panel infoPanel) {
-        final Collection<Schema> schemas = schemaService.getSchemas();
-
+    private void configureGrid(Grid grid, Long id) {
+        List<SchemaElement> elems = Collections.EMPTY_LIST;
+        if (id != null) {
+            Schema schema = schemaService.getSchema(id);
+            elems = schema.getElementsList();
+        }
         grid.setSizeFull();
-        final BeanItemContainer<Schema> container = new BeanItemContainer<>(Schema.class, schemas);
+        final BeanItemContainer<SchemaElement> container = new BeanItemContainer<>(SchemaElement.class, elems);
 
         grid.setContainerDataSource(container);
-        grid.setColumnOrder("name", "description");
+        grid.setColumnOrder("type", "name","description");
 
-        grid.addItemClickListener(new TastItemClickListener());
+        grid.addItemClickListener(new SchemaElementClickListener());
     }
 
-    private class TastItemClickListener implements ItemClickEvent.ItemClickListener {
+    private class SchemaElementClickListener implements ItemClickEvent.ItemClickListener {
 
         @Override
         public void itemClick(ItemClickEvent event) {
-            if (!(event.getItemId() instanceof Task)) {
-                System.out.println("Not an Task instance - exiting");
+            if (!(event.getItemId() instanceof SchemaElement)) {
+                System.out.println("Not an SchemaElement instance - exiting");
                 return;
             }
-            if (event.isDoubleClick()) {
-                final Task task = (Task) event.getItemId();
+            /*if (event.isDoubleClick()) {
+                final SchemaElement task = (SchemaElement) event.getItemId();
                 getSession().setAttribute("item", task.getId());
                 navigator.navigateTo(Main.CREATE_VIEW);
             } else {
@@ -121,7 +121,7 @@ public class SchemaView extends VerticalLayout implements View {
                 container.addComponent(name);
                 container.addComponent(release);
                 container.addComponent(descr);
-            }
+            }*/
         }
     }
 }

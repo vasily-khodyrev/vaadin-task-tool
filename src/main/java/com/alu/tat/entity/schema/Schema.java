@@ -21,8 +21,8 @@ public class Schema extends BaseEntity {
     private String description;
 
 
-    @ElementCollection
-    @CollectionTable(name = "SchemaElement", joinColumns = {@JoinColumn(name = "schema_name")})
+    //@CollectionTable(name = "SchemaElement", joinColumns = {@JoinColumn(name = "schema_name")})
+    @ElementCollection (fetch = FetchType.EAGER)
     private List<SchemaElement> elementsList = new LinkedList<>();
 
     public String getName() {
@@ -47,5 +47,10 @@ public class Schema extends BaseEntity {
 
     public void setElementsList(List<SchemaElement> elementsList) {
         this.elementsList = elementsList;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

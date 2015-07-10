@@ -107,6 +107,7 @@ public class MainView extends VerticalLayout implements View {
         container.setExpandRatio(grid, 4);
         container.setExpandRatio(infoPanel, 2);
 
+
         createButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
