@@ -134,6 +134,7 @@ public class MainView extends VerticalLayout implements View {
         schemaButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                getSession().setAttribute("schema",null);
                 navigator.navigateTo(Main.CREATE_SCHEMA);
             }
         });
@@ -241,7 +242,7 @@ public class MainView extends VerticalLayout implements View {
             }
             if (event.isDoubleClick()) {
                 final Schema schema = (Schema) event.getItemId();
-                getSession().setAttribute("schema", schema.getId());
+                getSession().setAttribute("schema", schema);
                 navigator.navigateTo(Main.CREATE_SCHEMA);
             } else {
                 final Schema schema = (Schema) event.getItemId();

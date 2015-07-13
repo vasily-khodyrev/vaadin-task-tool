@@ -14,14 +14,12 @@ import java.util.List;
 @Entity
 @Table(name = "schema")
 public class Schema extends BaseEntity {
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "desc")
     private String description;
 
-
-    //@CollectionTable(name = "SchemaElement", joinColumns = {@JoinColumn(name = "schema_name")})
     @ElementCollection (fetch = FetchType.EAGER)
     private List<SchemaElement> elementsList = new LinkedList<>();
 
