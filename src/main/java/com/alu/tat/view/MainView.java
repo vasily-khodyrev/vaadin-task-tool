@@ -2,7 +2,6 @@ package com.alu.tat.view;
 
 import java.util.Collection;
 
-import com.alu.tat.Main;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.service.SchemaService;
@@ -73,11 +72,11 @@ public class MainView extends VerticalLayout implements View {
 
     private Panel getLeftPanel() {
         TabSheet tabsheet = new TabSheet();
-        tabsheet.addTab(getTasksTreeMenu(),"Tasks");
-        tabsheet.addTab(getSchemasTreeMenu(),"Schemas");
+        tabsheet.addTab(getTasksTreeMenu(), "Tasks");
+        tabsheet.addTab(getSchemasTreeMenu(), "Schemas");
         tabsheet.addTab(new VerticalLayout());
 
-        return new Panel("Menu",tabsheet);
+        return new Panel("Menu", tabsheet);
     }
 
 
@@ -111,14 +110,14 @@ public class MainView extends VerticalLayout implements View {
         createButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                navigator.navigateTo(Main.CREATE_VIEW);
+                navigator.navigateTo(UIConstants.TASK_CREATE);
             }
         });
 
         loginButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                navigator.navigateTo(Main.LOGIN_VIEW);
+                navigator.navigateTo(UIConstants.VIEW_LOGIN);
             }
         });
 
@@ -127,15 +126,15 @@ public class MainView extends VerticalLayout implements View {
             public void buttonClick(Button.ClickEvent event) {
                 Task t = (Task) grid.getSelectedRow();
                 taskService.removeTask(t.getId());
-                navigator.navigateTo(Main.MAIN_VIEW);
+                navigator.navigateTo(UIConstants.VIEW_MAIN);
             }
         });
 
         schemaButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                getSession().setAttribute("schema",null);
-                navigator.navigateTo(Main.CREATE_SCHEMA);
+                getSession().setAttribute("schema", null);
+                navigator.navigateTo(UIConstants.SCHEMA_CREATE);
             }
         });
 
@@ -213,7 +212,7 @@ public class MainView extends VerticalLayout implements View {
             if (event.isDoubleClick()) {
                 final Task task = (Task) event.getItemId();
                 getSession().setAttribute("item", task.getId());
-                navigator.navigateTo(Main.CREATE_VIEW);
+                navigator.navigateTo(UIConstants.TASK_UPDATE + task.getId());
             } else {
                 final Task task = (Task) event.getItemId();
                 VerticalLayout container = new VerticalLayout();
@@ -243,7 +242,7 @@ public class MainView extends VerticalLayout implements View {
             if (event.isDoubleClick()) {
                 final Schema schema = (Schema) event.getItemId();
                 getSession().setAttribute("schema", schema);
-                navigator.navigateTo(Main.CREATE_SCHEMA);
+                navigator.navigateTo(UIConstants.SCHEMA_UPDATE + schema.getId());
             } else {
                 final Schema schema = (Schema) event.getItemId();
                 VerticalLayout container = new VerticalLayout();

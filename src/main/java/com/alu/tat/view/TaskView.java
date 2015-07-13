@@ -1,30 +1,28 @@
 package com.alu.tat.view;
 
-import com.alu.tat.Main;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
 import com.alu.tat.service.UserService;
-import com.vaadin.data.Property;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.Sizeable;
 import com.vaadin.ui.*;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by imalolet on 6/10/2015.
+ * Author Igor Maloletniy & Vasily Khodyrev
  */
-public class TaskView extends VerticalLayout implements View {
+public class TaskView extends AbstractActionView {
 
     private Navigator navigator;
     private TaskService taskService = TaskService.getInstance();
@@ -32,86 +30,99 @@ public class TaskView extends VerticalLayout implements View {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        final Long id = (Long) getSession().getAttribute("item");
+        final boolean isCreate = isCreate(event.getParameters());
+        final Long updateId = getUpdateId(event.getParameters());
 
         navigator = getUI().getNavigator();
 
-        //TODO
-        /*HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
-        hsplit.setFirstComponent(new Label("75% wide panel"));
-        hsplit.setSecondComponent(new Label("25% wide panel"));
-        // Set the position of the splitter as percentage
-        hsplit.setSplitPosition(75, Sizeable.UNITS_PERCENTAGE);*/
-
-
-        HorizontalLayout hl = new HorizontalLayout();
-        Panel leftPanel = new Panel();
+        HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
+        //Left section begin
         FormLayout form = new FormLayout();
-        final TextField crId = new TextField("Crqms");
-        final TextField author = new TextField("Author");
-        final TextField descr = new TextField("Description");
-        final ComboBox release = new ComboBox("Release");
+        final TextField taskName = new TextField("Task Name");
+        final TextField taskAuth = new TextField("Author");
+        final TextField taskDesc = new TextField("Description");
+        final ComboBox taskRel = new ComboBox("Release", Arrays.asList(Task.Release.values()));
+        taskRel.select(Task.Release.OT11);
+        taskRel.setNullSelectionAllowed(false);
 
-        for (Task.Release r : Task.Release.values()) {
-            release.addItem(r);
-        }
-        release.setNullSelectionAllowed(false);
-
-        final ComboBox schemaChoice = new ComboBox("Schema");
         Collection<Schema> schemas = schemaService.getSchemas();
-        for (Schema s : schemas) {
-            schemaChoice.addItem(s);
-        }
-        //TODO
-        schemaChoice.setValue(schemas.iterator().next());
-        schemaChoice.setNullSelectionAllowed(false);
+        final ComboBox taskSchema = new ComboBox("Schema", schemas);
+        Schema defaultSchema = schemas.iterator().next();
+        taskSchema.setValue(defaultSchema);
+        taskSchema.setNullSelectionAllowed(false);
 
-        form.addComponent(crId);
-        form.addComponent(author);
-        form.addComponent(descr);
-        form.addComponent(release);
-        form.addComponent(schemaChoice);
+        form.addComponent(taskName);
+        form.addComponent(taskAuth);
+        form.addComponent(taskDesc);
+        form.addComponent(taskRel);
+        form.addComponent(taskSchema);
 
-        Button create = new Button(id != null ? "Update" : "Create");
+        Button create = new Button(isCreate ? "Create" : "Update");
         Button back = new Button("Back");
 
         HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
         form.addComponent(buttonGroup);
+        hsplit.setFirstComponent(form);
+        //Left section end
 
-
+        //Right section begin
+        Schema curSchema = !isCreate ? taskService.getTask(updateId).getSchema() : (Schema) taskSchema.getValue();
         final Map<String, AbstractField> fieldMap = new HashMap<>();
+        TabSheet ts = prepareTabDataView(fieldMap, curSchema);
+        hsplit.setSecondComponent(ts);
+        //Right section end
+
+        // Set the position of the splitter as percentage
+        hsplit.setSplitPosition(25, Unit.PERCENTAGE);
+        hsplit.setSizeFull();
+        addComponent(hsplit);
 
         create.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 Task t = new Task();
-                t.setName(crId.getValue());
+                t.setName(taskName.getValue());
                 t.setAuthor(UserService.currentUser());
-                t.setDescription(descr.getValue());
-                t.setRelease((Task.Release) release.getValue());
-                t.setSchema((Schema) schemaChoice.getValue());
-                t.setData(convertToData((Schema) schemaChoice.getValue(), fieldMap));
-                if (id != null) {
-                    t.setId(id);
+                t.setDescription(taskDesc.getValue());
+                t.setRelease((Task.Release) taskRel.getValue());
+                t.setSchema((Schema) taskSchema.getValue());
+                t.setData(convertToData((Schema) taskSchema.getValue(), fieldMap));
+                if (!isCreate) {
+                    t.setId(updateId);
                     taskService.updateTask(t);
                 } else {
                     taskService.addTask(t);
                 }
 
-                navigator.navigateTo(Main.MAIN_VIEW);
+                navigator.navigateTo(UIConstants.VIEW_MAIN);
             }
         });
 
         back.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                navigator.navigateTo(Main.MAIN_VIEW);
+                navigator.navigateTo(UIConstants.VIEW_MAIN);
             }
         });
-        Panel p1 = new Panel("General", form);
-        p1.setSizeFull();
-        hl.addComponent(p1);
-        Schema curSchema = id != null? taskService.getTask(id).getSchema() :(Schema) schemaChoice.getValue();
+
+        //load task fields if its for edit
+        if (!isCreate) {
+            Task task = taskService.getTask(updateId);
+            taskName.setValue(String.valueOf(task.getName()));
+            taskAuth.setValue(UserService.currentUser().getName());
+            taskDesc.setValue(task.getDescription());
+            taskRel.setValue(task.getRelease());
+            taskSchema.setValue(task.getSchema());
+
+            Map<String, Object> valueMap = convertFromJSON(task.getData(), (Schema) taskSchema.getValue());
+            for (String fieldName : fieldMap.keySet()) {
+                AbstractField field = fieldMap.get(fieldName);
+                field.setValue(valueMap.get(fieldName));
+            }
+        }
+    }
+
+    private TabSheet prepareTabDataView(Map<String, AbstractField> fieldMap, Schema curSchema) {
         TabSheet ts = new TabSheet();
         FormLayout curForm = new FormLayout();
         String tabName = "General";
@@ -153,33 +164,10 @@ public class TaskView extends VerticalLayout implements View {
                 }
             }
         }
-        ts.addTab(curForm, tabName);
-        Panel p2 = new Panel("Data", ts);
-        p2.setSizeFull();
-        hl.addComponent(p2);
-        hl.setSizeFull();
-
-        addComponent(hl);
-
-        //load task fields if its for edit
-        if (id != null) {
-            getSession().setAttribute("item", null);
-            Task task = taskService.getTask(id);
-            crId.setValue(String.valueOf(task.getName()));
-            author.setValue(UserService.currentUser().getName());
-            descr.setValue(task.getDescription());
-            release.setValue(task.getRelease());
-
-            if (task.getSchema() != null) {
-                schemaChoice.setValue(task.getSchema());
-            }
-
-            Map<String, Object> valueMap = convertFromJSON(task.getData(), (Schema) schemaChoice.getValue());
-            for (String fieldName : fieldMap.keySet()) {
-                AbstractField field = fieldMap.get(fieldName);
-                field.setValue(valueMap.get(fieldName));
-            }
+        if (curForm.getComponentCount() > 0) {
+            ts.addTab(curForm, tabName);
         }
+        return ts;
     }
 
     private String convertToData(Schema schema, Map<String, AbstractField> fieldMap) {

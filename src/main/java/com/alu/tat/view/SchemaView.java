@@ -1,21 +1,16 @@
 package com.alu.tat.view;
 
-import com.alu.tat.Main;
-import com.alu.tat.entity.Task;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
-import com.alu.tat.service.UserService;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.SelectionEvent;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,45 +20,96 @@ import java.util.List;
  * User: vkhodyre
  * Date: 7/8/2015
  */
-public class SchemaView extends VerticalLayout implements View {
+public class SchemaView extends AbstractActionView {
     private Navigator navigator;
     private SchemaService schemaService = SchemaService.getInstance();
-    private Grid grid = new Grid();
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        Schema schema = (Schema) getSession().getAttribute("schema");
-        if (schema == null) {
-            schema = new Schema();
-            getSession().setAttribute("schema", schema);
-        }
-        final Long id = schema.getId();
+        final boolean isCreate = isCreate(event.getParameters());
+        final Long updateId = getUpdateId(event.getParameters());
 
         navigator = getUI().getNavigator();
 
         VerticalLayout form = new VerticalLayout();
         final TextField schemaName = new TextField("Name");
         final TextField schemaDesc = new TextField("Description");
-        configureGrid(grid, id);
-
         form.addComponent(schemaName);
         form.addComponent(schemaDesc);
+
+        final Grid grid = prepareGrid(form);
+
+        Button create = new Button(isCreate ? "Create" : "Save");
+        Button back = new Button("Back");
+
+        HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
+        form.addComponent(buttonGroup);
+        form.setExpandRatio(grid, 4);
+
+        create.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                Schema t = new Schema();
+                t.setName(schemaName.getValue());
+                t.setDescription(schemaDesc.getValue());
+                List<SchemaElement> newlist = new LinkedList<SchemaElement>();
+                for (Object id : grid.getContainerDataSource().getItemIds()) {
+                    Item item = grid.getContainerDataSource().getItem(id);
+                    item.getItemPropertyIds();
+                    SchemaElement el = (SchemaElement) id;
+                    newlist.add(el);
+                }
+                t.setElementsList(newlist);
+                if (!isCreate) {
+                    t.setId(updateId);
+                    schemaService.updateSchema(t);
+                } else {
+                    schemaService.addSchema(t);
+                }
+
+                navigator.navigateTo(UIConstants.VIEW_MAIN);
+            }
+        });
+
+        back.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                navigator.navigateTo(UIConstants.VIEW_MAIN);
+            }
+        });
+
+        addComponent(form);
+
+        //load task fields if its for edit
+        if (!isCreate) {
+            Schema schema = schemaService.getSchema(updateId);
+            schemaName.setValue(schema.getName());
+            schemaDesc.setValue(schema.getDescription());
+            for (SchemaElement se : schema.getElementsList()) {
+                grid.getContainerDataSource().addItem(se);
+            }
+        }
+    }
+
+    private Grid prepareGrid(ComponentContainer cc) {
+        final Grid grid = new Grid();
+        configureGrid(grid);
         HorizontalLayout hl = new HorizontalLayout();
         Button addElement = new Button("Add item");
         final Button removeSelected = new Button("Remove");
         removeSelected.setEnabled(false);
         hl.addComponent(addElement);
         hl.addComponent(removeSelected);
-        form.addComponent(hl);
-        form.addComponent(grid);
+        cc.addComponent(hl);
+        cc.addComponent(grid);
         grid.addSelectionListener(new SelectionEvent.SelectionListener() {
-                                      @Override
-                                      public void select(SelectionEvent event) {
-                                          removeSelected.setEnabled(true);
-                                      }
+            @Override
+            public void select(SelectionEvent event) {
+                removeSelected.setEnabled(true);
+            }
 
 
-                                  }
+        }
         );
         addElement.addClickListener(new Button.ClickListener() {
             @Override
@@ -83,63 +129,12 @@ public class SchemaView extends VerticalLayout implements View {
             }
 
         });
-        Button create = new Button(id != null ? "Save" : "Create");
-        Button back = new Button("Back");
-
-        HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
-        form.addComponent(buttonGroup);
-        form.setExpandRatio(grid, 4);
-        //load task fields if its for edit
-        if (id != null) {
-            //getSession().setAttribute("schema", null);
-            //Schema schema = schemaService.getSchema(id);
-            schemaName.setValue(schema.getName());
-            schemaDesc.setValue(schema.getDescription());
-        }
-
-        create.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                Schema t = (Schema) getSession().getAttribute("schema");
-                t.setName(schemaName.getValue());
-                t.setDescription(schemaDesc.getValue());
-                List<SchemaElement> newlist = new LinkedList<SchemaElement>();
-                for (Object id : grid.getContainerDataSource().getItemIds()) {
-                    Item item = grid.getContainerDataSource().getItem(id);
-                    item.getItemPropertyIds();
-                    SchemaElement el = (SchemaElement) id;
-                    newlist.add(el);
-                }
-                t.setElementsList(newlist);
-                if (id != null) {
-                    t.setId(id);
-                    schemaService.updateSchema(t);
-                } else {
-                    schemaService.addSchema(t);
-                }
-
-                navigator.navigateTo(Main.MAIN_VIEW);
-            }
-        });
-
-        back.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                navigator.navigateTo(Main.MAIN_VIEW);
-            }
-        });
-
-        addComponent(form);
+        return grid;
     }
 
-    private void configureGrid(Grid grid, Long id) {
-        List<SchemaElement> elems = Collections.EMPTY_LIST;
-        if (id != null) {
-            Schema schema = schemaService.getSchema(id);
-            elems = schema.getElementsList();
-        }
+    private void configureGrid(Grid grid) {
         grid.setSizeFull();
-        final BeanItemContainer<SchemaElement> container = new BeanItemContainer<>(SchemaElement.class, elems);
+        final BeanItemContainer<SchemaElement> container = new BeanItemContainer<>(SchemaElement.class);
 
         grid.setContainerDataSource(container);
         grid.setColumnOrder("type", "name", "description");
@@ -158,7 +153,7 @@ public class SchemaView extends VerticalLayout implements View {
             /*if (event.isDoubleClick()) {
                 final SchemaElement task = (SchemaElement) event.getItemId();
                 getSession().setAttribute("item", task.getId());
-                navigator.navigateTo(Main.CREATE_VIEW);
+                navigator.navigateTo(Main.VIEW_TASK);
             } else {
                 final Task task = (Task) event.getItemId();
                 VerticalLayout container = new VerticalLayout();
