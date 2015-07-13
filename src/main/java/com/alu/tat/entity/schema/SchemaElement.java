@@ -13,16 +13,16 @@ import javax.persistence.Enumerated;
 @Embeddable
 public class SchemaElement {
     @Enumerated(EnumType.STRING)
-    private ElemType type;
+    private ElemType type = ElemType.BOOLEAN;
 
     @Column(name = "name")
-    private String name;
+    private String name = "No name";
 
     @Column(name = "desc")
-    private String description;
+    private String description = "No description";
 
     @Column(name = "multiplier")
-    private Integer multiplier;
+    private Integer multiplier = 1;
 
     public SchemaElement() {
 

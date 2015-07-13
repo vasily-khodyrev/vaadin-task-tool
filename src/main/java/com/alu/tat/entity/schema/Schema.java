@@ -14,15 +14,13 @@ import java.util.List;
 @Entity
 @Table(name = "schema")
 public class Schema extends BaseEntity {
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "desc")
     private String description;
 
-
-    @ElementCollection
-    @CollectionTable(name = "SchemaElement", joinColumns = {@JoinColumn(name = "schema_name")})
+    @ElementCollection (fetch = FetchType.EAGER)
     private List<SchemaElement> elementsList = new LinkedList<>();
 
     public String getName() {
@@ -47,5 +45,10 @@ public class Schema extends BaseEntity {
 
     public void setElementsList(List<SchemaElement> elementsList) {
         this.elementsList = elementsList;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
