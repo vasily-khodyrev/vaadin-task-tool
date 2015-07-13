@@ -1,14 +1,8 @@
 package com.alu.tat.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import com.alu.tat.entity.schema.Schema;
+
+import javax.persistence.*;
 
 /**
  * Created by imalolet on 6/10/2015.
@@ -26,6 +20,13 @@ public class Task extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "user_id")
     private User author;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "schema_id")
+    private Schema schema;
+
+    @Column(name = "data")
+    private String data;
 
     @Enumerated(EnumType.STRING)
     private Release release;
@@ -74,6 +75,22 @@ public class Task extends BaseEntity {
 
     public void setRelease(Release release) {
         this.release = release;
+    }
+
+    public Schema getSchema() {
+        return schema;
+    }
+
+    public void setSchema(Schema schema) {
+        this.schema = schema;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     @Override
