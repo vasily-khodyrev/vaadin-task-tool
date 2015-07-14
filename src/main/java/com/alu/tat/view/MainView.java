@@ -193,7 +193,8 @@ public class MainView extends VerticalLayout implements View {
         grid.setColumnOrder("name", "author", "description");
 
         grid.removeColumn("id");
-        grid.removeColumn("updateTime");
+        //grid.removeColumn("createTime");
+        //grid.removeColumn("updateTime");
 
         grid.addItemClickListener(new TastItemClickListener());
 
@@ -205,28 +206,35 @@ public class MainView extends VerticalLayout implements View {
 
         @Override
         public void itemClick(ItemClickEvent event) {
-            if (!(event.getItemId() instanceof Task)) {
-                System.out.println("Not an Task instance - exiting");
-                return;
+            //Root element
+            if (event.getItemId() instanceof String) {
+                //TODO
             }
-            if (event.isDoubleClick()) {
-                final Task task = (Task) event.getItemId();
-                getSession().setAttribute("item", task.getId());
-                navigator.navigateTo(UIConstants.TASK_UPDATE + task.getId());
-            } else {
-                final Task task = (Task) event.getItemId();
-                VerticalLayout container = new VerticalLayout();
+            //Release Nodes
+            if (event.getItemId() instanceof Task.Release) {
+                //TODO
+            }
+            //Task leaf
+            if (event.getItemId() instanceof Task) {
+                if (event.isDoubleClick()) {
+                    final Task task = (Task) event.getItemId();
+                    getSession().setAttribute("item", task.getId());
+                    navigator.navigateTo(UIConstants.TASK_UPDATE + task.getId());
+                } else {
+                    final Task task = (Task) event.getItemId();
+                    VerticalLayout container = new VerticalLayout();
 
-                Label name = new Label("Name: " + task.getName());
-                Label release = new Label("Release: " + task.getRelease().getVersion());
-                Label descr = new Label("Description: " + task.getDescription());
+                    Label name = new Label("Name: " + task.getName());
+                    Label release = new Label("Release: " + task.getRelease().getVersion());
+                    Label descr = new Label("Description: " + task.getDescription());
 
-                container.addComponent(name);
-                container.addComponent(release);
-                container.addComponent(descr);
+                    container.addComponent(name);
+                    container.addComponent(release);
+                    container.addComponent(descr);
 
-                infoPanel.setSizeFull();
-                infoPanel.setContent(container);
+                    infoPanel.setSizeFull();
+                    infoPanel.setContent(container);
+                }
             }
         }
     }

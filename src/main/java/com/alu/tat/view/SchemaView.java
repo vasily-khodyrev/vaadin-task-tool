@@ -11,6 +11,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,19 +50,19 @@ public class SchemaView extends AbstractActionView {
         create.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                Schema t = new Schema();
+                Schema t;
+                if (isCreate) {
+                    t = new Schema();
+                } else {
+                    t = schemaService.getSchema(updateId);
+                }
                 t.setName(schemaName.getValue());
                 t.setDescription(schemaDesc.getValue());
-                List<SchemaElement> newlist = new LinkedList<SchemaElement>();
-                for (Object id : grid.getContainerDataSource().getItemIds()) {
-                    Item item = grid.getContainerDataSource().getItem(id);
-                    item.getItemPropertyIds();
-                    SchemaElement el = (SchemaElement) id;
-                    newlist.add(el);
-                }
-                t.setElementsList(newlist);
+                List<SchemaElement> newlist = t.getElementsList();
+                Collection<SchemaElement> cse = (Collection<SchemaElement> ) grid.getContainerDataSource().getItemIds();
+                newlist.clear();
+                newlist.addAll(cse);
                 if (!isCreate) {
-                    t.setId(updateId);
                     schemaService.updateSchema(t);
                 } else {
                     schemaService.addSchema(t);

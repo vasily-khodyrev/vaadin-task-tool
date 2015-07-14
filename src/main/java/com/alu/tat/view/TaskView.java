@@ -6,6 +6,7 @@ import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
 import com.alu.tat.service.UserService;
+import com.vaadin.data.Property;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -35,7 +36,7 @@ public class TaskView extends AbstractActionView {
 
         navigator = getUI().getNavigator();
 
-        HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
+        final HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
         //Left section begin
         FormLayout form = new FormLayout();
         final TextField taskName = new TextField("Task Name");
@@ -67,7 +68,7 @@ public class TaskView extends AbstractActionView {
 
         //Right section begin
         Schema curSchema = !isCreate ? taskService.getTask(updateId).getSchema() : (Schema) taskSchema.getValue();
-        final Map<String, AbstractField> fieldMap = new HashMap<>();
+        final Map<String, Property> fieldMap = new HashMap<>();
         TabSheet ts = prepareTabDataView(fieldMap, curSchema);
         hsplit.setSecondComponent(ts);
         //Right section end
@@ -80,7 +81,12 @@ public class TaskView extends AbstractActionView {
         create.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                Task t = new Task();
+                Task t;
+                if (isCreate) {
+                    t = new Task();
+                } else {
+                    t = taskService.getTask(updateId);
+                }
                 t.setName(taskName.getValue());
                 t.setAuthor(UserService.currentUser());
                 t.setDescription(taskDesc.getValue());
@@ -88,7 +94,6 @@ public class TaskView extends AbstractActionView {
                 t.setSchema((Schema) taskSchema.getValue());
                 t.setData(convertToData((Schema) taskSchema.getValue(), fieldMap));
                 if (!isCreate) {
-                    t.setId(updateId);
                     taskService.updateTask(t);
                 } else {
                     taskService.addTask(t);
@@ -113,16 +118,32 @@ public class TaskView extends AbstractActionView {
             taskDesc.setValue(task.getDescription());
             taskRel.setValue(task.getRelease());
             taskSchema.setValue(task.getSchema());
+            initSchemaData(fieldMap, task.getData(), (Schema) taskSchema.getValue());
+        }
 
-            Map<String, Object> valueMap = convertFromJSON(task.getData(), (Schema) taskSchema.getValue());
-            for (String fieldName : fieldMap.keySet()) {
-                AbstractField field = fieldMap.get(fieldName);
-                field.setValue(valueMap.get(fieldName));
+        taskSchema.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                Schema newSchema = (Schema) taskSchema.getValue();
+                TabSheet ts = prepareTabDataView(fieldMap, newSchema);
+                hsplit.setSecondComponent(ts);
+                if (!isCreate) {
+                    Task task = taskService.getTask(updateId);
+                    initSchemaData(fieldMap, task.getData(), newSchema);
+                }
             }
+        });
+    }
+
+    private void initSchemaData(final Map<String, Property> fieldMap, String jsonData, Schema schema) {
+        Map<String, Object> valueMap = convertFromJSON(jsonData, schema);
+        for (String fieldName : fieldMap.keySet()) {
+            Property field = fieldMap.get(fieldName);
+            field.setValue(valueMap.get(fieldName));
         }
     }
 
-    private TabSheet prepareTabDataView(Map<String, AbstractField> fieldMap, Schema curSchema) {
+    private TabSheet prepareTabDataView(Map<String, Property> fieldMap, Schema curSchema) {
         TabSheet ts = new TabSheet();
         FormLayout curForm = new FormLayout();
         String tabName = "General";
@@ -170,7 +191,7 @@ public class TaskView extends AbstractActionView {
         return ts;
     }
 
-    private String convertToData(Schema schema, Map<String, AbstractField> fieldMap) {
+    private String convertToData(Schema schema, Map<String, Property> fieldMap) {
         JSONObject json = new JSONObject();
         for (SchemaElement se : schema.getElementsList()) {
 
