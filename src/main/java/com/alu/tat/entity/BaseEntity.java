@@ -1,10 +1,8 @@
 package com.alu.tat.entity;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by imalolet on 6/10/2015.
@@ -17,11 +15,12 @@ public class BaseEntity {
     @Id
     private Long id;
 
-    @Column(name = "create_time")
-    private Long createTime = System.currentTimeMillis();
+    @Column(name="create_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable=false, updatable=false)
+    private Date createTime;
 
-    @Column(name = "update_time")
-    private Long updateTime;
+    @Version
+    @Column(name="update_time")
+    private Date updateTime;
 
     public Long getId() {
         return id;
@@ -31,20 +30,25 @@ public class BaseEntity {
         this.id = id;
     }
 
-    public Long getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Long createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
-    public Long getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Long updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @PrePersist
+    void onCreate() {
+        this.setUpdateTime(new Date());
     }
 
     @Override

@@ -30,7 +30,7 @@ public class ErrorView extends VerticalLayout implements View {
         backBut.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                navigator.navigateTo(Main.MAIN_VIEW);
+                navigator.navigateTo(UIConstants.VIEW_MAIN);
             }
         });
 
