@@ -185,6 +185,7 @@ public class TaskView extends AbstractActionView {
                     break;
                 }
             }
+            c.setDescription(se.getDescription());
         }
         if (curForm.getComponentCount() > 0) {
             ts.addTab(curForm, tabName);
