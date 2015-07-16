@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "schema")
 public class Schema extends BaseEntity {
     @Column(name = "name", unique = true)
-    private String name;
+    private String name = "";
 
     @Column(name = "desc")
     private String description;
@@ -50,5 +50,25 @@ public class Schema extends BaseEntity {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Schema schema = (Schema) o;
+
+        if (!name.equals(schema.name)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }
