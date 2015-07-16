@@ -8,6 +8,7 @@ import com.alu.tat.entity.User;
 import com.alu.tat.entity.dao.BaseDao;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
+import com.alu.tat.util.HibernateUtil;
 
 import java.util.List;
 
@@ -20,6 +21,12 @@ public class Init extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         initData();
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        HibernateUtil.shutdown();
     }
 
     private void initData() {

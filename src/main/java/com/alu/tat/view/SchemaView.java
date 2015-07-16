@@ -59,7 +59,7 @@ public class SchemaView extends AbstractActionView {
                 t.setName(schemaName.getValue());
                 t.setDescription(schemaDesc.getValue());
                 List<SchemaElement> newlist = t.getElementsList();
-                Collection<SchemaElement> cse = (Collection<SchemaElement> ) grid.getContainerDataSource().getItemIds();
+                Collection<SchemaElement> cse = (Collection<SchemaElement>) grid.getContainerDataSource().getItemIds();
                 newlist.clear();
                 newlist.addAll(cse);
                 if (!isCreate) {
@@ -69,6 +69,7 @@ public class SchemaView extends AbstractActionView {
                 }
 
                 navigator.navigateTo(UIConstants.VIEW_MAIN);
+                Notification.show("Schema '" + t.getName() + "' is successfully " + (isCreate ? "created" : "updated"), Notification.Type.TRAY_NOTIFICATION);
             }
         });
 
@@ -104,18 +105,21 @@ public class SchemaView extends AbstractActionView {
         cc.addComponent(hl);
         cc.addComponent(grid);
         grid.addSelectionListener(new SelectionEvent.SelectionListener() {
-            @Override
-            public void select(SelectionEvent event) {
-                removeSelected.setEnabled(true);
-            }
+                                      @Override
+                                      public void select(SelectionEvent event) {
+                                          removeSelected.setEnabled(true);
+                                      }
 
 
-        }
+                                  }
         );
         addElement.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 grid.getContainerDataSource().addItem(new SchemaElement());
+
+                //Issue when adding new items in non-empty grid. Last column was shifted down.
+                grid.recalculateColumnWidths();
             }
         });
         removeSelected.addClickListener(new Button.ClickListener() {
@@ -134,13 +138,12 @@ public class SchemaView extends AbstractActionView {
     }
 
     private void configureGrid(Grid grid) {
-        grid.setSizeFull();
-        final BeanItemContainer<SchemaElement> container = new BeanItemContainer<>(SchemaElement.class);
-
+        final BeanItemContainer<SchemaElement> container = new BeanItemContainer<>(SchemaElement.class, new LinkedList<SchemaElement>());
         grid.setContainerDataSource(container);
         grid.setColumnOrder("type", "name", "description");
         grid.setEditorEnabled(true);
         grid.addItemClickListener(new SchemaElementClickListener());
+        grid.setSizeFull();
     }
 
     private class SchemaElementClickListener implements ItemClickEvent.ItemClickListener {

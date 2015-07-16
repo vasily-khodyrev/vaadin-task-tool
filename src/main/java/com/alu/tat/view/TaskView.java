@@ -100,6 +100,7 @@ public class TaskView extends AbstractActionView {
                 }
 
                 navigator.navigateTo(UIConstants.VIEW_MAIN);
+                Notification.show("Task '" + t.getName() + "' is successfully " + (isCreate ? "created" : "updated"), Notification.Type.TRAY_NOTIFICATION);
             }
         });
 
@@ -184,6 +185,7 @@ public class TaskView extends AbstractActionView {
                     break;
                 }
             }
+            c.setDescription(se.getDescription());
         }
         if (curForm.getComponentCount() > 0) {
             ts.addTab(curForm, tabName);
