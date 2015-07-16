@@ -6,13 +6,11 @@ import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
 import com.alu.tat.service.UserService;
+import com.alu.tat.util.TaskPresenter;
 import com.vaadin.data.Property;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,7 +90,7 @@ public class TaskView extends AbstractActionView {
                 t.setDescription(taskDesc.getValue());
                 t.setRelease((Task.Release) taskRel.getValue());
                 t.setSchema((Schema) taskSchema.getValue());
-                t.setData(convertToData((Schema) taskSchema.getValue(), fieldMap));
+                t.setData(TaskPresenter.convertToData((Schema) taskSchema.getValue(), fieldMap));
                 if (!isCreate) {
                     taskService.updateTask(t);
                 } else {
@@ -137,7 +135,7 @@ public class TaskView extends AbstractActionView {
     }
 
     private void initSchemaData(final Map<String, Property> fieldMap, String jsonData, Schema schema) {
-        Map<String, Object> valueMap = convertFromJSON(jsonData, schema);
+        Map<String, Object> valueMap = TaskPresenter.convertFromJSON(jsonData, schema);
         for (String fieldName : fieldMap.keySet()) {
             Property field = fieldMap.get(fieldName);
             field.setValue(valueMap.get(fieldName));
@@ -191,65 +189,5 @@ public class TaskView extends AbstractActionView {
             ts.addTab(curForm, tabName);
         }
         return ts;
-    }
-
-    private String convertToData(Schema schema, Map<String, Property> fieldMap) {
-        JSONObject json = new JSONObject();
-        for (SchemaElement se : schema.getElementsList()) {
-
-            switch (se.getType()) {
-                case DOMAIN:
-                    break;
-                case INTEGER:
-                case STRING:
-                case BOOLEAN:
-                default: {
-                    Object value = fieldMap.get(se.getName()).getValue();
-                    json.put(se.getName(), value);
-                    break;
-                }
-            }
-
-        }
-        return json.toString();
-    }
-
-    private Map<String, Object> convertFromJSON(String data, Schema schema) {
-        Map<String, Object> result = new HashMap<>();
-        JSON json = JSONSerializer.toJSON(data);
-        if (json instanceof JSONObject) {
-            JSONObject jso = (JSONObject) json;
-            for (SchemaElement se : schema.getElementsList()) {
-                if (jso.has(se.getName())) {
-                    switch (se.getType()) {
-                        case DOMAIN:
-                            break;
-                        case INTEGER: {
-                            String value = jso.getString(se.getName());
-                            String o = value;
-                            result.put(se.getName(), o);
-                            break;
-                        }
-                        case STRING: {
-                            String value = jso.getString(se.getName());
-                            String o = value;
-                            result.put(se.getName(), o);
-                            break;
-                        }
-                        case BOOLEAN: {
-                            String value = jso.getString(se.getName());
-                            Boolean o = Boolean.valueOf(value);
-                            result.put(se.getName(), o);
-                            break;
-                        }
-                        default:
-                            break;
-
-                    }
-                }
-
-            }
-        }
-        return result;
     }
 }

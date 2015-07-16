@@ -3,16 +3,15 @@ package com.alu.tat.view;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
-import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.SelectionEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -96,24 +95,30 @@ public class SchemaView extends AbstractActionView {
     private Grid prepareGrid(ComponentContainer cc) {
         final Grid grid = new Grid();
         configureGrid(grid);
-        HorizontalLayout hl = new HorizontalLayout();
-        Button addElement = new Button("Add item");
-        final Button removeSelected = new Button("Remove");
-        removeSelected.setEnabled(false);
-        hl.addComponent(addElement);
-        hl.addComponent(removeSelected);
-        cc.addComponent(hl);
+        HorizontalLayout buttonGroup = new HorizontalLayout();
+        Button addButton = new Button("Add item");
+        addButton.setIcon(FontAwesome.PLUS_CIRCLE);
+        final Button removeButton = new Button("Remove");
+        removeButton.setIcon(FontAwesome.MINUS_CIRCLE);
+        removeButton.setEnabled(false);
+        buttonGroup.addComponent(addButton);
+        buttonGroup.addComponent(removeButton);
+        cc.addComponent(buttonGroup);
         cc.addComponent(grid);
         grid.addSelectionListener(new SelectionEvent.SelectionListener() {
                                       @Override
                                       public void select(SelectionEvent event) {
-                                          removeSelected.setEnabled(true);
+                                          if (!grid.getSelectedRows().isEmpty()) {
+                                              removeButton.setEnabled(true);
+                                          } else {
+                                              removeButton.setEnabled(false);
+                                          }
                                       }
 
 
                                   }
         );
-        addElement.addClickListener(new Button.ClickListener() {
+        addButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 grid.getContainerDataSource().addItem(new SchemaElement());
@@ -122,7 +127,7 @@ public class SchemaView extends AbstractActionView {
                 grid.recalculateColumnWidths();
             }
         });
-        removeSelected.addClickListener(new Button.ClickListener() {
+        removeButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 // Delete all selected data items
@@ -143,6 +148,9 @@ public class SchemaView extends AbstractActionView {
         grid.setColumnOrder("type", "name", "description");
         grid.setEditorEnabled(true);
         grid.addItemClickListener(new SchemaElementClickListener());
+        for (Grid.Column c : grid.getColumns()) {
+            c.setSortable(false);
+        }
         grid.setSizeFull();
     }
 

@@ -1,17 +1,21 @@
 package com.alu.tat.view;
 
-import java.util.Collection;
-
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
+import com.alu.tat.util.SchemaPresenter;
+import com.alu.tat.util.TaskPresenter;
+import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
+
+import java.util.Collection;
 
 /**
  * Created by imalolet on 6/10/2015.
@@ -148,10 +152,13 @@ public class MainView extends VerticalLayout implements View {
 
         tree.addItem(root);
         tree.expandItem(root);
+        tree.setItemIcon(root, FontAwesome.FILM);
 
         for (Task.Release r : Task.Release.values()) {
-            tree.addItem(r.getVersion());
+            Item i = tree.addItem(r.getVersion());
+            i.getItemPropertyIds();
             tree.setParent(r.getVersion(), root);
+            tree.setItemIcon(r.getVersion(), FontAwesome.TAG);
         }
 
         for (Task t : tasks) {
@@ -171,6 +178,7 @@ public class MainView extends VerticalLayout implements View {
         String root = "Schemas";
 
         tree.addItem(root);
+        tree.setItemIcon(root, FontAwesome.FILM);
         tree.expandItem(root);
 
         for (Schema t : schemas) {
@@ -193,8 +201,6 @@ public class MainView extends VerticalLayout implements View {
         grid.setColumnOrder("name", "author", "description");
 
         grid.removeColumn("id");
-        //grid.removeColumn("createTime");
-        //grid.removeColumn("updateTime");
 
         grid.addItemClickListener(new TastItemClickListener());
 
@@ -208,11 +214,11 @@ public class MainView extends VerticalLayout implements View {
         public void itemClick(ItemClickEvent event) {
             //Root element
             if (event.getItemId() instanceof String) {
-                //TODO
+                //TODO Process root node in Task tree
             }
             //Release Nodes
             if (event.getItemId() instanceof Task.Release) {
-                //TODO
+                //TODO Process Releases in Task Tree - filter by release.
             }
             //Task leaf
             if (event.getItemId() instanceof Task) {
@@ -222,18 +228,14 @@ public class MainView extends VerticalLayout implements View {
                     navigator.navigateTo(UIConstants.TASK_UPDATE + task.getId());
                 } else {
                     final Task task = (Task) event.getItemId();
-                    VerticalLayout container = new VerticalLayout();
 
-                    Label name = new Label("Name: " + task.getName());
-                    Label release = new Label("Release: " + task.getRelease().getVersion());
-                    Label descr = new Label("Description: " + task.getDescription());
-
-                    container.addComponent(name);
-                    container.addComponent(release);
-                    container.addComponent(descr);
+                    RichTextArea  text = new RichTextArea ();
+                    text.setSizeFull();
+                    text.setValue(TaskPresenter.getHtmlView(task));
+                    text.setReadOnly(true);
 
                     infoPanel.setSizeFull();
-                    infoPanel.setContent(container);
+                    infoPanel.setContent(text);
                 }
             }
         }
@@ -253,16 +255,14 @@ public class MainView extends VerticalLayout implements View {
                 navigator.navigateTo(UIConstants.SCHEMA_UPDATE + schema.getId());
             } else {
                 final Schema schema = (Schema) event.getItemId();
-                VerticalLayout container = new VerticalLayout();
 
-                Label name = new Label("Name: " + schema.getName());
-                Label descr = new Label("Description: " + schema.getDescription());
-
-                container.addComponent(name);
-                container.addComponent(descr);
+                RichTextArea  text = new RichTextArea ();
+                text.setSizeFull();
+                text.setValue(SchemaPresenter.getHtmlView(schema));
+                text.setReadOnly(true);
 
                 infoPanel.setSizeFull();
-                infoPanel.setContent(container);
+                infoPanel.setContent(text);
             }
         }
     }
