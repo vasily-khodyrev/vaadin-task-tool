@@ -14,8 +14,6 @@ import com.vaadin.ui.UI;
 @Theme("valo")
 public class Main extends UI {
 
-
-
     private Navigator navigator;
 
     @Override
@@ -25,8 +23,5 @@ public class Main extends UI {
         navigator.addView(UIConstants.VIEW_TASK, TaskView.class);
         navigator.addView(UIConstants.VIEW_SCHEMA, SchemaView.class);
         navigator.setErrorView(ErrorView.class);
-
     }
-
-
 }
