@@ -10,6 +10,7 @@ import com.alu.tat.util.TaskPresenter;
 import com.vaadin.data.Property;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 
 import java.util.Arrays;
@@ -56,8 +57,8 @@ public class TaskView extends AbstractActionView {
         form.addComponent(taskRel);
         form.addComponent(taskSchema);
 
-        Button create = new Button(isCreate ? "Create" : "Update");
-        Button back = new Button("Back");
+        Button create = new Button(isCreate ? "Create" : "Update", new ThemeResource(("../runo/icons/16/ok.png")));
+        Button back = new Button("Back", new ThemeResource(("../runo/icons/16/cancel.png")));
 
         HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
         form.addComponent(buttonGroup);

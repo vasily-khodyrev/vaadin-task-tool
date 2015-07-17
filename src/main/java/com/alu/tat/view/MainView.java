@@ -12,9 +12,12 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 
+import java.io.File;
 import java.util.Collection;
 
 /**
@@ -76,11 +79,35 @@ public class MainView extends VerticalLayout implements View {
 
     private Panel getLeftPanel() {
         TabSheet tabsheet = new TabSheet();
-        tabsheet.addTab(getTasksTreeMenu(), "Tasks");
-        tabsheet.addTab(getSchemasTreeMenu(), "Schemas");
+        tabsheet.addTab(getTasksTreeMenu(), "Tasks", new ThemeResource("../runo/icons/16/document-txt.png"));
+        tabsheet.addTab(getSchemasTreeMenu(), "Schemas", new ThemeResource("../runo/icons/16/document.png"));
         tabsheet.addTab(new VerticalLayout());
 
-        return new Panel("Menu", tabsheet);
+        Panel p = new Panel();
+        HorizontalLayout panelCaption = new HorizontalLayout();
+        panelCaption.setStyleName("panelstyle");
+        panelCaption.setWidth(100, Unit.PERCENTAGE);
+        Label menuLab = new Label("Menu");
+        panelCaption.addComponent(menuLab);
+        panelCaption.setComponentAlignment(menuLab, Alignment.TOP_LEFT);
+        Button signout = new Button("Sign Out");
+        signout.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                UI.getCurrent().getSession().close();
+                //navigator.navigateTo(UIConstants.VIEW_LOGIN);
+            }
+        });
+        panelCaption.addComponent(signout);
+        panelCaption.setComponentAlignment(signout, Alignment.TOP_RIGHT);
+        panelCaption.setHeight(signout.getHeight(), signout.getHeightUnits());
+        VerticalLayout v = new VerticalLayout();
+        v.setMargin(true);
+        v.addComponent(panelCaption);
+        v.addComponent(tabsheet);
+        v.setExpandRatio(tabsheet, 1);
+        p.setContent(v);
+        return p;
     }
 
 
@@ -91,12 +118,10 @@ public class MainView extends VerticalLayout implements View {
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
 
-        Button loginButton = new Button("Sign in");
         Button createButton = new Button("Create task");
         Button deleteButton = new Button("Delete task");
         Button schemaButton = new Button("Create Schema");
 
-        buttonPanel.addComponent(loginButton);
         buttonPanel.addComponent(createButton);
         buttonPanel.addComponent(deleteButton);
         buttonPanel.addComponent(schemaButton);
@@ -115,13 +140,6 @@ public class MainView extends VerticalLayout implements View {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 navigator.navigateTo(UIConstants.TASK_CREATE);
-            }
-        });
-
-        loginButton.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                navigator.navigateTo(UIConstants.VIEW_LOGIN);
             }
         });
 
@@ -152,13 +170,13 @@ public class MainView extends VerticalLayout implements View {
 
         tree.addItem(root);
         tree.expandItem(root);
-        tree.setItemIcon(root, FontAwesome.FILM);
+        tree.setItemIcon(root, new ThemeResource("../runo/icons/16/folder.png"));
 
         for (Task.Release r : Task.Release.values()) {
             Item i = tree.addItem(r.getVersion());
             i.getItemPropertyIds();
             tree.setParent(r.getVersion(), root);
-            tree.setItemIcon(r.getVersion(), FontAwesome.TAG);
+            tree.setItemIcon(r.getVersion(), new ThemeResource("../runo/icons/16/folder.png"));
         }
 
         for (Task t : tasks) {
@@ -178,7 +196,7 @@ public class MainView extends VerticalLayout implements View {
         String root = "Schemas";
 
         tree.addItem(root);
-        tree.setItemIcon(root, FontAwesome.FILM);
+        tree.setItemIcon(root, new ThemeResource("../runo/icons/16/folder.png"));
         tree.expandItem(root);
 
         for (Schema t : schemas) {
@@ -229,7 +247,7 @@ public class MainView extends VerticalLayout implements View {
                 } else {
                     final Task task = (Task) event.getItemId();
 
-                    RichTextArea  text = new RichTextArea ();
+                    RichTextArea text = new RichTextArea();
                     text.setSizeFull();
                     text.setValue(TaskPresenter.getHtmlView(task));
                     text.setReadOnly(true);
@@ -256,7 +274,7 @@ public class MainView extends VerticalLayout implements View {
             } else {
                 final Schema schema = (Schema) event.getItemId();
 
-                RichTextArea  text = new RichTextArea ();
+                RichTextArea text = new RichTextArea();
                 text.setSizeFull();
                 text.setValue(SchemaPresenter.getHtmlView(schema));
                 text.setReadOnly(true);

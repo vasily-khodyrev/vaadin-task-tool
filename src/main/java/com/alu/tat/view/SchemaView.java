@@ -9,6 +9,7 @@ import com.vaadin.event.SelectionEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 
 import java.util.Collection;
@@ -39,8 +40,8 @@ public class SchemaView extends AbstractActionView {
 
         final Grid grid = prepareGrid(form);
 
-        Button create = new Button(isCreate ? "Create" : "Save");
-        Button back = new Button("Back");
+        Button create = new Button(isCreate ? "Create" : "Save", new ThemeResource(("../runo/icons/16/ok.png")));
+        Button back = new Button("Back", new ThemeResource(("../runo/icons/16/cancel.png")));
 
         HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
         form.addComponent(buttonGroup);
