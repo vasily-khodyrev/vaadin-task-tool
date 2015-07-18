@@ -7,6 +7,16 @@ import javax.persistence.*;
 /**
  * Created by imalolet on 6/10/2015.
  */
+@NamedQueries({
+        @NamedQuery(
+                name = "findTaskByRelease",
+                query = "from Task t where t.release = :release"
+        ),
+        @NamedQuery(
+                name = "findTaskBySchema",
+                query = "from Task t where t.schema = :schema"
+        )
+})
 @Entity
 @Table(name = "task")
 public class Task extends BaseEntity {

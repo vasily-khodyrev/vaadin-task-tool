@@ -115,8 +115,6 @@ public class SchemaView extends AbstractActionView {
                                               removeButton.setEnabled(false);
                                           }
                                       }
-
-
                                   }
         );
         addButton.addClickListener(new Button.ClickListener() {
