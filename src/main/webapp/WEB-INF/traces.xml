@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <!-- APPENDERS -->
+    <appender name="CONSOLE-ERR" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.err"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p: %-20c{1} : %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="warn"/>
+        </filter>
+    </appender>
+
+    <appender name="ALL" class="org.apache.log4j.RollingFileAppender">
+        <param name="file" value="${ecc.logsDir}/${ecc.applicationName}/task_traces.log"/>
+        <param name="MaxFileSize" value="5MB"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p: %-20c{1} : %m%n"/>
+        </layout>
+    </appender>
+
+    <!-- CATEGORIES -->
+    <category name="com.alu">
+        <priority value="info" />
+        <appender-ref ref="ALL"/>
+    </category>
+
+    <root>
+        <priority value="error"/>
+        <appender-ref ref="CONSOLE-ERR"/>
+    </root>
+</log4j:configuration>

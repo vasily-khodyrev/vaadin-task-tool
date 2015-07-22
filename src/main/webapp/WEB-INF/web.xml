@@ -5,6 +5,10 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    <context-param>
+        <param-name>log4j-config</param-name>
+        <param-value>WEB-INF/traces.xml</param-value>
+    </context-param>
 
     <servlet>
         <servlet-name>myservlet</servlet-name>

@@ -1,8 +1,5 @@
 package com.alu.tat.init;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.User;
 import com.alu.tat.entity.dao.BaseDao;
@@ -10,6 +7,8 @@ import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.util.HibernateUtil;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import java.util.List;
 
 /**
@@ -17,16 +16,29 @@ import java.util.List;
  */
 public class Init extends HttpServlet {
 
+    //private final static Logger logger =
+    //        LoggerFactory.getLogger(Init.class);
+
     @Override
     public void init() throws ServletException {
         super.init();
-        initData();
+        try {
+            initData();
+        } catch (Exception e) {
+            System.err.println("error while initializing data: " +  e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void destroy() {
         super.destroy();
-        HibernateUtil.shutdown();
+        try {
+            HibernateUtil.shutdown();
+        } catch (Exception e) {
+            System.err.println("error while shutting down hibernate: " +  e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void initData() {

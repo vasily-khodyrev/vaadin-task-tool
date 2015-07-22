@@ -6,6 +6,7 @@ import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
 import com.alu.tat.util.SchemaPresenter;
 import com.alu.tat.util.TaskPresenter;
+import com.alu.tat.view.ui.UIComponentFactory;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
@@ -117,10 +118,9 @@ public class MainView extends VerticalLayout implements View {
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
 
-        Button createButton = new Button("Create task");
-        final Button deleteButton = new Button("Delete task");
-        deleteButton.setEnabled(false);
-        Button schemaButton = new Button("Create Schema");
+        Button createButton = UIComponentFactory.getComponent(Button.class, "Create task", "MAINVIEW_CREATE_TASK_BUTTON");
+        final Button deleteButton = UIComponentFactory.getComponent(Button.class, "Delete task", "MAINVIEW_DEL_TASK_BUTTON");
+        Button schemaButton = UIComponentFactory.getComponent(Button.class, "Create Schema", "MAINVIEW_CREATE_SCHEMA_BUTTON");
 
         buttonPanel.addComponent(createButton);
         buttonPanel.addComponent(schemaButton);
