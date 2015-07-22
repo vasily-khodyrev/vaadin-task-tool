@@ -6,19 +6,19 @@ import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
 import com.alu.tat.util.SchemaPresenter;
 import com.alu.tat.util.TaskPresenter;
+import com.alu.tat.view.ui.UIComponentFactory;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.SelectionEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.FileResource;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 
-import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by imalolet on 6/10/2015.
@@ -118,13 +118,14 @@ public class MainView extends VerticalLayout implements View {
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
 
-        Button createButton = new Button("Create task");
-        Button deleteButton = new Button("Delete task");
-        Button schemaButton = new Button("Create Schema");
+        Button createButton = UIComponentFactory.getComponent(Button.class, "Create task", "MAINVIEW_CREATE_TASK_BUTTON");
+        final Button deleteButton = UIComponentFactory.getComponent(Button.class, "Delete task", "MAINVIEW_DEL_TASK_BUTTON");
+        Button schemaButton = UIComponentFactory.getComponent(Button.class, "Create Schema", "MAINVIEW_CREATE_SCHEMA_BUTTON");
 
         buttonPanel.addComponent(createButton);
-        buttonPanel.addComponent(deleteButton);
         buttonPanel.addComponent(schemaButton);
+        buttonPanel.addComponent(deleteButton);
+        buttonPanel.setComponentAlignment(deleteButton,Alignment.TOP_RIGHT);
 
 
         container.addComponent(buttonPanel);
@@ -135,7 +136,16 @@ public class MainView extends VerticalLayout implements View {
         container.setExpandRatio(grid, 4);
         container.setExpandRatio(infoPanel, 2);
 
-
+        grid.addSelectionListener(new SelectionEvent.SelectionListener() {
+            @Override
+            public void select(SelectionEvent event) {
+                if (!grid.getSelectedRows().isEmpty()) {
+                    deleteButton.setEnabled(true);
+                } else {
+                    deleteButton.setEnabled(false);
+                }
+            }
+        });
         createButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -173,14 +183,14 @@ public class MainView extends VerticalLayout implements View {
         tree.setItemIcon(root, new ThemeResource("../runo/icons/16/folder.png"));
 
         for (Task.Release r : Task.Release.values()) {
-            Item i = tree.addItem(r.getVersion());
+            Item i = tree.addItem(r);
             i.getItemPropertyIds();
-            tree.setParent(r.getVersion(), root);
-            tree.setItemIcon(r.getVersion(), new ThemeResource("../runo/icons/16/folder.png"));
+            tree.setParent(r, root);
+            tree.setItemIcon(r, new ThemeResource("../runo/icons/16/folder.png"));
         }
 
         for (Task t : tasks) {
-            String parent = t.getRelease().getVersion();
+            Task.Release parent = t.getRelease();
             tree.addItem(t);
             tree.setChildrenAllowed(t, false);
             tree.setParent(t, parent);
@@ -232,11 +242,17 @@ public class MainView extends VerticalLayout implements View {
         public void itemClick(ItemClickEvent event) {
             //Root element
             if (event.getItemId() instanceof String) {
-                //TODO Process root node in Task tree
+                Collection<Task> tasks = taskService.getTasks();
+                final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                grid.setContainerDataSource(container);
+                grid.markAsDirty();
             }
             //Release Nodes
             if (event.getItemId() instanceof Task.Release) {
-                //TODO Process Releases in Task Tree - filter by release.
+                List<Task> tasks = taskService.findTaskByRelease((Task.Release) event.getItemId());
+                final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                grid.setContainerDataSource(container);
+                grid.markAsDirty();
             }
             //Task leaf
             if (event.getItemId() instanceof Task) {
@@ -263,24 +279,31 @@ public class MainView extends VerticalLayout implements View {
 
         @Override
         public void itemClick(ItemClickEvent event) {
-            if (!(event.getItemId() instanceof Schema)) {
-                System.out.println("Not an Schema instance - exiting");
-                return;
-            }
-            if (event.isDoubleClick()) {
-                final Schema schema = (Schema) event.getItemId();
-                getSession().setAttribute("schema", schema);
-                navigator.navigateTo(UIConstants.SCHEMA_UPDATE + schema.getId());
-            } else {
-                final Schema schema = (Schema) event.getItemId();
+            if (event.getItemId() instanceof String) {
+                Collection<Task> tasks = taskService.getTasks();
+                final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                grid.setContainerDataSource(container);
+                grid.markAsDirty();
+            } else if (event.getItemId() instanceof Schema) {
+                if (event.isDoubleClick()) {
+                    final Schema schema = (Schema) event.getItemId();
+                    getSession().setAttribute("schema", schema);
+                    navigator.navigateTo(UIConstants.SCHEMA_UPDATE + schema.getId());
+                } else {
+                    final Schema schema = (Schema) event.getItemId();
+                    List<Task> tasks = taskService.findTaskBySchema(schema);
+                    final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                    grid.setContainerDataSource(container);
+                    grid.markAsDirty();
 
-                RichTextArea text = new RichTextArea();
-                text.setSizeFull();
-                text.setValue(SchemaPresenter.getHtmlView(schema));
-                text.setReadOnly(true);
+                    RichTextArea text = new RichTextArea();
+                    text.setSizeFull();
+                    text.setValue(SchemaPresenter.getHtmlView(schema));
+                    text.setReadOnly(true);
 
-                infoPanel.setSizeFull();
-                infoPanel.setContent(text);
+                    infoPanel.setSizeFull();
+                    infoPanel.setContent(text);
+                }
             }
         }
     }

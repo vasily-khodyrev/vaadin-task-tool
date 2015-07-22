@@ -1,9 +1,13 @@
 package com.alu.tat.service;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.dao.BaseDao;
+import com.alu.tat.entity.schema.Schema;
 
 /**
  * Created by imalolet on 6/11/2015.
@@ -36,6 +40,18 @@ public class TaskService {
     }
 
     public void removeTask(Long id) {
-        BaseDao.removeById(id,Task.class);
+        BaseDao.removeById(id, Task.class);
+    }
+
+    public List<Task> findTaskByRelease(Task.Release release) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("release", release);
+        return BaseDao.find(Task.class, "findTaskByRelease", params);
+    }
+
+    public List<Task> findTaskBySchema(Schema schema) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("schema", schema);
+        return BaseDao.find(Task.class, "findTaskBySchema", params);
     }
 }

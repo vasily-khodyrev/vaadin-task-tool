@@ -1,7 +1,9 @@
 package com.alu.tat.entity.dao;
 
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -54,5 +56,15 @@ public class BaseDao {
         final T item = (T) session.get(clazz,id);
         session.delete(item);
         transaction.commit();
+    }
+
+    public static <T> List<T> find(Class<T> clazz, String query, Map params) {
+        final Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        final Transaction transaction = session.beginTransaction();
+        Query q = session.getNamedQuery(query);
+        q.setProperties(params);
+        final List<T> result = q.list();
+        transaction.commit();
+        return result;
     }
 }
