@@ -99,6 +99,30 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <overlays>
+                        <overlay>
+                            <groupId>com.vaadin</groupId>
+                            <artifactId>vaadin-server</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>VAADIN/**</include>
+                            </includes>
+                        </overlay>
+                        <overlay>
+                            <groupId>com.vaadin</groupId>
+                            <artifactId>vaadin-themes</artifactId>
+                            <type>jar</type>
+                            <includes>
+                                <include>VAADIN/**</include>
+                            </includes>
+                        </overlay>
+                    </overlays>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.2</version>
                 <configuration>

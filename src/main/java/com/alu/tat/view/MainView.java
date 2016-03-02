@@ -94,8 +94,11 @@ public class MainView extends VerticalLayout implements View {
         signout.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                UI.getCurrent().getSession().close();
-                //navigator.navigateTo(UIConstants.VIEW_LOGIN);
+                // "Logout" the user
+                getSession().setAttribute("user", null);
+
+                // Refresh this view, should redirect to login view
+                navigator.navigateTo("");
             }
         });
         panelCaption.addComponent(signout);

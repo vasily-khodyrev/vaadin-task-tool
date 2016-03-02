@@ -139,7 +139,10 @@ public class TaskView extends AbstractActionView {
         Map<String, Object> valueMap = TaskPresenter.convertFromJSON(jsonData, schema);
         for (String fieldName : fieldMap.keySet()) {
             Property field = fieldMap.get(fieldName);
-            field.setValue(valueMap.get(fieldName));
+            Object vo = valueMap.get(fieldName);
+            if (vo != null) {
+                field.setValue(vo);
+            }
         }
     }
 
