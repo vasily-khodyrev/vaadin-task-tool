@@ -1,13 +1,19 @@
 package com.alu.tat.view;
 
+import com.alu.tat.entity.User;
+import com.alu.tat.service.UserService;
+import com.alu.tat.util.PasswordTools;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.AbstractValidator;
 import com.vaadin.data.validator.EmailValidator;
+import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.Reindeer;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * Created by
@@ -32,25 +38,27 @@ public class LoginView extends CustomComponent implements View,
         user = new TextField("User:");
         user.setWidth("300px");
         user.setRequired(true);
-        user.setInputPrompt("Your username (eg. joe@email.com)");
-        user.addValidator(new EmailValidator(
-                "Username must be an email address"));
+        user.setInputPrompt("Your login");
+        user.addValidator(new StringLengthValidator(
+                "Username length must not be between 1 and 64 symbols",1,64,false));
         user.setInvalidAllowed(false);
 
         // Create the password input field
         password = new PasswordField("Password:");
         password.setWidth("300px");
-        password.addValidator(new PasswordValidator());
+        password.addValidator(new PasswordTools.PasswordValidator(false));
         password.setRequired(true);
         password.setValue("");
         password.setNullRepresentation("");
 
         // Create login button
         loginButton = new Button("Login", this);
+        loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        loginButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 
         // Add both to a panel
         VerticalLayout fields = new VerticalLayout(user, password, loginButton);
-        fields.setCaption("Please login to access the application. (test@test.com/passw0rd)");
+        fields.setCaption("Please login to access the application.");
         fields.setSpacing(true);
         fields.setMargin(new MarginInfo(true, true, true, false));
         fields.setSizeUndefined();
@@ -67,33 +75,6 @@ public class LoginView extends CustomComponent implements View,
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         // focus the username field when user arrives to the login view
         user.focus();
-    }
-
-    // Validator for validating the passwords
-    private static final class PasswordValidator extends
-            AbstractValidator<String> implements Validator {
-
-        public PasswordValidator() {
-            super("The password provided is not valid");
-        }
-
-        @Override
-        protected boolean isValidValue(String value) {
-            //
-            // Password must be at least 8 characters long and contain at least
-            // one number
-            //
-            if (value != null
-                    && (value.length() < 8 || !value.matches(".*\\d.*"))) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public Class<String> getType() {
-            return String.class;
-        }
     }
 
     @Override
@@ -115,13 +96,17 @@ public class LoginView extends CustomComponent implements View,
         // Validate username and password with database here. For examples sake
         // I use a dummy username and password.
         //
-        boolean isValid = username.equals("test@test.com")
-                && password.equals("passw0rd");
+        User u = UserService.getUser(username);
+        String pwdHash = null;
+        if (u != null) {
+            pwdHash = PasswordTools.getPwdHash(password);
+        }
+        boolean isValid = u != null && pwdHash != null && pwdHash.equals(u.getPasswordHash());
 
         if (isValid) {
 
             // Store the current user in the service session
-            getSession().setAttribute("user", username);
+            getSession().setAttribute("user", u);
 
             // Navigate to main view
             getUI().getNavigator().navigateTo(UIConstants.VIEW_MAIN);//

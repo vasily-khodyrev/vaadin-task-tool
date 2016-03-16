@@ -1,9 +1,11 @@
 package com.alu.tat.view;
 
 import com.alu.tat.entity.Task;
+import com.alu.tat.entity.User;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
+import com.alu.tat.service.UserService;
 import com.alu.tat.util.SchemaPresenter;
 import com.alu.tat.util.TaskPresenter;
 import com.alu.tat.view.ui.UIComponentFactory;
@@ -34,6 +36,7 @@ public class MainView extends VerticalLayout implements View {
     final Panel infoPanel = new Panel("Info");
     final Tree taskTree = new Tree();
     final Tree schemaTree = new Tree();
+    final Tree usersTree = new Tree();
 
 
     @Override
@@ -76,11 +79,21 @@ public class MainView extends VerticalLayout implements View {
 
         return container;
     }
+    private Component getUsersTreeMenu() {
+        Layout container = new VerticalLayout();
+
+        configureUsersTree(usersTree, infoPanel);
+
+        container.addComponent(usersTree);
+
+        return container;
+    }
 
     private Panel getLeftPanel() {
         TabSheet tabsheet = new TabSheet();
         tabsheet.addTab(getTasksTreeMenu(), "Tasks", new ThemeResource("../runo/icons/16/document-txt.png"));
         tabsheet.addTab(getSchemasTreeMenu(), "Schemas", new ThemeResource("../runo/icons/16/document.png"));
+        tabsheet.addTab(getUsersTreeMenu(), "Users", new ThemeResource("../runo/icons/16/users.png"));
         tabsheet.addTab(new VerticalLayout());
 
         Panel p = new Panel();
@@ -122,13 +135,15 @@ public class MainView extends VerticalLayout implements View {
         HorizontalLayout buttonPanel = new HorizontalLayout();
 
         Button createButton = UIComponentFactory.getComponent(Button.class, "Create task", "MAINVIEW_CREATE_TASK_BUTTON");
-        final Button deleteButton = UIComponentFactory.getComponent(Button.class, "Delete task", "MAINVIEW_DEL_TASK_BUTTON");
+        final Button deleteTaskButton = UIComponentFactory.getComponent(Button.class, "Delete task", "MAINVIEW_DEL_TASK_BUTTON");
         Button schemaButton = UIComponentFactory.getComponent(Button.class, "Create Schema", "MAINVIEW_CREATE_SCHEMA_BUTTON");
+        Button userButton = UIComponentFactory.getComponent(Button.class, "Create User", "MAINVIEW_CREATE_USER_BUTTON");
 
         buttonPanel.addComponent(createButton);
         buttonPanel.addComponent(schemaButton);
-        buttonPanel.addComponent(deleteButton);
-        buttonPanel.setComponentAlignment(deleteButton,Alignment.TOP_RIGHT);
+        buttonPanel.addComponent(userButton);
+        buttonPanel.addComponent(deleteTaskButton);
+        buttonPanel.setComponentAlignment(deleteTaskButton,Alignment.TOP_RIGHT);
 
 
         container.addComponent(buttonPanel);
@@ -143,9 +158,9 @@ public class MainView extends VerticalLayout implements View {
             @Override
             public void select(SelectionEvent event) {
                 if (!grid.getSelectedRows().isEmpty()) {
-                    deleteButton.setEnabled(true);
+                    deleteTaskButton.setEnabled(true);
                 } else {
-                    deleteButton.setEnabled(false);
+                    deleteTaskButton.setEnabled(false);
                 }
             }
         });
@@ -156,7 +171,7 @@ public class MainView extends VerticalLayout implements View {
             }
         });
 
-        deleteButton.addClickListener(new Button.ClickListener() {
+        deleteTaskButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 Task t = (Task) grid.getSelectedRow();
@@ -170,6 +185,13 @@ public class MainView extends VerticalLayout implements View {
             public void buttonClick(Button.ClickEvent event) {
                 getSession().setAttribute("schema", null);
                 navigator.navigateTo(UIConstants.SCHEMA_CREATE);
+            }
+        });
+
+        userButton.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                navigator.navigateTo(UIConstants.USER_CREATE);
             }
         });
 
@@ -219,6 +241,25 @@ public class MainView extends VerticalLayout implements View {
         }
 
         tree.addItemClickListener(new SchemaItemClickListener());
+
+    }
+
+    private void configureUsersTree(Tree tree, Panel infoPanel) {
+        final Collection<User> users = UserService.getUsers();
+
+        String root = "Users";
+
+        tree.addItem(root);
+        tree.setItemIcon(root, new ThemeResource("../runo/icons/16/folder.png"));
+        tree.expandItem(root);
+
+        for (User t : users) {
+            tree.addItem(t);
+            tree.setParent(t, root);
+            tree.setChildrenAllowed(t, false);
+        }
+
+        tree.addItemClickListener(new UserItemClickListener());
 
     }
 
@@ -306,6 +347,25 @@ public class MainView extends VerticalLayout implements View {
 
                     infoPanel.setSizeFull();
                     infoPanel.setContent(text);
+                }
+            }
+        }
+    }
+
+    private class UserItemClickListener implements ItemClickEvent.ItemClickListener {
+
+        @Override
+        public void itemClick(ItemClickEvent event) {
+            if (event.getItemId() instanceof String) {
+                Collection<User> users = UserService.getUsers();
+                final BeanItemContainer<User> container = new BeanItemContainer<>(User.class, users);
+                grid.setContainerDataSource(container);
+                grid.markAsDirty();
+            } else if (event.getItemId() instanceof User) {
+                if (event.isDoubleClick()) {
+                    final User user = (User) event.getItemId();
+                    getSession().setAttribute("selectedUser", user);
+                    navigator.navigateTo(UIConstants.USER_UPDATE + user.getId());
                 }
             }
         }

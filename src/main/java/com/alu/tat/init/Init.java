@@ -5,7 +5,9 @@ import com.alu.tat.entity.User;
 import com.alu.tat.entity.dao.BaseDao;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
+import com.alu.tat.service.UserService;
 import com.alu.tat.util.HibernateUtil;
+import com.alu.tat.util.PasswordTools;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,8 +47,10 @@ public class Init extends HttpServlet {
         List<User> allUsers = BaseDao.getAll(User.class);
         if (allUsers.isEmpty()) {
             User user = new User();
+            user.setLogin("imalolet");
+            user.setPasswordHash(PasswordTools.getPwdHash("imalolet"));
             user.setName("Igor Maloletniy");
-            BaseDao.create(user);
+            UserService.createUser(user);
 
             Schema defaultSchema = new Schema();
             defaultSchema.setName("Default schema");

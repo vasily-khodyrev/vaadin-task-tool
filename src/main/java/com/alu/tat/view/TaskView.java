@@ -1,6 +1,7 @@
 package com.alu.tat.view;
 
 import com.alu.tat.entity.Task;
+import com.alu.tat.entity.User;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
@@ -40,6 +41,8 @@ public class TaskView extends AbstractActionView {
         FormLayout form = new FormLayout();
         final TextField taskName = new TextField("Task Name");
         final TextField taskAuth = new TextField("Author");
+        taskAuth.setValue(((User)getSession().getAttribute("user")).getName());
+        taskAuth.setEnabled(false);
         final TextField taskDesc = new TextField("Description");
         final ComboBox taskRel = new ComboBox("Release", Arrays.asList(Task.Release.values()));
         taskRel.select(Task.Release.OT11);
@@ -87,7 +90,7 @@ public class TaskView extends AbstractActionView {
                     t = taskService.getTask(updateId);
                 }
                 t.setName(taskName.getValue());
-                t.setAuthor(UserService.currentUser());
+                t.setAuthor((User) getSession().getAttribute("user"));
                 t.setDescription(taskDesc.getValue());
                 t.setRelease((Task.Release) taskRel.getValue());
                 t.setSchema((Schema) taskSchema.getValue());
@@ -114,7 +117,7 @@ public class TaskView extends AbstractActionView {
         if (!isCreate) {
             Task task = taskService.getTask(updateId);
             taskName.setValue(String.valueOf(task.getName()));
-            taskAuth.setValue(UserService.currentUser().getName());
+            taskAuth.setValue(task.getAuthor().getName());
             taskDesc.setValue(task.getDescription());
             taskRel.setValue(task.getRelease());
             taskSchema.setValue(task.getSchema());
