@@ -28,6 +28,9 @@ public class UserView extends AbstractActionView {
         //Left section begin
         FormLayout form = new FormLayout();
         final TextField userLogin = new TextField("User login");
+        if (!isCreate) {
+            userLogin.setEnabled(false);
+        }
         final TextField userName = new TextField("User Full Name");
         final PasswordField userPassword = new PasswordField("User Password");
         userPassword.addValidator(new PasswordTools.PasswordValidator(!isCreate));
@@ -47,6 +50,10 @@ public class UserView extends AbstractActionView {
         create.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                if (!userPassword.isValid()) {
+                    Notification.show("Form data is not valid!",Notification.Type.ERROR_MESSAGE);
+                    return;
+                }
                 User user;
                 if (isCreate) {
                     user = new User();

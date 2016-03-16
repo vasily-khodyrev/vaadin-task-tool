@@ -40,7 +40,7 @@ public class LoginView extends CustomComponent implements View,
         user.setRequired(true);
         user.setInputPrompt("Your login");
         user.addValidator(new StringLengthValidator(
-                "Username length must not be between 1 and 64 symbols",1,64,false));
+                "User login length must not be between 1 and 64 symbols",1,64,false));
         user.setInvalidAllowed(false);
 
         // Create the password input field
