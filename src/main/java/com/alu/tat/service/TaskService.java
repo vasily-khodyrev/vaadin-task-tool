@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alu.tat.entity.Task;
+import com.alu.tat.entity.User;
 import com.alu.tat.entity.dao.BaseDao;
 import com.alu.tat.entity.schema.Schema;
 
@@ -53,5 +54,11 @@ public class TaskService {
         Map<String, Object> params = new HashMap<>();
         params.put("schema", schema);
         return BaseDao.find(Task.class, "findTaskBySchema", params);
+    }
+
+    public List<Task> findTaskByUser(User user) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("user", user);
+        return BaseDao.find(Task.class, "findTaskByUser", params);
     }
 }

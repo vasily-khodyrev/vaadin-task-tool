@@ -15,6 +15,10 @@ import javax.persistence.*;
         @NamedQuery(
                 name = "findTaskBySchema",
                 query = "from Task t where t.schema = :schema"
+        ),
+        @NamedQuery(
+                name = "findTaskByUser",
+                query = "from Task t where t.author = :user"
         )
 })
 @Entity

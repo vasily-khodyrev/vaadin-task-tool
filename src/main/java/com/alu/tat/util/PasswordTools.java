@@ -60,7 +60,7 @@ public class PasswordTools {
             // one number
             //
             if (value != null
-                    && (value.length() < 6)) {
+                    && (value.length() < 5)) {
                 return false;
             }
             return true;

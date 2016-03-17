@@ -17,6 +17,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.*;
 
 import java.util.Collection;
@@ -32,7 +33,7 @@ public class MainView extends VerticalLayout implements View {
     private TaskService taskService = TaskService.getInstance();
     private SchemaService schemaService = SchemaService.getInstance();
 
-    final Grid grid = new Grid();
+    final Grid taskGrid = new Grid();
     final Panel infoPanel = new Panel("Info");
     final Tree taskTree = new Tree();
     final Tree schemaTree = new Tree();
@@ -79,6 +80,7 @@ public class MainView extends VerticalLayout implements View {
 
         return container;
     }
+
     private Component getUsersTreeMenu() {
         Layout container = new VerticalLayout();
 
@@ -130,7 +132,7 @@ public class MainView extends VerticalLayout implements View {
     private Panel getRightPanel() {
         VerticalLayout container = new VerticalLayout();
 
-        configureGrid(grid, infoPanel);
+        configureGrid(taskGrid, infoPanel);
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
 
@@ -143,21 +145,21 @@ public class MainView extends VerticalLayout implements View {
         buttonPanel.addComponent(schemaButton);
         buttonPanel.addComponent(userButton);
         buttonPanel.addComponent(deleteTaskButton);
-        buttonPanel.setComponentAlignment(deleteTaskButton,Alignment.TOP_RIGHT);
+        buttonPanel.setComponentAlignment(deleteTaskButton, Alignment.TOP_RIGHT);
 
 
         container.addComponent(buttonPanel);
-        container.addComponent(grid);
+        container.addComponent(taskGrid);
         container.addComponent(infoPanel);
 
         container.setExpandRatio(buttonPanel, 2);
-        container.setExpandRatio(grid, 4);
+        container.setExpandRatio(taskGrid, 4);
         container.setExpandRatio(infoPanel, 2);
 
-        grid.addSelectionListener(new SelectionEvent.SelectionListener() {
+        taskGrid.addSelectionListener(new SelectionEvent.SelectionListener() {
             @Override
             public void select(SelectionEvent event) {
-                if (!grid.getSelectedRows().isEmpty()) {
+                if (!taskGrid.getSelectedRows().isEmpty()) {
                     deleteTaskButton.setEnabled(true);
                 } else {
                     deleteTaskButton.setEnabled(false);
@@ -174,7 +176,7 @@ public class MainView extends VerticalLayout implements View {
         deleteTaskButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                Task t = (Task) grid.getSelectedRow();
+                Task t = (Task) taskGrid.getSelectedRow();
                 taskService.removeTask(t.getId());
                 navigator.navigateTo(UIConstants.VIEW_MAIN);
             }
@@ -288,15 +290,22 @@ public class MainView extends VerticalLayout implements View {
             if (event.getItemId() instanceof String) {
                 Collection<Task> tasks = taskService.getTasks();
                 final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                grid.setContainerDataSource(container);
-                grid.markAsDirty();
+                taskGrid.setContainerDataSource(container);
+                taskGrid.markAsDirty();
             }
             //Release Nodes
             if (event.getItemId() instanceof Task.Release) {
-                List<Task> tasks = taskService.findTaskByRelease((Task.Release) event.getItemId());
-                final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                grid.setContainerDataSource(container);
-                grid.markAsDirty();
+                Task.Release release = (Task.Release) event.getItemId();
+                if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+                    event.getClientX();
+                    event.getClientY();
+                    //todo: show popup window with actions
+                } else if (true) {
+                    List<Task> tasks = taskService.findTaskByRelease(release);
+                    final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                    taskGrid.setContainerDataSource(container);
+                    taskGrid.markAsDirty();
+                }
             }
             //Task leaf
             if (event.getItemId() instanceof Task) {
@@ -326,8 +335,8 @@ public class MainView extends VerticalLayout implements View {
             if (event.getItemId() instanceof String) {
                 Collection<Task> tasks = taskService.getTasks();
                 final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                grid.setContainerDataSource(container);
-                grid.markAsDirty();
+                taskGrid.setContainerDataSource(container);
+                taskGrid.markAsDirty();
             } else if (event.getItemId() instanceof Schema) {
                 if (event.isDoubleClick()) {
                     final Schema schema = (Schema) event.getItemId();
@@ -337,8 +346,8 @@ public class MainView extends VerticalLayout implements View {
                     final Schema schema = (Schema) event.getItemId();
                     List<Task> tasks = taskService.findTaskBySchema(schema);
                     final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                    grid.setContainerDataSource(container);
-                    grid.markAsDirty();
+                    taskGrid.setContainerDataSource(container);
+                    taskGrid.markAsDirty();
 
                     RichTextArea text = new RichTextArea();
                     text.setSizeFull();
@@ -357,15 +366,20 @@ public class MainView extends VerticalLayout implements View {
         @Override
         public void itemClick(ItemClickEvent event) {
             if (event.getItemId() instanceof String) {
-                Collection<User> users = UserService.getUsers();
-                final BeanItemContainer<User> container = new BeanItemContainer<>(User.class, users);
-                grid.setContainerDataSource(container);
-                grid.markAsDirty();
+                Collection<Task> tasks = taskService.getTasks();
+                final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                taskGrid.setContainerDataSource(container);
+                taskGrid.markAsDirty();
             } else if (event.getItemId() instanceof User) {
+                final User user = (User) event.getItemId();
+                getSession().setAttribute("selectedUser", user);
                 if (event.isDoubleClick()) {
-                    final User user = (User) event.getItemId();
-                    getSession().setAttribute("selectedUser", user);
                     navigator.navigateTo(UIConstants.USER_UPDATE + user.getId());
+                } else {
+                    List<Task> tasks = taskService.findTaskByUser(user);
+                    final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                    taskGrid.setContainerDataSource(container);
+                    taskGrid.markAsDirty();
                 }
             }
         }
