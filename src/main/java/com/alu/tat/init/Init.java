@@ -11,6 +11,7 @@ import com.alu.tat.util.PasswordTools;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -44,7 +45,14 @@ public class Init extends HttpServlet {
     }
 
     private void initData() {
-        List<User> allUsers = BaseDao.getAll(User.class);
+        Collection<User> allUsers = UserService.getUsers();
+        User admin = new User();
+        admin.setLogin("admin");
+        admin.setName("Admin");
+        admin.setPasswordHash(PasswordTools.getPwdHash("admin"));
+        if (!allUsers.contains(admin)) {
+            UserService.createUser(admin);
+        }
         if (allUsers.isEmpty()) {
             User user = new User();
             user.setLogin("imalolet");

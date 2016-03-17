@@ -37,7 +37,7 @@ public class User extends BaseEntity {
     }
 
     public void setLogin(String login) {
-        this.login = login;
+        this.login = login.toLowerCase();
     }
 
     public String getPasswordHash() {
@@ -51,5 +51,24 @@ public class User extends BaseEntity {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        User user = (User) o;
+
+        return login.equals(user.login);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + login.hashCode();
+        return result;
     }
 }
