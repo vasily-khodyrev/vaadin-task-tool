@@ -12,22 +12,29 @@ import com.alu.tat.view.ui.UIComponentFactory;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.LayoutEvents;
 import com.vaadin.event.SelectionEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.BaseTheme;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by imalolet on 6/10/2015.
  */
 public class MainView extends VerticalLayout implements View {
 
+    public static final ThemeResource FOLDER_ICON = new ThemeResource("../runo/icons/16/folder.png");
     private Navigator navigator;
 
     private TaskService taskService = TaskService.getInstance();
@@ -39,6 +46,16 @@ public class MainView extends VerticalLayout implements View {
     final Tree schemaTree = new Tree();
     final Tree usersTree = new Tree();
 
+    private CopyOnWriteArrayList<Window> extraWindows = new CopyOnWriteArrayList<>();
+
+    private void closeExtraWindows() {
+        Iterator<Window> wit = extraWindows.listIterator();
+        while (wit.hasNext()) {
+            Window w = wit.next();
+            w.close();
+            extraWindows.remove(wit);
+        }
+    }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -59,6 +76,14 @@ public class MainView extends VerticalLayout implements View {
         setExpandRatio(container, 1);
         setSizeFull();
 
+        this.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
+            @Override
+            public void layoutClick(LayoutEvents.LayoutClickEvent event) {
+                if (event.getButton().equals(MouseEventDetails.MouseButton.LEFT)) {
+                    closeExtraWindows();
+                }
+            }
+        });
     }
 
     private Component getTasksTreeMenu() {
@@ -105,7 +130,7 @@ public class MainView extends VerticalLayout implements View {
         Label menuLab = new Label("Menu");
         panelCaption.addComponent(menuLab);
         panelCaption.setComponentAlignment(menuLab, Alignment.TOP_LEFT);
-        Button signout = new Button("Sign Out");
+        Button signout = UIComponentFactory.getButton("Sign Out", "MAINVIEW_SIGNOUT_BUTTON");
         signout.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -136,10 +161,10 @@ public class MainView extends VerticalLayout implements View {
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
 
-        Button createButton = UIComponentFactory.getComponent(Button.class, "Create task", "MAINVIEW_CREATE_TASK_BUTTON");
-        final Button deleteTaskButton = UIComponentFactory.getComponent(Button.class, "Delete task", "MAINVIEW_DEL_TASK_BUTTON");
-        Button schemaButton = UIComponentFactory.getComponent(Button.class, "Create Schema", "MAINVIEW_CREATE_SCHEMA_BUTTON");
-        Button userButton = UIComponentFactory.getComponent(Button.class, "Create User", "MAINVIEW_CREATE_USER_BUTTON");
+        Button createButton = UIComponentFactory.getButton("Create task", "MAINVIEW_CREATE_TASK_BUTTON");
+        final Button deleteTaskButton = UIComponentFactory.getButton("Delete task", "MAINVIEW_DEL_TASK_BUTTON");
+        Button schemaButton = UIComponentFactory.getButton("Create Schema", "MAINVIEW_CREATE_SCHEMA_BUTTON");
+        Button userButton = UIComponentFactory.getButton("Create User", "MAINVIEW_CREATE_USER_BUTTON");
 
         buttonPanel.addComponent(createButton);
         buttonPanel.addComponent(schemaButton);
@@ -185,7 +210,6 @@ public class MainView extends VerticalLayout implements View {
         schemaButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                getSession().setAttribute("schema", null);
                 navigator.navigateTo(UIConstants.SCHEMA_CREATE);
             }
         });
@@ -207,13 +231,13 @@ public class MainView extends VerticalLayout implements View {
 
         tree.addItem(root);
         tree.expandItem(root);
-        tree.setItemIcon(root, new ThemeResource("../runo/icons/16/folder.png"));
+        tree.setItemIcon(root, FOLDER_ICON);
 
         for (Task.Release r : Task.Release.values()) {
             Item i = tree.addItem(r);
             i.getItemPropertyIds();
             tree.setParent(r, root);
-            tree.setItemIcon(r, new ThemeResource("../runo/icons/16/folder.png"));
+            tree.setItemIcon(r, FOLDER_ICON);
         }
 
         for (Task t : tasks) {
@@ -223,7 +247,7 @@ public class MainView extends VerticalLayout implements View {
             tree.setParent(t, parent);
         }
 
-        tree.addItemClickListener(new TastItemClickListener());
+        tree.addItemClickListener(new TaskTreeItemClickListener());
 
     }
 
@@ -233,7 +257,7 @@ public class MainView extends VerticalLayout implements View {
         String root = "Schemas";
 
         tree.addItem(root);
-        tree.setItemIcon(root, new ThemeResource("../runo/icons/16/folder.png"));
+        tree.setItemIcon(root, FOLDER_ICON);
         tree.expandItem(root);
 
         for (Schema t : schemas) {
@@ -242,7 +266,7 @@ public class MainView extends VerticalLayout implements View {
             tree.setChildrenAllowed(t, false);
         }
 
-        tree.addItemClickListener(new SchemaItemClickListener());
+        tree.addItemClickListener(new SchemaTreeItemClickListener());
 
     }
 
@@ -252,7 +276,7 @@ public class MainView extends VerticalLayout implements View {
         String root = "Users";
 
         tree.addItem(root);
-        tree.setItemIcon(root, new ThemeResource("../runo/icons/16/folder.png"));
+        tree.setItemIcon(root, FOLDER_ICON);
         tree.expandItem(root);
 
         for (User t : users) {
@@ -261,7 +285,7 @@ public class MainView extends VerticalLayout implements View {
             tree.setChildrenAllowed(t, false);
         }
 
-        tree.addItemClickListener(new UserItemClickListener());
+        tree.addItemClickListener(new UserTreeItemClickListener());
 
     }
 
@@ -276,42 +300,19 @@ public class MainView extends VerticalLayout implements View {
 
         grid.removeColumn("id");
 
-        grid.addItemClickListener(new TastItemClickListener());
+        grid.addItemClickListener(new TastItemGridClickListener());
 
 
     }
 
 
-    private class TastItemClickListener implements ItemClickEvent.ItemClickListener {
+    private class TastItemGridClickListener implements ItemClickEvent.ItemClickListener {
 
         @Override
         public void itemClick(ItemClickEvent event) {
-            //Root element
-            if (event.getItemId() instanceof String) {
-                Collection<Task> tasks = taskService.getTasks();
-                final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                taskGrid.setContainerDataSource(container);
-                taskGrid.markAsDirty();
-            }
-            //Release Nodes
-            if (event.getItemId() instanceof Task.Release) {
-                Task.Release release = (Task.Release) event.getItemId();
-                if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-                    event.getClientX();
-                    event.getClientY();
-                    //todo: show popup window with actions
-                } else if (true) {
-                    List<Task> tasks = taskService.findTaskByRelease(release);
-                    final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                    taskGrid.setContainerDataSource(container);
-                    taskGrid.markAsDirty();
-                }
-            }
-            //Task leaf
             if (event.getItemId() instanceof Task) {
                 if (event.isDoubleClick()) {
                     final Task task = (Task) event.getItemId();
-                    getSession().setAttribute("item", task.getId());
                     navigator.navigateTo(UIConstants.TASK_UPDATE + task.getId());
                 } else {
                     final Task task = (Task) event.getItemId();
@@ -328,7 +329,91 @@ public class MainView extends VerticalLayout implements View {
         }
     }
 
-    private class SchemaItemClickListener implements ItemClickEvent.ItemClickListener {
+    private class TaskTreeItemClickListener implements ItemClickEvent.ItemClickListener {
+
+        @Override
+        public void itemClick(ItemClickEvent event) {
+            //Root element
+            if (event.getItemId() instanceof String) {
+                Collection<Task> tasks = taskService.getTasks();
+                final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                taskGrid.setContainerDataSource(container);
+                taskGrid.markAsDirty();
+            }
+            //Release Nodes
+            if (event.getItemId() instanceof Task.Release) {
+                Task.Release release = (Task.Release) event.getItemId();
+                if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+                    showWindow(event.getClientX(), event.getClientY(), new VerticalLayout());
+                    //todo: show popup window with actions
+                } else if (true) {
+                    List<Task> tasks = taskService.findTaskByRelease(release);
+                    final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                    taskGrid.setContainerDataSource(container);
+                    taskGrid.markAsDirty();
+                }
+            }
+            //Task leaf
+            if (event.getItemId() instanceof Task) {
+                if (event.isDoubleClick()) {
+                    final Task task = (Task) event.getItemId();
+                    navigator.navigateTo(UIConstants.TASK_UPDATE + task.getId());
+                } else {
+                    final Task task = (Task) event.getItemId();
+
+                    RichTextArea text = new RichTextArea();
+                    text.setSizeFull();
+                    text.setValue(TaskPresenter.getHtmlView(task));
+                    text.setReadOnly(true);
+
+                    infoPanel.setSizeFull();
+                    infoPanel.setContent(text);
+                }
+            }
+        }
+
+        public void showWindow(int x, int y, Component content) {
+            closeExtraWindows();
+
+            final Window window = new Window();
+            /*Button closeButton = new Button("\u00a0"); // &nbsp;
+            closeButton.addClickListener(new Button.ClickListener() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    window.close();
+                }
+            });
+
+            VerticalLayout menu = new VerticalLayout();
+            for (final Map.Entry<String, String> pair : navRules.entrySet()) {
+                Button action = new Button(pair.getKey());
+                action.addClickListener(new Button.ClickListener() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        navigator.navigateTo(pair.getValue());
+                        window.close();
+                    }
+                });
+                menu.addComponent(action);
+            }*/
+            window.setContent(content);
+            window.setModal(false);
+            window.setWidth("300px");
+            window.setHeight("150px");
+            window.setPositionX(x);
+            window.setPositionY(y);
+            window.setClosable(false);
+            window.setResizable(false);
+            extraWindows.add(window);
+            UI.getCurrent().addWindow(window);
+        }
+    }
+
+    private class SchemaTreeItemClickListener implements ItemClickEvent.ItemClickListener {
 
         @Override
         public void itemClick(ItemClickEvent event) {
@@ -340,7 +425,6 @@ public class MainView extends VerticalLayout implements View {
             } else if (event.getItemId() instanceof Schema) {
                 if (event.isDoubleClick()) {
                     final Schema schema = (Schema) event.getItemId();
-                    getSession().setAttribute("schema", schema);
                     navigator.navigateTo(UIConstants.SCHEMA_UPDATE + schema.getId());
                 } else {
                     final Schema schema = (Schema) event.getItemId();
@@ -361,7 +445,7 @@ public class MainView extends VerticalLayout implements View {
         }
     }
 
-    private class UserItemClickListener implements ItemClickEvent.ItemClickListener {
+    private class UserTreeItemClickListener implements ItemClickEvent.ItemClickListener {
 
         @Override
         public void itemClick(ItemClickEvent event) {
@@ -372,7 +456,6 @@ public class MainView extends VerticalLayout implements View {
                 taskGrid.markAsDirty();
             } else if (event.getItemId() instanceof User) {
                 final User user = (User) event.getItemId();
-                getSession().setAttribute("selectedUser", user);
                 if (event.isDoubleClick()) {
                     navigator.navigateTo(UIConstants.USER_UPDATE + user.getId());
                 } else {
@@ -382,6 +465,15 @@ public class MainView extends VerticalLayout implements View {
                     taskGrid.markAsDirty();
                 }
             }
+        }
+    }
+
+    private class MyPopupUI extends UI {
+        @Override
+        protected void init(VaadinRequest request) {
+            setContent(new Label("This is MyPopupUI where parameter foo="
+                    + request.getParameter("foo") + " and fragment is set to "
+                    + getPage().getUriFragment()));
         }
     }
 }

@@ -3,6 +3,7 @@ package com.alu.tat.view;
 import com.alu.tat.entity.User;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.PasswordTools;
+import com.alu.tat.view.ui.UIComponentFactory;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.AbstractValidator;
 import com.vaadin.data.validator.EmailValidator;
@@ -52,7 +53,7 @@ public class LoginView extends CustomComponent implements View,
         password.setNullRepresentation("");
 
         // Create login button
-        loginButton = new Button("Login", this);
+        loginButton = UIComponentFactory.getButton("Login", "LOGINVIEW_LOGIN_BUTTON",this);
         loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         loginButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 

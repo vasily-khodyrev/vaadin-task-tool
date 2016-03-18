@@ -1,6 +1,7 @@
 package com.alu.tat.view;
 
 import com.alu.tat.Main;
+import com.alu.tat.view.ui.UIComponentFactory;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -25,7 +26,7 @@ public class ErrorView extends VerticalLayout implements View {
         Label label = new Label("<b>Sorry! The requested page doesn't exist!</b><br/>", ContentMode.HTML);
         layout.addComponent(label);
 
-        Button backBut = new Button("Get Back");
+        Button backBut = UIComponentFactory.getButton("Get Back", "ERRORVIEW_BACK_BUTTON");
         layout.addComponent(backBut);
         backBut.addClickListener(new Button.ClickListener() {
             @Override

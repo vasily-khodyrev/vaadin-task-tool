@@ -9,16 +9,21 @@
         <param-name>log4j-config</param-name>
         <param-value>WEB-INF/traces.xml</param-value>
     </context-param>
-
     <servlet>
         <servlet-name>myservlet</servlet-name>
         <servlet-class>
-            com.vaadin.server.VaadinServlet
+            com.alu.tat.TaskAnalysisServlet
         </servlet-class>
 
         <init-param>
             <param-name>UI</param-name>
             <param-value>com.alu.tat.Main</param-value>
+        </init-param>
+
+        <init-param>
+            <description>Enable Session Timeout</description>
+            <param-name>closeIdleSessions</param-name>
+            <param-value>true</param-value>
         </init-param>
     </servlet>
 

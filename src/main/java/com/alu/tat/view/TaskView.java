@@ -8,6 +8,7 @@ import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.TaskPresenter;
+import com.alu.tat.view.ui.UIComponentFactory;
 import com.vaadin.data.Property;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
@@ -60,8 +61,8 @@ public class TaskView extends AbstractActionView {
         form.addComponent(taskRel);
         form.addComponent(taskSchema);
 
-        Button create = new Button(isCreate ? "Create" : "Update", new ThemeResource(("../runo/icons/16/ok.png")));
-        Button back = new Button("Back", new ThemeResource(("../runo/icons/16/cancel.png")));
+        Button create = UIComponentFactory.getButton(isCreate ? "Create" : "Update", "TASKVIEW_CREATEORUPDATE_BUTTON", new ThemeResource(("../runo/icons/16/ok.png")));
+        Button back = UIComponentFactory.getButton("Back", "TASKVIEW_CANCEL_BUTTON", new ThemeResource(("../runo/icons/16/cancel.png")));
 
         HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
         form.addComponent(buttonGroup);

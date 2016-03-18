@@ -3,6 +3,7 @@ package com.alu.tat.view;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
+import com.alu.tat.view.ui.UIComponentFactory;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.SelectionEvent;
@@ -40,8 +41,8 @@ public class SchemaView extends AbstractActionView {
 
         final Grid grid = prepareGrid(form);
 
-        Button create = new Button(isCreate ? "Create" : "Save", new ThemeResource(("../runo/icons/16/ok.png")));
-        Button back = new Button("Back", new ThemeResource(("../runo/icons/16/cancel.png")));
+        Button create = UIComponentFactory.getButton(isCreate ? "Create" : "Update", "SCHEMAVIEW_CREATEORUPDATE_BUTTON", new ThemeResource(("../runo/icons/16/ok.png")));
+        Button back = UIComponentFactory.getButton("Back", "SCHEMAVIEW_CANCEL_BUTTON", new ThemeResource(("../runo/icons/16/cancel.png")));
 
         HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
         form.addComponent(buttonGroup);
@@ -97,9 +98,9 @@ public class SchemaView extends AbstractActionView {
         final Grid grid = new Grid();
         configureGrid(grid);
         HorizontalLayout buttonGroup = new HorizontalLayout();
-        Button addButton = new Button("Add item");
+        Button addButton = UIComponentFactory.getButton("Add item", "SCHEMAVIEW_ADDITEM_BUTTON");
         addButton.setIcon(FontAwesome.PLUS_CIRCLE);
-        final Button removeButton = new Button("Remove");
+        final Button removeButton = UIComponentFactory.getButton("Remove", "SCHEMAVIEW_REMOVEITEM_BUTTON");
         removeButton.setIcon(FontAwesome.MINUS_CIRCLE);
         removeButton.setEnabled(false);
         buttonGroup.addComponent(addButton);
