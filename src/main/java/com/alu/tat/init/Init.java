@@ -1,10 +1,12 @@
 package com.alu.tat.init;
 
+import com.alu.tat.entity.Folder;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.User;
 import com.alu.tat.entity.dao.BaseDao;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
+import com.alu.tat.service.FolderService;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.HibernateUtil;
 import com.alu.tat.util.PasswordTools;
@@ -82,6 +84,13 @@ public class Init extends HttpServlet {
             secondList.add(new SchemaElement("SDD", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
             BaseDao.create(secondSchema);
 
+            Folder f1 = new Folder();
+            f1.setName("OT10");
+            Folder f2 = new Folder();
+            f2.setName("OT11");
+            FolderService.createFolder(f1);
+            FolderService.createFolder(f2);
+
             for (int i = 0; i < 20; i++) {
                 Task t = new Task();
 
@@ -90,9 +99,7 @@ public class Init extends HttpServlet {
                 t.setDescription("description of crqms" + i);
                 t.setName("crqms" + i);
                 t.setSchema(defaultSchema);
-                final Task.Release release = Task.Release.values()[((int) (Math.round(Math.random())))];
-                t.setRelease(release);
-
+                t.setFolder(((int) (Math.round(Math.random()))) % 2 == 1 ? f1 : f2);
                 BaseDao.create(t);
             }
         }

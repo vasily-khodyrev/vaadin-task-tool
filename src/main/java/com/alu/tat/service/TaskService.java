@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alu.tat.entity.Folder;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.User;
 import com.alu.tat.entity.dao.BaseDao;
@@ -44,10 +45,10 @@ public class TaskService {
         BaseDao.removeById(id, Task.class);
     }
 
-    public List<Task> findTaskByRelease(Task.Release release) {
+    public List<Task> findTaskByFolder(Folder release) {
         Map<String, Object> params = new HashMap<>();
         params.put("release", release);
-        return BaseDao.find(Task.class, "findTaskByRelease", params);
+        return BaseDao.find(Task.class, "findTaskByFolder", params);
     }
 
     public List<Task> findTaskBySchema(Schema schema) {

@@ -11,6 +11,7 @@ public interface UIConstants {
     public final static String VIEW_TASK = "Task";
     public final static String VIEW_SCHEMA = "Schema";
     public final static String VIEW_USER = "User";
+    public final static String VIEW_FOLDER = "Folder";
     public final static String VIEW_MAIN = "";
     public final static String VIEW_LOGIN = "Login";
     public final static String VIEW_ERROR = "Error";
@@ -25,6 +26,8 @@ public interface UIConstants {
     public final static String TASK_UPDATE = VIEW_TASK + "/" + OP_UPDATE+"/";
     public final static String USER_CREATE = VIEW_USER + "/" + OP_CREATE;
     public final static String USER_UPDATE = VIEW_USER + "/" + OP_UPDATE+"/";
+    public final static String FOLDER_CREATE = VIEW_FOLDER + "/" + OP_CREATE;
+    public final static String FOLDER_UPDATE = VIEW_FOLDER + "/" + OP_UPDATE+"/";
     public final static String SCHEMA_CREATE = VIEW_SCHEMA + "/" + OP_CREATE;
     public final static String SCHEMA_UPDATE = VIEW_SCHEMA + "/" + OP_UPDATE+"/";
 

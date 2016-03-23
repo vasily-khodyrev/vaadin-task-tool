@@ -171,7 +171,7 @@ public class SchemaView extends AbstractActionView {
                 VerticalLayout container = new VerticalLayout();
 
                 Label name = new Label("Name: " + task.getName());
-                Label release = new Label("Release: " + task.getRelease().getVersion());
+                Label release = new Label("Release: " + task.getFolder().getVersion());
                 Label descr = new Label("Description: " + task.getDescription());
 
                 container.addComponent(name);

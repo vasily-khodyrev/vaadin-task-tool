@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class PopupMenuManager {
     private CopyOnWriteArrayList<Window> extraWindows = new CopyOnWriteArrayList<>();
 
-    public PopupMenuManager(AbstractOrderedLayout layout){
+    public PopupMenuManager(AbstractOrderedLayout layout) {
         layout.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
             @Override
             public void layoutClick(LayoutEvents.LayoutClickEvent event) {
@@ -29,7 +29,7 @@ public class PopupMenuManager {
         });
     }
 
-    public void showWindow(int x, int y, Component content) {
+    public void showWindow(int x, int y, PopupContent content) {
         closeExtraWindows();
 
         final Window window = new Window();
@@ -42,6 +42,7 @@ public class PopupMenuManager {
         window.setClosable(false);
         window.setResizable(false);
         extraWindows.add(window);
+        content.setWindow(window);
         UI.getCurrent().addWindow(window);
     }
 
@@ -52,5 +53,9 @@ public class PopupMenuManager {
             w.close();
             extraWindows.remove(wit);
         }
+    }
+
+    public interface PopupContent extends Component {
+        public void setWindow(Window w);
     }
 }

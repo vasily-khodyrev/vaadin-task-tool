@@ -1,9 +1,11 @@
 package com.alu.tat.view;
 
+import com.alu.tat.entity.Folder;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.User;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
+import com.alu.tat.service.FolderService;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
 import com.alu.tat.util.TaskPresenter;
@@ -44,8 +46,8 @@ public class TaskView extends AbstractActionView {
         taskAuth.setValue(((User)getSession().getAttribute("user")).getName());
         taskAuth.setEnabled(false);
         final TextField taskDesc = new TextField("Description");
-        final ComboBox taskRel = new ComboBox("Release", Arrays.asList(Task.Release.values()));
-        taskRel.select(Task.Release.OT11);
+        final ComboBox taskRel = new ComboBox("Folder");
+        taskRel.addItems(FolderService.getFolders());
         taskRel.setNullSelectionAllowed(false);
 
         Collection<Schema> schemas = schemaService.getSchemas();
@@ -92,7 +94,9 @@ public class TaskView extends AbstractActionView {
                 t.setName(taskName.getValue());
                 t.setAuthor((User) getSession().getAttribute("user"));
                 t.setDescription(taskDesc.getValue());
-                t.setRelease((Task.Release) taskRel.getValue());
+                if (taskRel.getValue() instanceof Folder) {
+                    t.setFolder((Folder) taskRel.getValue());
+                }
                 t.setSchema((Schema) taskSchema.getValue());
                 t.setData(TaskPresenter.convertToData((Schema) taskSchema.getValue(), fieldMap));
                 if (!isCreate) {
@@ -119,7 +123,7 @@ public class TaskView extends AbstractActionView {
             taskName.setValue(String.valueOf(task.getName()));
             taskAuth.setValue(task.getAuthor().getName());
             taskDesc.setValue(task.getDescription());
-            taskRel.setValue(task.getRelease());
+            taskRel.setValue(task.getFolder());
             taskSchema.setValue(task.getSchema());
             initSchemaData(fieldMap, task.getData(), (Schema) taskSchema.getValue());
         }
