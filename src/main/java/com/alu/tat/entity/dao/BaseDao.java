@@ -1,70 +1,116 @@
 package com.alu.tat.entity.dao;
 
-import java.util.List;
-import java.util.Map;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
 import com.alu.tat.entity.BaseEntity;
 import com.alu.tat.util.HibernateUtil;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by imalolet on 6/19/2015.
  */
 public class BaseDao {
     public static void create(BaseEntity entity) {
-        final Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        final Transaction transaction = session.beginTransaction();
-
-        final Long id = (Long) session.save(entity);
-
-        transaction.commit();
+        final Session session = getSession();
+        final Transaction transaction = session.getTransaction();
+        Long id = 0L;
+        try {
+            transaction.begin();
+            id = (Long) session.save(entity);
+            transaction.commit();
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
         entity.setId(id);
     }
 
     public static void update(BaseEntity entity) {
-        final Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        final Transaction transaction = session.beginTransaction();
-
-        session.update(entity);
-        transaction.commit();
+        final Session session = getSession();
+        final Transaction transaction = session.getTransaction();
+        try {
+            transaction.begin();
+            session.update(entity);
+            transaction.commit();
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
     }
 
     public static <T> List<T> getAll(Class<T> clazz) {
-        final Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        final Transaction transaction = session.beginTransaction();
-        final List result = session.createCriteria(clazz).list();
-        transaction.commit();
-
+        final Session session = getSession();
+        final Transaction transaction = session.getTransaction();
+        List result = null;
+        try {
+            transaction.begin();
+            result = session.createCriteria(clazz).list();
+            transaction.commit();
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
         return result;
     }
 
     public static <T> T getById(Long id, Class<T> clazz) {
-        final Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        final Transaction transaction = session.beginTransaction();
-        final T result = (T) session.get(clazz, id);
-        transaction.commit();
+        final Session session = getSession();
+        final Transaction transaction = session.getTransaction();
+        T result = null;
+        try {
+            transaction.begin();
+            result = (T) session.get(clazz, id);
+            transaction.commit();
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
         return result;
 
     }
 
     public static <T> void removeById(Long id, Class<T> clazz) {
-        final Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        final Transaction transaction = session.beginTransaction();
-        final T item = (T) session.get(clazz,id);
-        session.delete(item);
-        transaction.commit();
+        final Session session = getSession();
+        final Transaction transaction = session.getTransaction();
+        try {
+            transaction.begin();
+            final T item = (T) session.get(clazz, id);
+            session.delete(item);
+            transaction.commit();
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
     }
 
     public static <T> List<T> find(Class<T> clazz, String query, Map params) {
-        final Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        final Transaction transaction = session.beginTransaction();
-        Query q = session.getNamedQuery(query);
-        q.setProperties(params);
-        final List<T> result = q.list();
-        transaction.commit();
+        final Session session = getSession();
+        final Transaction transaction = session.getTransaction();
+        List<T> result = null;
+        try {
+            transaction.begin();
+            Query q = session.getNamedQuery(query);
+            q.setProperties(params);
+            result = q.list();
+            transaction.commit();
+        } catch (RuntimeException e) {
+            transaction.rollback();
+            throw e;
+        }
         return result;
+    }
+
+    private static Session getSession() {
+        SessionFactory sf = HibernateUtil.getSessionFactory();
+        Session session = sf.getCurrentSession();
+        if (!session.isOpen()) {
+            session.close();
+            session = sf.openSession();
+        }
+        return session;
     }
 }
