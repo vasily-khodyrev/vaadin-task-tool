@@ -47,7 +47,7 @@ public class TaskService {
 
     public List<Task> findTaskByFolder(Folder release) {
         Map<String, Object> params = new HashMap<>();
-        params.put("release", release);
+        params.put("folder", release);
         return BaseDao.find(Task.class, "findTaskByFolder", params);
     }
 
