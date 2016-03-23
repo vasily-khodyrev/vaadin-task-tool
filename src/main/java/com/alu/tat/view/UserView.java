@@ -3,6 +3,7 @@ package com.alu.tat.view;
 import com.alu.tat.entity.User;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.PasswordTools;
+import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ThemeResource;
@@ -40,8 +41,8 @@ public class UserView extends AbstractActionView {
         form.addComponent(userPassword);
 
 
-        Button create = new Button(isCreate ? "Create" : "Update", new ThemeResource(("../runo/icons/16/ok.png")));
-        Button back = new Button("Back", new ThemeResource(("../runo/icons/16/cancel.png")));
+        Button create = UIComponentFactory.getButton(isCreate ? "Create" : "Update", "USERVIEW_CREATEORUPDATE_BUTTON", new ThemeResource(("../runo/icons/16/ok.png")));
+        Button back = UIComponentFactory.getButton("Back", "USERVIEW_CANCEL_BUTTON", new ThemeResource(("../runo/icons/16/cancel.png")));
 
         HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
         form.addComponent(buttonGroup);

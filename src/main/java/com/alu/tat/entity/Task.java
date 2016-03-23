@@ -9,8 +9,8 @@ import javax.persistence.*;
  */
 @NamedQueries({
         @NamedQuery(
-                name = "findTaskByRelease",
-                query = "from Task t where t.release = :release"
+                name = "findTaskByFolder",
+                query = "from Task t where t.folder = :folder"
         ),
         @NamedQuery(
                 name = "findTaskBySchema",
@@ -42,22 +42,9 @@ public class Task extends BaseEntity {
     @Column(name = "data")
     private String data;
 
-    @Enumerated(EnumType.STRING)
-    private Release release;
-
-    public enum Release {
-        OT11("11"), OT10("10");
-
-        private String version;
-
-        Release(String version) {
-            this.version = version;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-    }
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    @JoinColumn(name = "folder_id")
+    private Folder folder;
 
     public String getName() {
         return name;
@@ -83,12 +70,12 @@ public class Task extends BaseEntity {
         this.author = author;
     }
 
-    public Release getRelease() {
-        return release;
+    public Folder getFolder() {
+        return folder;
     }
 
-    public void setRelease(Release release) {
-        this.release = release;
+    public void setFolder(Folder folder) {
+        this.folder = folder;
     }
 
     public Schema getSchema() {

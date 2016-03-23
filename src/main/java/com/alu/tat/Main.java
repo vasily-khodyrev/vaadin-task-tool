@@ -34,6 +34,7 @@ public class Main extends UI {
         navigator.addView(UIConstants.VIEW_SCHEMA, SchemaView.class);
         navigator.addView(UIConstants.VIEW_LOGIN, LoginView.class);
         navigator.addView(UIConstants.VIEW_USER, UserView.class);
+        navigator.addView(UIConstants.VIEW_FOLDER, FolderView.class);
         navigator.setErrorView(ErrorView.class);
         //
         // We use a view change handler to ensure the user is always redirected

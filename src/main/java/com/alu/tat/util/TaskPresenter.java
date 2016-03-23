@@ -26,7 +26,7 @@ public class TaskPresenter {
         result.append("<br>");
         result.append("<b>Description:</b> " + task.getDescription());
         result.append("<br>");
-        result.append("<b>Release:</b> " + task.getRelease().getVersion());
+        result.append("<b>Release:</b> " + task.getFolder());
         result.append("<br>");
         result.append("<b>Analyzer:</b> " + task.getAuthor());
         result.append("<br>");
