@@ -8,11 +8,12 @@ import com.alu.tat.service.TaskService;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.SchemaPresenter;
 import com.alu.tat.util.TaskPresenter;
-import com.alu.tat.view.ui.UIComponentFactory;
+import com.alu.tat.util.UIComponentFactory;
+import com.alu.tat.view.menu.PopupMenuManager;
+import com.alu.tat.view.menu.ReleasePopupMenu;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.LayoutEvents;
 import com.vaadin.event.SelectionEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -21,12 +22,9 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.*;
-import com.vaadin.ui.themes.BaseTheme;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -45,16 +43,11 @@ public class MainView extends VerticalLayout implements View {
     final Tree taskTree = new Tree();
     final Tree schemaTree = new Tree();
     final Tree usersTree = new Tree();
+    final PopupMenuManager popupManager;
 
-    private CopyOnWriteArrayList<Window> extraWindows = new CopyOnWriteArrayList<>();
-
-    private void closeExtraWindows() {
-        Iterator<Window> wit = extraWindows.listIterator();
-        while (wit.hasNext()) {
-            Window w = wit.next();
-            w.close();
-            extraWindows.remove(wit);
-        }
+    public MainView() {
+        super();
+        popupManager = new PopupMenuManager(this);
     }
 
     @Override
@@ -75,15 +68,6 @@ public class MainView extends VerticalLayout implements View {
         addComponent(container);
         setExpandRatio(container, 1);
         setSizeFull();
-
-        this.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
-            @Override
-            public void layoutClick(LayoutEvents.LayoutClickEvent event) {
-                if (event.getButton().equals(MouseEventDetails.MouseButton.LEFT)) {
-                    closeExtraWindows();
-                }
-            }
-        });
     }
 
     private Component getTasksTreeMenu() {
@@ -344,8 +328,7 @@ public class MainView extends VerticalLayout implements View {
             if (event.getItemId() instanceof Task.Release) {
                 Task.Release release = (Task.Release) event.getItemId();
                 if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-                    showWindow(event.getClientX(), event.getClientY(), new VerticalLayout());
-                    //todo: show popup window with actions
+                    popupManager.showWindow(event.getClientX(), event.getClientY(), new ReleasePopupMenu(release));
                 } else if (true) {
                     List<Task> tasks = taskService.findTaskByRelease(release);
                     final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
@@ -370,46 +353,6 @@ public class MainView extends VerticalLayout implements View {
                     infoPanel.setContent(text);
                 }
             }
-        }
-
-        public void showWindow(int x, int y, Component content) {
-            closeExtraWindows();
-
-            final Window window = new Window();
-            /*Button closeButton = new Button("\u00a0"); // &nbsp;
-            closeButton.addClickListener(new Button.ClickListener() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    window.close();
-                }
-            });
-
-            VerticalLayout menu = new VerticalLayout();
-            for (final Map.Entry<String, String> pair : navRules.entrySet()) {
-                Button action = new Button(pair.getKey());
-                action.addClickListener(new Button.ClickListener() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                        navigator.navigateTo(pair.getValue());
-                        window.close();
-                    }
-                });
-                menu.addComponent(action);
-            }*/
-            window.setContent(content);
-            window.setModal(false);
-            window.setWidth("300px");
-            window.setHeight("150px");
-            window.setPositionX(x);
-            window.setPositionY(y);
-            window.setClosable(false);
-            window.setResizable(false);
-            extraWindows.add(window);
-            UI.getCurrent().addWindow(window);
         }
     }
 
@@ -465,15 +408,6 @@ public class MainView extends VerticalLayout implements View {
                     taskGrid.markAsDirty();
                 }
             }
-        }
-    }
-
-    private class MyPopupUI extends UI {
-        @Override
-        protected void init(VaadinRequest request) {
-            setContent(new Label("This is MyPopupUI where parameter foo="
-                    + request.getParameter("foo") + " and fragment is set to "
-                    + getPage().getUriFragment()));
         }
     }
 }

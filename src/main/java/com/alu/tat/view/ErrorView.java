@@ -1,7 +1,6 @@
 package com.alu.tat.view;
 
-import com.alu.tat.Main;
-import com.alu.tat.view.ui.UIComponentFactory;
+import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;

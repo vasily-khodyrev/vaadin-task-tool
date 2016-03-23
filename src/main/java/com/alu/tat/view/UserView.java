@@ -3,7 +3,7 @@ package com.alu.tat.view;
 import com.alu.tat.entity.User;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.PasswordTools;
-import com.alu.tat.view.ui.UIComponentFactory;
+import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ThemeResource;

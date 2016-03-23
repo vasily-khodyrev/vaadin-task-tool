@@ -1,4 +1,4 @@
-package com.alu.tat.view.ui;
+package com.alu.tat.util;
 
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Button;

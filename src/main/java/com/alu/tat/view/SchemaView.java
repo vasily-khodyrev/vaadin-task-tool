@@ -3,7 +3,7 @@ package com.alu.tat.view;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
-import com.alu.tat.view.ui.UIComponentFactory;
+import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.SelectionEvent;
