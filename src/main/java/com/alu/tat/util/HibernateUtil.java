@@ -30,7 +30,11 @@ public class HibernateUtil {
 
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
-           sessionFactory = buildSessionFactory();
+            synchronized (HibernateUtil.class) {
+                if (sessionFactory == null) {
+                    sessionFactory = buildSessionFactory();
+                }
+            }
         }
         return sessionFactory;
     }
