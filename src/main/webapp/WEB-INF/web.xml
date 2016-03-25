@@ -7,7 +7,7 @@
      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <context-param>
         <param-name>log4j-config</param-name>
-        <param-value>WEB-INF/traces.xml</param-value>
+        <param-value>WEB-INF/log4j.properties</param-value>
     </context-param>
     <servlet>
         <servlet-name>myservlet</servlet-name>
