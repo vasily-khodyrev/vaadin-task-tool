@@ -6,6 +6,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,8 @@ import java.util.Map;
  * Created by imalolet on 6/19/2015.
  */
 public class BaseDao {
+    private final static Logger logger = LoggerFactory.getLogger(BaseDao.class);
+
     public static void create(BaseEntity entity) {
         final Session session = getSession();
         final Transaction transaction = session.getTransaction();
@@ -23,6 +27,7 @@ public class BaseDao {
             id = (Long) session.save(entity);
             transaction.commit();
         } catch (RuntimeException e) {
+            logger.error("Error while creating entity " + entity, e);
             transaction.rollback();
             throw e;
         }
@@ -37,6 +42,7 @@ public class BaseDao {
             session.update(entity);
             transaction.commit();
         } catch (RuntimeException e) {
+            logger.error("Error while updating entity " + entity, e);
             transaction.rollback();
             throw e;
         }
@@ -51,6 +57,7 @@ public class BaseDao {
             result = session.createCriteria(clazz).list();
             transaction.commit();
         } catch (RuntimeException e) {
+            logger.error("Error while getting all entities Class:" + clazz.getSimpleName(), e);
             transaction.rollback();
             throw e;
         }
@@ -66,6 +73,7 @@ public class BaseDao {
             result = (T) session.get(clazz, id);
             transaction.commit();
         } catch (RuntimeException e) {
+            logger.error("Error while getting Class:" + clazz.getSimpleName() + " id=" + id, e);
             transaction.rollback();
             throw e;
         }
@@ -82,6 +90,7 @@ public class BaseDao {
             session.delete(item);
             transaction.commit();
         } catch (RuntimeException e) {
+            logger.error("Error while removing entity Class:" + clazz.getSimpleName() + " id=" + id, e);
             transaction.rollback();
             throw e;
         }
@@ -98,6 +107,7 @@ public class BaseDao {
             result = q.list();
             transaction.commit();
         } catch (RuntimeException e) {
+            logger.error("Error while searching entities " + clazz.getSimpleName() + " query=" + query, e);
             transaction.rollback();
             throw e;
         }
