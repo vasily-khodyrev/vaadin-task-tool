@@ -66,14 +66,51 @@ public class Init extends HttpServlet {
             defaultSchema.setName("Default schema");
             defaultSchema.setDescription("Default schema");
             List<SchemaElement> list = defaultSchema.getElementsList();
-            list.add(new SchemaElement("General", "Do we need SDD?", SchemaElement.ElemType.DOMAIN, 0));
-            list.add(new SchemaElement("SDD", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
-            list.add(new SchemaElement("impl", "Do we need to do it?", SchemaElement.ElemType.BOOLEAN, 5));
-            list.add(new SchemaElement("tests", "How many tests?", SchemaElement.ElemType.BOOLEAN, 5));
-            list.add(new SchemaElement("Details", "Do we need SDD?", SchemaElement.ElemType.DOMAIN, 0));
-            list.add(new SchemaElement("Question1?", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
-            list.add(new SchemaElement("Question2?", "Do we need to do it?", SchemaElement.ElemType.BOOLEAN, 5));
-            list.add(new SchemaElement("Question3?", "How many tests?", SchemaElement.ElemType.INTEGER, 5));
+            list.add(new SchemaElement("Documentation", "All documentation related aspects", SchemaElement.ElemType.DOMAIN, 0));
+            list.add(new SchemaElement("SDD", "FSD/FDD/SDD/Testplan needed?", SchemaElement.ElemType.BOOLEAN, 8));
+
+            list.add(new SchemaElement("Models", "All model description related aspects", SchemaElement.ElemType.DOMAIN, 0));
+            list.add(new SchemaElement("New models", "Do we need to create new models?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("Model changes", "Do we need to change existing models?", SchemaElement.ElemType.BOOLEAN, 2));
+            list.add(new SchemaElement("cmsUser/MyProfile/quickUser affected", "Does pseudo models affected?", SchemaElement.ElemType.BOOLEAN, 0));
+            list.add(new SchemaElement("Models generation affected?", "Do we need to change model generation part?", SchemaElement.ElemType.BOOLEAN, 8));
+
+            list.add(new SchemaElement("Instances", "All model instances related aspects", SchemaElement.ElemType.DOMAIN, 0));
+            list.add(new SchemaElement("New or changed instances", "Do we need to create new model instances?", SchemaElement.ElemType.BOOLEAN, 2));
+
+            list.add(new SchemaElement("Translations", "All localization aspects", SchemaElement.ElemType.DOMAIN, 0));
+            list.add(new SchemaElement("Models localization", "Do we need to add/change model change localization?", SchemaElement.ElemType.BOOLEAN, 2));
+            list.add(new SchemaElement("Exceptions localization", "Do we need to add/change exception localization?", SchemaElement.ElemType.BOOLEAN, 2));
+
+            list.add(new SchemaElement("Business logic", "All business logic aspects", SchemaElement.ElemType.DOMAIN, 0));
+            list.add(new SchemaElement("Enhancer / CoherenceChecker / Post-pre actions", "Does the new Business logic affects pointed items?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("New or changed behavior?", "Do we need to introduc/change any business logic?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("New/changed alarams", "Do we need to create/update alarms?", SchemaElement.ElemType.BOOLEAN, 2));
+            list.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.STRING, 0));
+            list.add(new SchemaElement("Describe cases", "Set and describe the number of use cases/scenarios", SchemaElement.ElemType.INTEGER, 4));
+
+            list.add(new SchemaElement("EasyAdmin / Migration / Audit", "All easy admin/migration/audit aspects", SchemaElement.ElemType.DOMAIN, 0));
+            list.add(new SchemaElement("EasyAdmin", "Do we need create/update easy admin?", SchemaElement.ElemType.BOOLEAN, 2));
+            list.add(new SchemaElement("ICE2ICE migration needed", "Do we need migration from previous OT version?", SchemaElement.ElemType.BOOLEAN, 0));
+            list.add(new SchemaElement("*Liquibase migration needed", "Do we need to migration DB schema or data?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("*Broker migration needed", "Do we need to migration something during Broker migration phase?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("*Post ready migration", "Do we need POST-READY migration(for external systems like ACS)?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("Audit", "Do we need to change/implement some audit procedures?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("ICS2ICE migration needed", "Does it impacts migration from ICS6.x?", SchemaElement.ElemType.BOOLEAN, 8));
+
+
+            list.add(new SchemaElement("Testing", "All the testing aspects", SchemaElement.ElemType.DOMAIN, 0));
+            list.add(new SchemaElement("Unit tests needed", "Do we need unit tests?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("Functional tests needed", "Do we need functional tests?", SchemaElement.ElemType.BOOLEAN, 8));
+            list.add(new SchemaElement("Integration tests needed", "Do we need integration tests?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("ICE2ICE migration tests needed", "Do we need migration from previous version tests?", SchemaElement.ElemType.BOOLEAN, 8));
+            list.add(new SchemaElement("ICS2ICE migration tests needed", "Do we need migration from ICS6.x tests?", SchemaElement.ElemType.BOOLEAN, 8));
+            list.add(new SchemaElement("Manual tests needed", "Do we need manual testing?", SchemaElement.ElemType.BOOLEAN, 4));
+            list.add(new SchemaElement("Auto GUI WBM/MyProfile tests needed", "Do we need auto GUI tests?", SchemaElement.ElemType.BOOLEAN, 8));
+
+
+            list.add(new SchemaElement("Environment", "All the environment aspects", SchemaElement.ElemType.DOMAIN, 0));
+            list.add(new SchemaElement("Should platforms be prepared?", "Do we need to prepare some environment before dev/test?", SchemaElement.ElemType.BOOLEAN, 8));
             BaseDao.create(defaultSchema);
 
             Schema secondSchema = new Schema();
