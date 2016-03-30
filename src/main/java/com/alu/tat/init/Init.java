@@ -52,6 +52,7 @@ public class Init extends HttpServlet {
         admin.setLogin("admin");
         admin.setName("Admin");
         admin.setPasswordHash(PasswordTools.getPwdHash("admin"));
+        admin.setIsSystem(true);
         if (!allUsers.contains(admin)) {
             UserService.createUser(admin);
         }
@@ -63,8 +64,9 @@ public class Init extends HttpServlet {
             UserService.createUser(user);
 
             Schema defaultSchema = new Schema();
-            defaultSchema.setName("Default schema");
-            defaultSchema.setDescription("Default schema");
+            defaultSchema.setIsSystem(true);
+            defaultSchema.setName("Detailed");
+            defaultSchema.setDescription("Detailed analysis schema");
             List<SchemaElement> list = defaultSchema.getElementsList();
             list.add(new SchemaElement("Documentation", "All documentation related aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("SDD", "FSD/FDD/SDD/Testplan needed?", SchemaElement.ElemType.BOOLEAN, 8));
@@ -114,8 +116,9 @@ public class Init extends HttpServlet {
             BaseDao.create(defaultSchema);
 
             Schema secondSchema = new Schema();
-            secondSchema.setName("Second schema");
-            secondSchema.setDescription("Second schema");
+            secondSchema.setIsSystem(true);
+            secondSchema.setName("High Level");
+            secondSchema.setDescription("High Level Analysis Schema");
             List<SchemaElement> secondList = secondSchema.getElementsList();
             secondList.add(new SchemaElement("General", "Do we need SDD?", SchemaElement.ElemType.DOMAIN, 0));
             secondList.add(new SchemaElement("SDD", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
@@ -130,7 +133,7 @@ public class Init extends HttpServlet {
 
             for (int i = 0; i < 20; i++) {
                 Task t = new Task();
-
+                t.setIsSystem(true);
                 t.setId(System.currentTimeMillis());
                 t.setAuthor(user);
                 t.setDescription("description of crqms" + i);

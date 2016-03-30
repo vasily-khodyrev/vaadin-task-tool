@@ -15,6 +15,9 @@ public class SchemaElement {
     @Enumerated(EnumType.STRING)
     private ElemType type = ElemType.BOOLEAN;
 
+    @Column(name = "eldata")
+    private String elementData = "";
+
     @Column(name = "name")
     private String name = "No name";
 
@@ -35,8 +38,16 @@ public class SchemaElement {
         this.multiplier = multi;
     }
 
+    public SchemaElement(String name, String desc, SchemaElement.ElemType type, String data, Integer multi) {
+        this.name = name;
+        this.description = desc;
+        this.type = type;
+        this.multiplier = multi;
+        this.elementData = data;
+    }
+
     public enum ElemType {
-        BOOLEAN("BOOLEAN"), STRING("STRING"), INTEGER("INTEGER"), DOMAIN("DOMAIN");
+        BOOLEAN("BOOLEAN"), STRING("STRING"), INTEGER("INTEGER"), DOMAIN("DOMAIN"), ENUM("ENUMERATION");
 
         private String type;
 
@@ -79,5 +90,13 @@ public class SchemaElement {
 
     public void setMultiplier(Integer multiplier) {
         this.multiplier = multiplier;
+    }
+
+    public String getElementData() {
+        return elementData;
+    }
+
+    public void setElementData(String elementData) {
+        this.elementData = elementData;
     }
 }

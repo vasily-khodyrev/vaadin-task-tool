@@ -12,6 +12,8 @@ import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.themes.ValoTheme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by
@@ -20,6 +22,9 @@ import com.vaadin.ui.themes.ValoTheme;
  */
 public class LoginView extends CustomComponent implements View,
         Button.ClickListener {
+
+    private final static Logger logger =
+            LoggerFactory.getLogger(LoginView.class);
 
     public static final String NAME = "login";
 
@@ -38,7 +43,7 @@ public class LoginView extends CustomComponent implements View,
         user.setRequired(true);
         user.setInputPrompt("Your login");
         user.addValidator(new StringLengthValidator(
-                "User login length must not be between 1 and 64 symbols",1,64,false));
+                "User login length must not be between 1 and 64 symbols", 1, 64, false));
         user.setInvalidAllowed(false);
 
         // Create the password input field
@@ -50,7 +55,7 @@ public class LoginView extends CustomComponent implements View,
         password.setNullRepresentation("");
 
         // Create login button
-        loginButton = UIComponentFactory.getButton("Login", "LOGINVIEW_LOGIN_BUTTON",this);
+        loginButton = UIComponentFactory.getButton("Login", "LOGINVIEW_LOGIN_BUTTON", this);
         loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         loginButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 
@@ -89,7 +94,8 @@ public class LoginView extends CustomComponent implements View,
 
         String username = user.getValue();
         String password = this.password.getValue();
-
+        logger.trace("Username " + username);
+        logger.trace("Password = " + password);
         //
         // Validate username and password with database here. For examples sake
         // I use a dummy username and password.
@@ -98,11 +104,13 @@ public class LoginView extends CustomComponent implements View,
         String pwdHash = null;
         if (u != null) {
             pwdHash = PasswordTools.getPwdHash(password);
+        } else {
+            logger.trace("User with username " + username + " not found");
         }
         boolean isValid = u != null && pwdHash != null && pwdHash.equals(u.getPasswordHash());
 
         if (isValid) {
-
+            logger.debug("User " + username + " is authorized - password is valid");
             // Store the current user in the service session
             getSession().setAttribute("user", u);
 
@@ -110,7 +118,7 @@ public class LoginView extends CustomComponent implements View,
             getUI().getNavigator().navigateTo(UIConstants.VIEW_MAIN);//
 
         } else {
-
+            logger.debug("User " + username + " is not authorized - password is invalid");
             // Wrong password clear the password field and refocuses it
             this.password.setValue(null);
             this.password.focus();

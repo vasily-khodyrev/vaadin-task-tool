@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Table(name = "user")
 public class User extends BaseEntity {
 
-    @Column(name = "login")
+    @Column(name = "login", unique = true)
     private String login;
 
     @Column(name = "pwd_hash")
