@@ -25,8 +25,8 @@ public class SchemaPresenter {
             switch (se.getType()) {
                 case DOMAIN:
                     break;
-                case ENUM: {
-                    result.append("<b>" + se.getName() + ":  Values=" + se.getElementData() + "</b> Type=" + se.getType() + " Multi=" + se.getMultiplier());
+                case MULTI_ENUM: {
+                    result.append("<b>" + se.getName() + ":  Values=" + se.getData() + "</b> Type=" + se.getType() + " Multi=" + se.getMultiplier());
                     result.append("<br>");
                     break;
                 }

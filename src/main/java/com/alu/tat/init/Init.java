@@ -124,6 +124,24 @@ public class Init extends HttpServlet {
             secondList.add(new SchemaElement("SDD", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
             BaseDao.create(secondSchema);
 
+            Schema testSchema = new Schema();
+            testSchema.setName("Test schema 1");
+            testSchema.setDescription("Test schema");
+            List<SchemaElement> testList = testSchema.getElementsList();
+            testList.add(new SchemaElement("General", "General", SchemaElement.ElemType.DOMAIN, 0));
+            testList.add(new SchemaElement("SDD", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
+            testList.add(new SchemaElement("Products", "What products we support?", SchemaElement.ElemType.MULTI_ENUM,"value1;value2;value3", 5));
+            BaseDao.create(testSchema);
+
+            Schema test2Schema = new Schema();
+            test2Schema.setName("Test schema 2");
+            test2Schema.setDescription("Test schema");
+            List<SchemaElement> test2List = test2Schema.getElementsList();
+            test2List.add(new SchemaElement("General", "General", SchemaElement.ElemType.DOMAIN, 0));
+            test2List.add(new SchemaElement("SDD", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
+            test2List.add(new SchemaElement("Use cases", "Describe all cases", SchemaElement.ElemType.MULTI_STRING, 5));
+            BaseDao.create(test2Schema);
+
             Folder f1 = new Folder();
             f1.setName("OT10");
             Folder f2 = new Folder();
@@ -131,7 +149,7 @@ public class Init extends HttpServlet {
             FolderService.createFolder(f1);
             FolderService.createFolder(f2);
 
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 10; i++) {
                 Task t = new Task();
                 t.setIsSystem(true);
                 t.setId(System.currentTimeMillis());
@@ -140,6 +158,7 @@ public class Init extends HttpServlet {
                 t.setName("crqms" + i);
                 t.setSchema(defaultSchema);
                 t.setFolder(((int) (Math.round(Math.random()))) % 2 == 1 ? f1 : f2);
+
                 BaseDao.create(t);
             }
         }
