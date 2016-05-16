@@ -145,7 +145,7 @@ public class SchemaView extends AbstractActionView {
     private void configureGrid(Grid grid) {
         final BeanItemContainer<SchemaElement> container = new BeanItemContainer<>(SchemaElement.class, new LinkedList<SchemaElement>());
         grid.setContainerDataSource(container);
-        grid.setColumnOrder("type", "name", "description");
+        grid.setColumnOrder("type", "name", "description","data");
         grid.setEditorEnabled(true);
         grid.addItemClickListener(new SchemaElementClickListener());
         for (Grid.Column c : grid.getColumns()) {

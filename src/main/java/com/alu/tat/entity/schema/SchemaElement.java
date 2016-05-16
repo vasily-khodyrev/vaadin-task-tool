@@ -21,6 +21,10 @@ public class SchemaElement {
     @Column(name = "desc")
     private String description = "No description";
 
+    @Column(name = "data")
+    private String data = "";
+
+
     @Column(name = "multiplier")
     private Integer multiplier = 1;
 
@@ -35,8 +39,16 @@ public class SchemaElement {
         this.multiplier = multi;
     }
 
+    public SchemaElement(String name, String desc, SchemaElement.ElemType type, String data, Integer multi) {
+        this.name = name;
+        this.description = desc;
+        this.type = type;
+        this.multiplier = multi;
+        this.data = data;
+    }
+
     public enum ElemType {
-        BOOLEAN("BOOLEAN"), STRING("STRING"), INTEGER("INTEGER"), DOMAIN("DOMAIN");
+        BOOLEAN("BOOLEAN"), STRING("STRING"), INTEGER("INTEGER"), DOMAIN("DOMAIN"), MULTI_ENUM("MULTI_ENUM"), MULTI_STRING("MULTI_STRING");
 
         private String type;
 
@@ -47,6 +59,14 @@ public class SchemaElement {
         public String getElemType() {
             return type;
         }
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     public ElemType getType() {

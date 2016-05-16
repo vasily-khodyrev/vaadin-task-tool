@@ -39,7 +39,7 @@ public class Task extends BaseEntity {
     @JoinColumn(name = "schema_id")
     private Schema schema;
 
-    @Column(name = "data")
+    @Column(name = "data", columnDefinition = "TEXT")
     private String data;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})

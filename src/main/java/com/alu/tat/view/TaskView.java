@@ -16,10 +16,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by imalolet on 6/10/2015.
@@ -43,7 +40,7 @@ public class TaskView extends AbstractActionView {
         FormLayout form = new FormLayout();
         final TextField taskName = new TextField("Task Name");
         final TextField taskAuth = new TextField("Author");
-        taskAuth.setValue(((User)getSession().getAttribute("user")).getName());
+        taskAuth.setValue(((User) getSession().getAttribute("user")).getName());
         taskAuth.setEnabled(false);
         final TextField taskDesc = new TextField("Description");
         final ComboBox taskRel = new ComboBox("Folder");
@@ -148,7 +145,15 @@ public class TaskView extends AbstractActionView {
             Property field = fieldMap.get(fieldName);
             Object vo = valueMap.get(fieldName);
             if (vo != null) {
-                field.setValue(vo);
+                if (field instanceof ListSelect) {
+                    ListSelect sl = (ListSelect) field;
+                    LinkedList<String> ll = (LinkedList<String>) vo;
+                    for (String v : ll) {
+                        sl.select(v);
+                    }
+                } else {
+                    field.setValue(vo);
+                }
             }
         }
     }
@@ -163,6 +168,18 @@ public class TaskView extends AbstractActionView {
             switch (se.getType()) {
                 case BOOLEAN: {
                     c = new CheckBox(se.getName());
+                    curForm.addComponent(c);
+                    fieldMap.put(se.getName(), c);
+                    break;
+                }
+                case MULTI_ENUM: {
+                    ListSelect cb = new ListSelect(se.getName());
+                    cb.setMultiSelect(true);
+                    String data = se.getData();
+                    String[] options = data.split(";");
+                    cb.setRows(options.length);
+                    cb.addItems(options);
+                    c = cb;
                     curForm.addComponent(c);
                     fieldMap.put(se.getName(), c);
                     break;

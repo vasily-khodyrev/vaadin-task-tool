@@ -15,12 +15,15 @@ public class BaseEntity {
     @Id
     private Long id;
 
-    @Column(name="create_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable=false, updatable=false)
+    @Column(name = "create_time", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private Date createTime;
 
     @Version
-    @Column(name="update_time")
+    @Column(name = "update_time")
     private Date updateTime;
+
+    @Column(name = "is_system")
+    private Boolean isSystem = false;
 
     public Long getId() {
         return id;
@@ -46,9 +49,24 @@ public class BaseEntity {
         this.updateTime = updateTime;
     }
 
+    public Boolean getIsSystem() {
+        return isSystem;
+    }
+
+    public void setIsSystem(Boolean isSystem) {
+        this.isSystem = isSystem;
+    }
+
     @PrePersist
     void onCreate() {
         this.setUpdateTime(new Date());
+    }
+
+    @PreRemove
+    void onRemove() {
+        if (this.getIsSystem() != null && this.getIsSystem()) {
+            throw new PersistenceException("It's prohibited to remove system objects!");
+        }
     }
 
     @Override
