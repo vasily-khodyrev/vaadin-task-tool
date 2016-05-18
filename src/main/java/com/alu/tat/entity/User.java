@@ -57,7 +57,6 @@ public class User extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
 
         User user = (User) o;
 
@@ -67,8 +66,7 @@ public class User extends BaseEntity {
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + login.hashCode();
+        int result = login.hashCode();
         return result;
     }
 }
