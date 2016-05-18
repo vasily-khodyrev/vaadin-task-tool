@@ -1,5 +1,6 @@
 package com.alu.tat.view;
 
+import com.alu.tat.component.MultiStringComponent;
 import com.alu.tat.entity.Folder;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.User;
@@ -13,6 +14,7 @@ import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.data.Property;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 
@@ -59,8 +61,8 @@ public class TaskView extends AbstractActionView {
         form.addComponent(taskRel);
         form.addComponent(taskSchema);
 
-        Button create = UIComponentFactory.getButton(isCreate ? "Create" : "Update", "TASKVIEW_CREATEORUPDATE_BUTTON", new ThemeResource(("../runo/icons/16/ok.png")));
-        Button back = UIComponentFactory.getButton("Back", "TASKVIEW_CANCEL_BUTTON", new ThemeResource(("../runo/icons/16/cancel.png")));
+        Button create = UIComponentFactory.getButton(isCreate ? "Create" : "Update", "TASKVIEW_CREATEORUPDATE_BUTTON", FontAwesome.PLUS);
+        Button back = UIComponentFactory.getButton("Back", "TASKVIEW_CANCEL_BUTTON", FontAwesome.ARROW_LEFT);
 
         HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
         form.addComponent(buttonGroup);
@@ -164,7 +166,7 @@ public class TaskView extends AbstractActionView {
         String tabName = "General";
 
         for (SchemaElement se : curSchema.getElementsList()) {
-            AbstractField c = new TextField();
+            final AbstractField c;
             switch (se.getType()) {
                 case BOOLEAN: {
                     c = new CheckBox(se.getName());
@@ -180,6 +182,13 @@ public class TaskView extends AbstractActionView {
                     cb.setRows(options.length);
                     cb.addItems(options);
                     c = cb;
+                    curForm.addComponent(c);
+                    fieldMap.put(se.getName(), c);
+                    break;
+                }
+                case MULTI_STRING: {
+                    c = new MultiStringComponent();
+                    ((MultiStringComponent) c).setHeader(se.getName());
                     curForm.addComponent(c);
                     fieldMap.put(se.getName(), c);
                     break;
@@ -206,6 +215,7 @@ public class TaskView extends AbstractActionView {
                     continue;
                 }
                 default: {
+                    c = new TextField();
                     curForm.addComponent(c);
                     fieldMap.put(se.getName(), c);
                     break;

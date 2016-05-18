@@ -34,7 +34,6 @@ public class ErrorView extends VerticalLayout implements View {
             }
         });
 
-
         addComponent(layout);
     }
 }

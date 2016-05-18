@@ -20,6 +20,7 @@ import com.vaadin.event.SelectionEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.*;
@@ -147,10 +148,10 @@ public class MainView extends VerticalLayout implements View {
 
         HorizontalLayout buttonPanel = new HorizontalLayout();
 
-        Button createButton = UIComponentFactory.getButton("Create task", "MAINVIEW_CREATE_TASK_BUTTON");
+        final Button createButton = UIComponentFactory.getButton("Create task", "MAINVIEW_CREATE_TASK_BUTTON");
         final Button deleteTaskButton = UIComponentFactory.getButton("Delete task", "MAINVIEW_DEL_TASK_BUTTON");
-        Button schemaButton = UIComponentFactory.getButton("Create Schema", "MAINVIEW_CREATE_SCHEMA_BUTTON");
-        Button userButton = UIComponentFactory.getButton("Create User", "MAINVIEW_CREATE_USER_BUTTON");
+        final Button schemaButton = UIComponentFactory.getButton("Create Schema", "MAINVIEW_CREATE_SCHEMA_BUTTON");
+        final Button userButton = UIComponentFactory.getButton("Create User", "MAINVIEW_CREATE_USER_BUTTON");
 
         buttonPanel.addComponent(createButton);
         buttonPanel.addComponent(schemaButton);
@@ -177,6 +178,8 @@ public class MainView extends VerticalLayout implements View {
                 }
             }
         });
+        //use fontawsome icons to be cool looking
+        createButton.setIcon(FontAwesome.PLUS_CIRCLE);
         createButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -335,7 +338,7 @@ public class MainView extends VerticalLayout implements View {
             //Root element
             if (event.getItemId() instanceof String) {
                 if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-                    getUI().getCurrent().getSession().setAttribute("selectedFolder",null);
+                    getUI().getCurrent().getSession().setAttribute("selectedFolder", null);
                     popupManager.showWindow(event.getClientX(), event.getClientY(), new FolderPopupMenu(null));
                 } else {
                     Collection<Task> tasks = taskService.getTasks();
@@ -348,7 +351,7 @@ public class MainView extends VerticalLayout implements View {
             if (event.getItemId() instanceof Folder) {
                 Folder folder = (Folder) event.getItemId();
                 if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-                    getUI().getCurrent().getSession().setAttribute("selectedFolder",folder);
+                    getUI().getCurrent().getSession().setAttribute("selectedFolder", folder);
                     popupManager.showWindow(event.getClientX(), event.getClientY(), new FolderPopupMenu(folder));
                 } else if (true) {
                     List<Task> tasks = taskService.findTaskByFolder(folder);

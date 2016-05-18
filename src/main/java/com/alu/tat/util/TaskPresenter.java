@@ -57,25 +57,23 @@ public class TaskPresenter {
                     }
                     case STRING:
                         break;
-                    case MULTI_ENUM:
-                    {
-                        LinkedList<String> items = (LinkedList < String >) value;
-                        estim+=se.getMultiplier();
+                    case MULTI_ENUM: {
+                        LinkedList<String> items = (LinkedList<String>) value;
+                        estim += se.getMultiplier();
                         StringBuilder sb = new StringBuilder();
-                        for (String item: items) {
+                        for (String item : items) {
                             sb.append("," + item);
                         }
                         result.append("<b>" + se.getName() + ":</b> " + sb.toString() + "  - " + se.getMultiplier() + "m/d");
                         break;
                     }
-                    case MULTI_STRING:
-                    {
-                        LinkedList<String> items = (LinkedList < String >) value;
-                        estim+=se.getMultiplier()*items.size();
-                        result.append("<b>" + se.getName() + ":</b> Estimate: " + se.getMultiplier()*items.size() + "m/d");
+                    case MULTI_STRING: {
+                        LinkedList<String> items = (LinkedList<String>) value;
+                        estim += se.getMultiplier() * items.size();
+                        result.append("<b>" + se.getName() + ":</b> Estimate: " + se.getMultiplier() * items.size() + "m/d <br>");
                         int i = 1;
-                        for (String item: items) {
-                            result.append("<b> Option " + i + ":</b> " + item  + "<br>");
+                        for (String item : items) {
+                            result.append("<b> Option " + i + ":</b> " + item + "<br>");
                             i++;
                         }
                         break;
@@ -85,13 +83,13 @@ public class TaskPresenter {
                     default:
                         break;
                 }
+
                 switch (se.getType()) {
                     case MULTI_STRING:
                         break;
                     case MULTI_ENUM:
                         break;
-                    default:
-                    {
+                    default: {
                         result.append("<b>" + se.getName() + ":</b> " + value.toString() + "  - " + se.getMultiplier() + "m/d");
                         break;
                     }
@@ -110,26 +108,25 @@ public class TaskPresenter {
             switch (se.getType()) {
                 case DOMAIN:
                     break;
-                case MULTI_ENUM:
-                {
+                case MULTI_ENUM: {
                     Object value = fieldMap.get(se.getName()).getValue();
-                    Collection<String> items = (Collection< String >) value;
+                    Collection<String> items = (Collection<String>) value;
                     JSONArray ja = new JSONArray();
                     for (String item : items) {
                         ja.add(item);
                     }
-                    json.put(se.getName(),ja);
+                    json.put(se.getName(), ja);
                     break;
                 }
-                case MULTI_STRING:
-                {
-                    Object value = fieldMap.get(se.getName()).getValue();
-                    LinkedList<String> items = (LinkedList < String >) value;
-                    JSONArray ja = new JSONArray();
-                    for (String item : items) {
-                        ja.add(item);
+                case MULTI_STRING: {
+                    List<String> items = (List) fieldMap.get(se.getName()).getValue();
+                    if (items != null) {
+                        JSONArray ja = new JSONArray();
+                        for (String item : items) {
+                            ja.add(item);
+                        }
+                        json.put(se.getName(), ja);
                     }
-                    json.put(se.getName(),ja);
                     break;
                 }
                 case INTEGER:
@@ -155,22 +152,20 @@ public class TaskPresenter {
                     switch (se.getType()) {
                         case DOMAIN:
                             break;
-                        case MULTI_ENUM:
-                        {
+                        case MULTI_ENUM: {
                             JSONArray ja = jso.getJSONArray(se.getName());
                             LinkedList<String> items = new LinkedList<>();
-                            for (int i = 0; i<ja.size();i++) {
+                            for (int i = 0; i < ja.size(); i++) {
                                 String v = ja.getString(i);
                                 items.add(v);
                             }
                             result.put(se.getName(), items);
                             break;
                         }
-                        case MULTI_STRING:
-                        {
+                        case MULTI_STRING: {
                             JSONArray ja = jso.getJSONArray(se.getName());
                             LinkedList<String> items = new LinkedList<>();
-                            for (int i = 0; i<ja.size();i++) {
+                            for (int i = 0; i < ja.size(); i++) {
                                 String v = ja.getString(i);
                                 items.add(v);
                             }

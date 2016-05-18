@@ -48,7 +48,12 @@ public class SchemaElement {
     }
 
     public enum ElemType {
-        BOOLEAN("BOOLEAN"), STRING("STRING"), INTEGER("INTEGER"), DOMAIN("DOMAIN"), MULTI_ENUM("MULTI_ENUM"), MULTI_STRING("MULTI_STRING");
+        BOOLEAN("BOOLEAN"),
+        STRING("STRING"),
+        INTEGER("INTEGER"),
+        DOMAIN("DOMAIN"),
+        MULTI_ENUM("MULTI_ENUM"),
+        MULTI_STRING("MULTI_STRING");
 
         private String type;
 
