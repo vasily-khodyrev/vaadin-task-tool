@@ -20,23 +20,23 @@ public class SchemaService {
     private SchemaService() {
     }
 
-    public Collection<Schema> getSchemas() {
+    public static Collection<Schema> getSchemas() {
         return BaseDao.getAll(Schema.class);
     }
 
-    public Schema getSchema(Long id) {
+    public static Schema getSchema(Long id) {
         return BaseDao.getById(id, Schema.class);
     }
 
-    public void addSchema(Schema t) {
+    public static void addSchema(Schema t) {
         BaseDao.create(t);
     }
 
-    public void updateSchema(Schema t) {
+    public static void updateSchema(Schema t) {
         BaseDao.update(t);
     }
 
-    public void removeSchema(Long id) {
+    public static void removeSchema(Long id) {
         BaseDao.removeById(id, Schema.class);
     }
 }

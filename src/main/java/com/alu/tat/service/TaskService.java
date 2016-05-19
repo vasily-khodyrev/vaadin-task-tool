@@ -25,39 +25,39 @@ public class TaskService {
     private TaskService() {
     }
 
-    public Collection<Task> getTasks() {
+    public static Collection<Task> getTasks() {
         return BaseDao.getAll(Task.class);
     }
 
-    public Task getTask(Long id) {
+    public static Task getTask(Long id) {
         return BaseDao.getById(id, Task.class);
     }
 
-    public void addTask(Task t) {
+    public static void addTask(Task t) {
         BaseDao.create(t);
     }
 
-    public void updateTask(Task t) {
+    public static void updateTask(Task t) {
         BaseDao.update(t);
     }
 
-    public void removeTask(Long id) {
+    public static void removeTask(Long id) {
         BaseDao.removeById(id, Task.class);
     }
 
-    public List<Task> findTaskByFolder(Folder release) {
+    public static List<Task> findTaskByFolder(Folder release) {
         Map<String, Object> params = new HashMap<>();
         params.put("folder", release);
         return BaseDao.find(Task.class, "findTaskByFolder", params);
     }
 
-    public List<Task> findTaskBySchema(Schema schema) {
+    public static List<Task> findTaskBySchema(Schema schema) {
         Map<String, Object> params = new HashMap<>();
         params.put("schema", schema);
         return BaseDao.find(Task.class, "findTaskBySchema", params);
     }
 
-    public List<Task> findTaskByUser(User user) {
+    public static List<Task> findTaskByUser(User user) {
         Map<String, Object> params = new HashMap<>();
         params.put("user", user);
         return BaseDao.find(Task.class, "findTaskByUser", params);

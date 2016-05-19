@@ -1,20 +1,22 @@
 package com.alu.tat.view.menu;
 
 import com.alu.tat.entity.Folder;
+import com.alu.tat.entity.User;
 import com.alu.tat.service.FolderService;
+import com.alu.tat.service.UserService;
 import com.alu.tat.view.UIConstants;
 import com.vaadin.ui.*;
 
 /**
  * Created by
  * User: vkhodyre
- * Date: 3/18/2016
+ * Date: 5/19/2016
  */
-public class FolderPopupMenu extends VerticalLayout implements PopupMenuManager.PopupContent {
-    private Folder item;
+public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.PopupContent {
+    private User item;
     private Window window;
 
-    public FolderPopupMenu(Folder item) {
+    public UserPopupMenu(User item) {
         super();
         this.item = item;
         initButtons(this);
@@ -36,7 +38,7 @@ public class FolderPopupMenu extends VerticalLayout implements PopupMenuManager.
         createFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                getUI().getCurrent().getNavigator().navigateTo(UIConstants.FOLDER_CREATE);
+                getUI().getCurrent().getNavigator().navigateTo(UIConstants.USER_CREATE);
                 closeWindow();
             }
         });
@@ -46,7 +48,7 @@ public class FolderPopupMenu extends VerticalLayout implements PopupMenuManager.
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (item != null) {
-                    getUI().getCurrent().getNavigator().navigateTo(UIConstants.FOLDER_UPDATE + item.getId());
+                    getUI().getCurrent().getNavigator().navigateTo(UIConstants.USER_UPDATE + item.getId());
                 }
                 closeWindow();
             }
@@ -59,10 +61,10 @@ public class FolderPopupMenu extends VerticalLayout implements PopupMenuManager.
                 closeWindow();
                 if (item != null) {
                     try {
-                        FolderService.removeFolder(item.getId());
-                        Notification.show("Folder '" + item.getName() + "' successfully removed.", Notification.Type.TRAY_NOTIFICATION);
+                        UserService.removeUser(item.getId());
+                        Notification.show("User '" + item.getName() + "' successfully removed.", Notification.Type.TRAY_NOTIFICATION);
                     } catch (Exception e) {
-                        Notification.show("Failed to remove Folder '" + item.getName() + "' due to " + e.getMessage() , Notification.Type.ERROR_MESSAGE);
+                        Notification.show("Failed to remove User '" + item.getName() + "' due to " + e.getMessage() , Notification.Type.ERROR_MESSAGE);
                     }
                     getUI().getCurrent().getNavigator().navigateTo(UIConstants.VIEW_MAIN);
                 }

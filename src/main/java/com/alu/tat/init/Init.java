@@ -65,7 +65,7 @@ public class Init extends HttpServlet {
 
             Schema defaultSchema = new Schema();
             defaultSchema.setIsSystem(true);
-            defaultSchema.setName("Detailed");
+            defaultSchema.setName("Detailed Analysis");
             defaultSchema.setDescription("Detailed analysis schema");
             List<SchemaElement> list = defaultSchema.getElementsList();
             list.add(new SchemaElement("Documentation", "All documentation related aspects", SchemaElement.ElemType.DOMAIN, 0));
@@ -89,7 +89,7 @@ public class Init extends HttpServlet {
             list.add(new SchemaElement("New or changed behavior?", "Do we need to introduc/change any business logic?", SchemaElement.ElemType.BOOLEAN, 4));
             list.add(new SchemaElement("New/changed alarams", "Do we need to create/update alarms?", SchemaElement.ElemType.BOOLEAN, 2));
             list.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM,"OTMS;OTBE;OTMC", 0));
-            list.add(new SchemaElement("Describe cases", "Set and describe the number of use cases/scenarios", SchemaElement.ElemType.INTEGER, 4));
+            list.add(new SchemaElement("Describe cases", "Set and describe the number of use cases/scenarios", SchemaElement.ElemType.MULTI_STRING, 4));
 
             list.add(new SchemaElement("EasyAdmin / Migration / Audit", "All easy admin/migration/audit aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("EasyAdmin", "Do we need create/update easy admin?", SchemaElement.ElemType.BOOLEAN, 2));
@@ -117,30 +117,17 @@ public class Init extends HttpServlet {
 
             Schema secondSchema = new Schema();
             secondSchema.setIsSystem(true);
-            secondSchema.setName("High Level");
+            secondSchema.setName("High Level Analysis");
             secondSchema.setDescription("High Level Analysis Schema");
             List<SchemaElement> secondList = secondSchema.getElementsList();
-            secondList.add(new SchemaElement("General", "Do we need SDD?", SchemaElement.ElemType.DOMAIN, 0));
-            secondList.add(new SchemaElement("SDD", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
+            secondList.add(new SchemaElement("General", "General", SchemaElement.ElemType.DOMAIN, 0));
+            secondList.add(new SchemaElement("FSD", "Do we need to provide contribution for the FSD?", SchemaElement.ElemType.BOOLEAN, 5));
+            secondList.add(new SchemaElement("FDD", "Do we need to create/update FDD?", SchemaElement.ElemType.BOOLEAN, 5));
+            secondList.add(new SchemaElement("SDD", "Do we need a dedicated component SDD or update internal docs?", SchemaElement.ElemType.BOOLEAN, 5));
+            secondList.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM,"OTMS;OTBE;OTMC", 0));
+            secondList.add(new SchemaElement("Cases", "Cases", SchemaElement.ElemType.DOMAIN, 0));
+            secondList.add(new SchemaElement("Cases", "Describe your case here.", SchemaElement.ElemType.MULTI_STRING, 5));
             BaseDao.create(secondSchema);
-
-            Schema testSchema = new Schema();
-            testSchema.setName("Test schema 1");
-            testSchema.setDescription("Test schema");
-            List<SchemaElement> testList = testSchema.getElementsList();
-            testList.add(new SchemaElement("General", "General", SchemaElement.ElemType.DOMAIN, 0));
-            testList.add(new SchemaElement("SDD", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
-            testList.add(new SchemaElement("Products", "What products we support?", SchemaElement.ElemType.MULTI_ENUM,"value1;value2;value3", 5));
-            BaseDao.create(testSchema);
-
-            Schema test2Schema = new Schema();
-            test2Schema.setName("Test schema 2");
-            test2Schema.setDescription("Test schema");
-            List<SchemaElement> test2List = test2Schema.getElementsList();
-            test2List.add(new SchemaElement("General", "General", SchemaElement.ElemType.DOMAIN, 0));
-            test2List.add(new SchemaElement("SDD", "Do we need SDD?", SchemaElement.ElemType.BOOLEAN, 5));
-            test2List.add(new SchemaElement("Use cases", "Describe all cases", SchemaElement.ElemType.MULTI_STRING, 5));
-            BaseDao.create(test2Schema);
 
             Folder f1 = new Folder();
             f1.setName("OT10");

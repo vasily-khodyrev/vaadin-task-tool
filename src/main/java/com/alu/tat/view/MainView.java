@@ -11,8 +11,7 @@ import com.alu.tat.service.UserService;
 import com.alu.tat.util.SchemaPresenter;
 import com.alu.tat.util.TaskPresenter;
 import com.alu.tat.util.UIComponentFactory;
-import com.alu.tat.view.menu.PopupMenuManager;
-import com.alu.tat.view.menu.FolderPopupMenu;
+import com.alu.tat.view.menu.*;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
@@ -150,12 +149,8 @@ public class MainView extends VerticalLayout implements View {
 
         final Button createButton = UIComponentFactory.getButton("Create task", "MAINVIEW_CREATE_TASK_BUTTON");
         final Button deleteTaskButton = UIComponentFactory.getButton("Delete task", "MAINVIEW_DEL_TASK_BUTTON");
-        final Button schemaButton = UIComponentFactory.getButton("Create Schema", "MAINVIEW_CREATE_SCHEMA_BUTTON");
-        final Button userButton = UIComponentFactory.getButton("Create User", "MAINVIEW_CREATE_USER_BUTTON");
 
         buttonPanel.addComponent(createButton);
-        buttonPanel.addComponent(schemaButton);
-        buttonPanel.addComponent(userButton);
         buttonPanel.addComponent(deleteTaskButton);
         buttonPanel.setComponentAlignment(deleteTaskButton, Alignment.TOP_RIGHT);
 
@@ -193,20 +188,6 @@ public class MainView extends VerticalLayout implements View {
                 Task t = (Task) taskGrid.getSelectedRow();
                 taskService.removeTask(t.getId());
                 navigator.navigateTo(UIConstants.VIEW_MAIN);
-            }
-        });
-
-        schemaButton.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                navigator.navigateTo(UIConstants.SCHEMA_CREATE);
-            }
-        });
-
-        userButton.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                navigator.navigateTo(UIConstants.USER_CREATE);
             }
         });
 
@@ -313,19 +294,21 @@ public class MainView extends VerticalLayout implements View {
         @Override
         public void itemClick(ItemClickEvent event) {
             if (event.getItemId() instanceof Task) {
+                final Task task = (Task) event.getItemId();
                 if (event.isDoubleClick()) {
-                    final Task task = (Task) event.getItemId();
                     navigator.navigateTo(UIConstants.TASK_UPDATE + task.getId());
                 } else {
-                    final Task task = (Task) event.getItemId();
+                    if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+                        popupManager.showWindow(event.getClientX(), event.getClientY(), new TaskPopupMenu(task));
+                    } else {
+                        RichTextArea text = new RichTextArea();
+                        text.setSizeFull();
+                        text.setValue(TaskPresenter.getHtmlView(task));
+                        text.setReadOnly(true);
 
-                    RichTextArea text = new RichTextArea();
-                    text.setSizeFull();
-                    text.setValue(TaskPresenter.getHtmlView(task));
-                    text.setReadOnly(true);
-
-                    infoPanel.setSizeFull();
-                    infoPanel.setContent(text);
+                        infoPanel.setSizeFull();
+                        infoPanel.setContent(text);
+                    }
                 }
             }
         }
@@ -353,7 +336,7 @@ public class MainView extends VerticalLayout implements View {
                 if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
                     getUI().getCurrent().getSession().setAttribute("selectedFolder", folder);
                     popupManager.showWindow(event.getClientX(), event.getClientY(), new FolderPopupMenu(folder));
-                } else if (true) {
+                } else {
                     List<Task> tasks = taskService.findTaskByFolder(folder);
                     final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
                     taskGrid.setContainerDataSource(container);
@@ -362,19 +345,21 @@ public class MainView extends VerticalLayout implements View {
             }
             //Task leaf
             if (event.getItemId() instanceof Task) {
+                final Task task = (Task) event.getItemId();
                 if (event.isDoubleClick()) {
-                    final Task task = (Task) event.getItemId();
                     navigator.navigateTo(UIConstants.TASK_UPDATE + task.getId());
                 } else {
-                    final Task task = (Task) event.getItemId();
+                    if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+                        popupManager.showWindow(event.getClientX(), event.getClientY(), new TaskPopupMenu(task));
+                    } else {
+                        RichTextArea text = new RichTextArea();
+                        text.setSizeFull();
+                        text.setValue(TaskPresenter.getHtmlView(task));
+                        text.setReadOnly(true);
 
-                    RichTextArea text = new RichTextArea();
-                    text.setSizeFull();
-                    text.setValue(TaskPresenter.getHtmlView(task));
-                    text.setReadOnly(true);
-
-                    infoPanel.setSizeFull();
-                    infoPanel.setContent(text);
+                        infoPanel.setSizeFull();
+                        infoPanel.setContent(text);
+                    }
                 }
             }
         }
@@ -385,28 +370,36 @@ public class MainView extends VerticalLayout implements View {
         @Override
         public void itemClick(ItemClickEvent event) {
             if (event.getItemId() instanceof String) {
-                Collection<Task> tasks = taskService.getTasks();
-                final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                taskGrid.setContainerDataSource(container);
-                taskGrid.markAsDirty();
+                if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+                    popupManager.showWindow(event.getClientX(), event.getClientY(), new SchemaPopupMenu(null));
+                } else {
+                    Collection<Task> tasks = taskService.getTasks();
+                    final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                    taskGrid.setContainerDataSource(container);
+                    taskGrid.markAsDirty();
+                }
             } else if (event.getItemId() instanceof Schema) {
                 if (event.isDoubleClick()) {
                     final Schema schema = (Schema) event.getItemId();
                     navigator.navigateTo(UIConstants.SCHEMA_UPDATE + schema.getId());
                 } else {
                     final Schema schema = (Schema) event.getItemId();
-                    List<Task> tasks = taskService.findTaskBySchema(schema);
-                    final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                    taskGrid.setContainerDataSource(container);
-                    taskGrid.markAsDirty();
+                    if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+                        popupManager.showWindow(event.getClientX(), event.getClientY(), new SchemaPopupMenu(schema));
+                    } else {
+                        List<Task> tasks = taskService.findTaskBySchema(schema);
+                        final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                        taskGrid.setContainerDataSource(container);
+                        taskGrid.markAsDirty();
 
-                    RichTextArea text = new RichTextArea();
-                    text.setSizeFull();
-                    text.setValue(SchemaPresenter.getHtmlView(schema));
-                    text.setReadOnly(true);
+                        RichTextArea text = new RichTextArea();
+                        text.setSizeFull();
+                        text.setValue(SchemaPresenter.getHtmlView(schema));
+                        text.setReadOnly(true);
 
-                    infoPanel.setSizeFull();
-                    infoPanel.setContent(text);
+                        infoPanel.setSizeFull();
+                        infoPanel.setContent(text);
+                    }
                 }
             }
         }
@@ -417,19 +410,27 @@ public class MainView extends VerticalLayout implements View {
         @Override
         public void itemClick(ItemClickEvent event) {
             if (event.getItemId() instanceof String) {
-                Collection<Task> tasks = taskService.getTasks();
-                final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                taskGrid.setContainerDataSource(container);
-                taskGrid.markAsDirty();
+                if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+                    popupManager.showWindow(event.getClientX(), event.getClientY(), new UserPopupMenu(null));
+                } else {
+                    Collection<Task> tasks = taskService.getTasks();
+                    final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                    taskGrid.setContainerDataSource(container);
+                    taskGrid.markAsDirty();
+                }
             } else if (event.getItemId() instanceof User) {
                 final User user = (User) event.getItemId();
                 if (event.isDoubleClick()) {
                     navigator.navigateTo(UIConstants.USER_UPDATE + user.getId());
                 } else {
-                    List<Task> tasks = taskService.findTaskByUser(user);
-                    final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
-                    taskGrid.setContainerDataSource(container);
-                    taskGrid.markAsDirty();
+                    if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
+                        popupManager.showWindow(event.getClientX(), event.getClientY(), new UserPopupMenu(user));
+                    } else {
+                        List<Task> tasks = taskService.findTaskByUser(user);
+                        final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
+                        taskGrid.setContainerDataSource(container);
+                        taskGrid.markAsDirty();
+                    }
                 }
             }
         }
