@@ -68,6 +68,7 @@ public class MultiStringComponent extends CustomField<List<String>> {
 
     private GridLayout addField(String value) {
         final TextArea text = new TextArea("", value);
+        text.setWordwrap(false);
         text.setCaption("Case description");
         text.setWidth("600px");
 

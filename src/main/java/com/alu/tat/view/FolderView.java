@@ -5,6 +5,7 @@ import com.alu.tat.entity.User;
 import com.alu.tat.service.FolderService;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.UIComponentFactory;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ThemeResource;
@@ -33,12 +34,13 @@ public class FolderView extends AbstractActionView {
         //Left section begin
         FormLayout form = new FormLayout();
         final TextField folderName = new TextField("Folder name");
-
+        folderName.addValidator(new StringLengthValidator(
+                "Folder name must not be empty", 1, 255, false));
         final ComboBox rootFolder = new ComboBox("Parent Folder");
         for (Folder folder : FolderService.getFolders()) {
             rootFolder.addItem(folder);
         }
-        if(selectedFolder!=null) {
+        if (selectedFolder != null) {
             rootFolder.select(selectedFolder);
         }
         //rootFolder.setEnabled(false);

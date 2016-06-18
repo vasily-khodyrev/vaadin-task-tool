@@ -3,6 +3,7 @@ package com.alu.tat.view;
 import com.alu.tat.entity.User;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.PasswordTools;
+import com.alu.tat.util.SessionHelper;
 import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
@@ -112,7 +113,7 @@ public class LoginView extends CustomComponent implements View,
         if (isValid) {
             logger.debug("User " + username + " is authorized - password is valid");
             // Store the current user in the service session
-            getSession().setAttribute("user", u);
+            SessionHelper.setCurrentUser(getSession(),u);
 
             // Navigate to main view
             getUI().getNavigator().navigateTo(UIConstants.VIEW_MAIN);//

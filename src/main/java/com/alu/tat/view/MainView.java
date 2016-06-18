@@ -9,6 +9,7 @@ import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.SchemaPresenter;
+import com.alu.tat.util.SessionHelper;
 import com.alu.tat.util.TaskPresenter;
 import com.alu.tat.util.UIComponentFactory;
 import com.alu.tat.view.menu.*;
@@ -52,13 +53,18 @@ public class MainView extends VerticalLayout implements View {
         popupManager = new PopupMenuManager(this);
     }
 
+    private User getCurUser() {
+        return SessionHelper.getCurrentUser(getSession());
+    }
+
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         navigator = getUI().getNavigator();
 
         Panel rightPanel = getRightPanel();
         rightPanel.setSizeFull();
-        Panel leftPanel = getLeftPanel();
+
+        Panel leftPanel = getLeftPanel(getCurUser().getIsSystem());
         leftPanel.setSizeFull();
 
         HorizontalLayout container = new HorizontalLayout(leftPanel, rightPanel);
@@ -102,12 +108,16 @@ public class MainView extends VerticalLayout implements View {
         return container;
     }
 
-    private Panel getLeftPanel() {
+    private Panel getLeftPanel(boolean isSystemUser) {
         TabSheet tabsheet = new TabSheet();
         tabsheet.addTab(getTasksTreeMenu(), "Tasks", new ThemeResource("../runo/icons/16/document-txt.png"));
-        tabsheet.addTab(getSchemasTreeMenu(), "Schemas", new ThemeResource("../runo/icons/16/document.png"));
-        tabsheet.addTab(getUsersTreeMenu(), "Users", new ThemeResource("../runo/icons/16/users.png"));
+        TabSheet.Tab schemas = tabsheet.addTab(getSchemasTreeMenu(), "Schemas", new ThemeResource("../runo/icons/16/document.png"));
+        TabSheet.Tab users = tabsheet.addTab(getUsersTreeMenu(), "Users", new ThemeResource("../runo/icons/16/users.png"));
         tabsheet.addTab(new VerticalLayout());
+        if (!isSystemUser) {
+            schemas.setVisible(false);
+            users.setVisible(false);
+        }
 
         Panel p = new Panel();
         HorizontalLayout panelCaption = new HorizontalLayout();

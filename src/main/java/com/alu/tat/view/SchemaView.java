@@ -5,6 +5,7 @@ import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.SelectionEvent;
 import com.vaadin.navigator.Navigator;
@@ -35,7 +36,9 @@ public class SchemaView extends AbstractActionView {
 
         VerticalLayout form = new VerticalLayout();
         final TextField schemaName = new TextField("Name");
-        final TextField schemaDesc = new TextField("Description");
+        schemaName.addValidator(new StringLengthValidator(
+                "Schema name must not be empty", 1, 255, false));
+        final TextArea schemaDesc = new TextArea("Description");
         form.addComponent(schemaName);
         form.addComponent(schemaDesc);
 

@@ -21,13 +21,13 @@ public class TaskPresenter {
 
     public static String getHtmlView(Task task) {
         StringBuilder result = new StringBuilder();
-        result.append("<h1>Task: " + task.getName() + "</h1>");
+        result.append("<h1>Task: " + putString(task.getName()) + "</h1>");
         result.append("<br>");
-        result.append("<b>Description:</b> " + task.getDescription());
+        result.append("<b>Description:</b> " + putString(task.getDescription()));
         result.append("<br>");
-        result.append("<b>Release:</b> " + task.getFolder());
+        result.append("<b>Folder:</b> " + putString(task.getFolder()));
         result.append("<br>");
-        result.append("<b>Analyzer:</b> " + task.getAuthor());
+        result.append("<b>Analyzer:</b> " + putString(task.getAuthor()));
         result.append("<br>");
         result.append("<br>");
         Schema schema = task.getSchema();
@@ -45,6 +45,7 @@ public class TaskPresenter {
                             continue;
                         }
                         estim += se.getMultiplier();
+                        result.append("<b>" + se.getName() + ":</b> " + "yes  - " + getDaysPrint(se.getMultiplier()));
                         break;
                     }
                     case INTEGER: {
@@ -53,27 +54,34 @@ public class TaskPresenter {
                             continue;
                         }
                         estim += se.getMultiplier() * i;
+                        result.append("<b>" + se.getName() + ":</b> " + i + " - " + getDaysPrint(se.getMultiplier() * i));
                         break;
                     }
                     case STRING:
+                        result.append("<b>" + se.getName() + ":</b> " + putString(value) + " - " + getDaysPrint(se.getMultiplier()));
                         break;
                     case MULTI_ENUM: {
                         LinkedList<String> items = (LinkedList<String>) value;
                         estim += se.getMultiplier();
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = null;
                         for (String item : items) {
-                            sb.append("," + item);
+                            if (sb == null) {
+                                sb = new StringBuilder(item);
+                            } else {
+                                sb.append("," + item);
+                            }
                         }
-                        result.append("<b>" + se.getName() + ":</b> " + sb.toString() + "  - " + se.getMultiplier() + "m/d");
+                        String sbs = sb != null ? sb.toString() : "";
+                        result.append("<b>" + se.getName() + ":</b> " + sbs + "  - " + getDaysPrint(se.getMultiplier()));
                         break;
                     }
                     case MULTI_STRING: {
                         LinkedList<String> items = (LinkedList<String>) value;
                         estim += se.getMultiplier() * items.size();
-                        result.append("<b>" + se.getName() + ":</b> Estimate: " + se.getMultiplier() * items.size() + "m/d <br>");
+                        result.append("<b>" + se.getName() + ":</b> " + getDaysPrint(se.getMultiplier() * items.size()) + "<br>");
                         int i = 1;
                         for (String item : items) {
-                            result.append("<b> Option " + i + ":</b> " + item + "<br>");
+                            result.append("<b> Option " + i + ":</b> " + putString(item) + "<br><br>");
                             i++;
                         }
                         break;
@@ -81,30 +89,38 @@ public class TaskPresenter {
                     case DOMAIN:
                         continue;
                     default:
+                        result.append("<b>" + se.getName() + ":</b> " + putString(value) + "  - " + getDaysPrint(se.getMultiplier()));
                         break;
-                }
-
-                switch (se.getType()) {
-                    case MULTI_STRING:
-                        break;
-                    case MULTI_ENUM:
-                        break;
-                    default: {
-                        result.append("<b>" + se.getName() + ":</b> " + value.toString() + "  - " + se.getMultiplier() + "m/d");
-                        break;
-                    }
                 }
                 result.append("<br>");
             }
         }
         result.append("<br>");
-        result.append("<b>Total Estimate:</b> " + estim + "m/d");
+        result.append("<b>Total Estimate:</b> " + getDaysPrint(estim));
         return result.toString();
+    }
+
+    private static String putString(Object s) {
+        if (s != null) {
+            String st = s.toString();
+            String cc = st.replace("\n", "<br/>");
+            return cc;
+        }
+        return "N/A";
+    }
+
+    private static String getDaysPrint(Integer i) {
+        String result = "";
+        if (i > 0) {
+            result = String.format("%.1f m/d", i / 8f);
+        }
+        return result;
     }
 
     public static String convertToData(Schema schema, Map<String, Property> fieldMap) {
         JSONObject json = new JSONObject();
         for (SchemaElement se : schema.getElementsList()) {
+            JSONObject jo = new JSONObject();
             switch (se.getType()) {
                 case DOMAIN:
                     break;
@@ -115,7 +131,8 @@ public class TaskPresenter {
                     for (String item : items) {
                         ja.add(item);
                     }
-                    json.put(se.getName(), ja);
+                    jo.put("value", ja);
+                    json.put(se.getName(), jo);
                     break;
                 }
                 case MULTI_STRING: {
@@ -125,7 +142,8 @@ public class TaskPresenter {
                         for (String item : items) {
                             ja.add(item);
                         }
-                        json.put(se.getName(), ja);
+                        jo.put("value", ja);
+                        json.put(se.getName(), jo);
                     }
                     break;
                 }
@@ -134,7 +152,8 @@ public class TaskPresenter {
                 case BOOLEAN:
                 default: {
                     Object value = fieldMap.get(se.getName()).getValue();
-                    json.put(se.getName(), value);
+                    jo.put("value", value);
+                    json.put(se.getName(), jo);
                     break;
                 }
             }
@@ -153,7 +172,9 @@ public class TaskPresenter {
                         case DOMAIN:
                             break;
                         case MULTI_ENUM: {
-                            JSONArray ja = jso.getJSONArray(se.getName());
+                            JSONObject jo = jso.getJSONObject(se.getName());
+                            JSONArray ja = jo.getJSONArray("value");
+
                             LinkedList<String> items = new LinkedList<>();
                             for (int i = 0; i < ja.size(); i++) {
                                 String v = ja.getString(i);
@@ -163,7 +184,9 @@ public class TaskPresenter {
                             break;
                         }
                         case MULTI_STRING: {
-                            JSONArray ja = jso.getJSONArray(se.getName());
+                            JSONObject jo = jso.getJSONObject(se.getName());
+                            JSONArray ja = jo.getJSONArray("value");
+
                             LinkedList<String> items = new LinkedList<>();
                             for (int i = 0; i < ja.size(); i++) {
                                 String v = ja.getString(i);
@@ -173,26 +196,28 @@ public class TaskPresenter {
                             break;
                         }
                         case INTEGER: {
-                            String value = jso.getString(se.getName());
+                            JSONObject jo = jso.getJSONObject(se.getName());
+                            String value = jo.getString("value");
                             String o = value;
                             result.put(se.getName(), o);
                             break;
                         }
                         case STRING: {
-                            String value = jso.getString(se.getName());
+                            JSONObject jo = jso.getJSONObject(se.getName());
+                            String value = jo.getString("value");
                             String o = value;
                             result.put(se.getName(), o);
                             break;
                         }
                         case BOOLEAN: {
-                            String value = jso.getString(se.getName());
+                            JSONObject jo = jso.getJSONObject(se.getName());
+                            String value = jo.getString("value");
                             Boolean o = Boolean.valueOf(value);
                             result.put(se.getName(), o);
                             break;
                         }
                         default:
                             break;
-
                     }
                 }
 
