@@ -12,6 +12,7 @@ import com.alu.tat.service.TaskService;
 import com.alu.tat.util.TaskPresenter;
 import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.data.Property;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
@@ -41,10 +42,14 @@ public class TaskView extends AbstractActionView {
         //Left section begin
         FormLayout form = new FormLayout();
         final TextField taskName = new TextField("Task Name");
+        taskName.addValidator(new StringLengthValidator(
+                "Task name must not be empty", 1, 255, false));
         final TextField taskAuth = new TextField("Author");
         taskAuth.setValue(((User) getSession().getAttribute("user")).getName());
         taskAuth.setEnabled(false);
-        final TextField taskDesc = new TextField("Description");
+        final TextArea taskDesc = new TextArea("Description");
+        taskDesc.setWidthUndefined();
+        taskDesc.setWordwrap(false);
         final ComboBox taskRel = new ComboBox("Folder");
         taskRel.addItems(FolderService.getFolders());
         taskRel.setNullSelectionAllowed(false);
@@ -201,7 +206,7 @@ public class TaskView extends AbstractActionView {
                     break;
                 }
                 case STRING: {
-                    c = new TextField(se.getName());
+                    c = new TextArea(se.getName());
                     curForm.addComponent(c);
                     fieldMap.put(se.getName(), c);
                     break;
