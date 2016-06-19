@@ -50,7 +50,10 @@ public class TaskPresenter {
                             multi = se.getMultiplier();
                         }
                         estim += multi;
-                        result.append("<b>" + se.getName() + ":</b> " + "yes  - " + getDaysPrint(multi));
+                        result.append("<b>" + se.getName() + ":</b> " + "yes");
+                        if (se.getMultiplier() > 0) {
+                            result.append(" - " + getDaysPrint(multi));
+                        }
                         break;
                     }
                     case INTEGER: {
@@ -63,7 +66,7 @@ public class TaskPresenter {
                         break;
                     }
                     case STRING:
-                        result.append("<b>" + se.getName() + ":</b> " + putString(value) + " - " + getDaysPrint(se.getMultiplier()));
+                        result.append("<b>" + se.getName() + ":</b> " + putString(value));
                         break;
                     case MULTI_ENUM: {
                         LinkedList<String> items = (LinkedList<String>) value;
@@ -77,7 +80,10 @@ public class TaskPresenter {
                             }
                         }
                         String sbs = sb != null ? sb.toString() : "";
-                        result.append("<b>" + se.getName() + ":</b> " + sbs + "  - " + getDaysPrint(se.getMultiplier()));
+                        result.append("<b>" + se.getName() + ":</b> " + sbs);
+                        if (se.getMultiplier() > 0) {
+                            result.append(" - " + getDaysPrint(se.getMultiplier()));
+                        }
                         break;
                     }
                     case MULTI_STRING: {
@@ -94,7 +100,10 @@ public class TaskPresenter {
                     case DOMAIN:
                         continue;
                     default:
-                        result.append("<b>" + se.getName() + ":</b> " + putString(value) + "  - " + getDaysPrint(se.getMultiplier()));
+                        result.append("<b>" + se.getName() + ":</b> " + putString(value));
+                        if (se.getMultiplier() > 0) {
+                            result.append(" - " + getDaysPrint(se.getMultiplier()));
+                        }
                         break;
                 }
                 result.append("<br>");
