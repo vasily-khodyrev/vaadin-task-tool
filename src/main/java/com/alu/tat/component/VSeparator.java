@@ -5,9 +5,9 @@ import com.vaadin.ui.Label;
 /**
  * Created by imalolet on 18.05.2016.
  */
-public class Separator extends Label {
+public class VSeparator extends Label {
 
-    public Separator(int height) {
+    public VSeparator(int height) {
         this.setWidth(null);
         this.setHeight(height + "px");
     }

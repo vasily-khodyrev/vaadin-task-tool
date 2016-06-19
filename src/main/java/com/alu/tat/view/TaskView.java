@@ -1,5 +1,6 @@
 package com.alu.tat.view;
 
+import com.alu.tat.component.BooleanItemComponent;
 import com.alu.tat.component.MultiStringComponent;
 import com.alu.tat.entity.Folder;
 import com.alu.tat.entity.Task;
@@ -89,13 +90,19 @@ public class TaskView extends AbstractActionView {
         create.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
+                if (!isDataValid(fieldMap)) return;
+
                 Task t;
                 if (isCreate) {
                     t = new Task();
                 } else {
                     t = taskService.getTask(updateId);
                 }
-                t.setName(taskName.getValue());
+                if (taskName.isValid()) {
+                    t.setName(taskName.getValue());
+                } else {
+                    return;
+                }
                 t.setAuthor((User) getSession().getAttribute("user"));
                 t.setDescription(taskDesc.getValue());
                 if (taskRel.getValue() instanceof Folder) {
@@ -146,6 +153,18 @@ public class TaskView extends AbstractActionView {
         });
     }
 
+    private boolean isDataValid(Map<String,Property> fieldMap) {
+        for (Map.Entry<String,Property> entry : fieldMap.entrySet()) {
+            if (entry.getValue() instanceof AbstractField) {
+                AbstractField af  =  (AbstractField) entry.getValue();
+                if (!af.isValid()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void initSchemaData(final Map<String, Property> fieldMap, String jsonData, Schema schema) {
         Map<String, Object> valueMap = TaskPresenter.convertFromJSON(jsonData, schema);
         for (String fieldName : fieldMap.keySet()) {
@@ -174,7 +193,7 @@ public class TaskView extends AbstractActionView {
             final AbstractField c;
             switch (se.getType()) {
                 case BOOLEAN: {
-                    c = new CheckBox(se.getName());
+                    c = new BooleanItemComponent(se.getName(),se);
                     curForm.addComponent(c);
                     fieldMap.put(se.getName(), c);
                     break;

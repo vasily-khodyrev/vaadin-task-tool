@@ -68,8 +68,9 @@ public class Init extends HttpServlet {
             defaultSchema.setName("Detailed Analysis");
             defaultSchema.setDescription("Detailed analysis schema");
             List<SchemaElement> list = defaultSchema.getElementsList();
-            list.add(new SchemaElement("Documentation", "All documentation related aspects", SchemaElement.ElemType.DOMAIN, 0));
+            list.add(new SchemaElement("General", "General aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("SDD", "FSD/FDD/SDD/Testplan needed?", SchemaElement.ElemType.BOOLEAN, 8));
+            list.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM,"OTMS;OTBE;OTMC", 0));
 
             list.add(new SchemaElement("Models", "All model description related aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("New models", "Do we need to create new models?", SchemaElement.ElemType.BOOLEAN, 4));
@@ -88,7 +89,6 @@ public class Init extends HttpServlet {
             list.add(new SchemaElement("Enhancer / CoherenceChecker / Post-pre actions", "Does the new Business logic affects pointed items?", SchemaElement.ElemType.BOOLEAN, 4));
             list.add(new SchemaElement("New or changed behavior?", "Do we need to introduc/change any business logic?", SchemaElement.ElemType.BOOLEAN, 4));
             list.add(new SchemaElement("New/changed alarams", "Do we need to create/update alarms?", SchemaElement.ElemType.BOOLEAN, 2));
-            list.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM,"OTMS;OTBE;OTMC", 0));
             list.add(new SchemaElement("Describe cases", "Set and describe the number of use cases/scenarios", SchemaElement.ElemType.MULTI_STRING, 4));
 
             list.add(new SchemaElement("EasyAdmin / Migration / Audit", "All easy admin/migration/audit aspects", SchemaElement.ElemType.DOMAIN, 0));
@@ -136,7 +136,7 @@ public class Init extends HttpServlet {
             FolderService.createFolder(f1);
             FolderService.createFolder(f2);
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 7; i++) {
                 Task t = new Task();
                 t.setIsSystem(true);
                 t.setId(System.currentTimeMillis());

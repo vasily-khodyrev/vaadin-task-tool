@@ -4,7 +4,6 @@ import com.vaadin.data.util.converter.Converter;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 
-import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +62,7 @@ public class MultiStringComponent extends CustomField<List<String>> {
 
     private void baseInit() {
         main.addComponent(new Label(this.getHeader()));
-        main.addComponent(new Separator(20));
+        main.addComponent(new VSeparator(20));
     }
 
     private GridLayout addField(String value) {
@@ -79,7 +78,7 @@ public class MultiStringComponent extends CustomField<List<String>> {
         buttonLayout.setSpacing(true);
         buttonLayout.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 
-        final GridLayout gridLayout = new GridLayout(1, 4, text, new Separator(20), buttonLayout, new Separator(50));
+        final GridLayout gridLayout = new GridLayout(1, 4, text, new VSeparator(20), buttonLayout, new VSeparator(50));
 
         addBtn.addClickListener(new Button.ClickListener() {
             @Override

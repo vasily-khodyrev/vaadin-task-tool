@@ -41,11 +41,16 @@ public class TaskPresenter {
                 Object value = valueMap.get(se.getName());
                 switch (se.getType()) {
                     case BOOLEAN: {
-                        if (!(Boolean) value) {
+                        Map.Entry<Boolean, Integer> bi = (Map.Entry) value;
+                        if (!bi.getKey()) {
                             continue;
                         }
-                        estim += se.getMultiplier();
-                        result.append("<b>" + se.getName() + ":</b> " + "yes  - " + getDaysPrint(se.getMultiplier()));
+                        Integer multi = bi.getValue();
+                        if (multi == null) {
+                            multi = se.getMultiplier();
+                        }
+                        estim += multi;
+                        result.append("<b>" + se.getName() + ":</b> " + "yes  - " + getDaysPrint(multi));
                         break;
                     }
                     case INTEGER: {
@@ -149,7 +154,18 @@ public class TaskPresenter {
                 }
                 case INTEGER:
                 case STRING:
-                case BOOLEAN:
+                case BOOLEAN: {
+                    Object value = fieldMap.get(se.getName()).getValue();
+                    if (value instanceof Map.Entry) {
+                        Map.Entry<Boolean, Integer> bi = (Map.Entry) value;
+                        Boolean v = bi.getKey();
+                        Integer m = bi.getValue();
+                        jo.put("value", v);
+                        jo.put("multi", m);
+                        json.put(se.getName(), jo);
+                    }
+                    break;
+                }
                 default: {
                     Object value = fieldMap.get(se.getName()).getValue();
                     jo.put("value", value);
@@ -213,7 +229,12 @@ public class TaskPresenter {
                             JSONObject jo = jso.getJSONObject(se.getName());
                             String value = jo.getString("value");
                             Boolean o = Boolean.valueOf(value);
-                            result.put(se.getName(), o);
+                            Integer i = null;
+                            Object m = jo.get("multi");
+                            if (m != null) {
+                                i = Integer.parseInt(m.toString());
+                            }
+                            result.put(se.getName(), new AbstractMap.SimpleEntry<Boolean, Integer>(o, i));
                             break;
                         }
                         default:
