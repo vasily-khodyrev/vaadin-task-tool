@@ -69,4 +69,11 @@ public class User extends BaseEntity {
         int result = login.hashCode();
         return result;
     }
+
+    @PreRemove
+    void onRemove() {
+        if (this.getIsSystem() != null && this.getIsSystem()) {
+            throw new PersistenceException("It's prohibited to remove system objects!");
+        }
+    }
 }

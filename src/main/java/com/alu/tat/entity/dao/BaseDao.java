@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +88,7 @@ public class BaseDao {
         try {
             transaction.begin();
             final T item = (T) session.get(clazz, id);
+            checkItem(item);
             session.delete(item);
             transaction.commit();
         } catch (RuntimeException e) {
@@ -112,6 +114,15 @@ public class BaseDao {
             throw e;
         }
         return result;
+    }
+
+    private static <T> void checkItem(T item) {
+        if (item instanceof BaseEntity) {
+            BaseEntity be = (BaseEntity) item;
+            if (be.getIsSystem() != null && be.getIsSystem()) {
+                throw new PersistenceException("It's prohibited to remove system objects!");
+            }
+        }
     }
 
     private static Session getSession() {

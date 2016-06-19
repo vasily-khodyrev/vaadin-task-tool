@@ -138,7 +138,6 @@ public class Init extends HttpServlet {
 
             for (int i = 0; i < 7; i++) {
                 Task t = new Task();
-                t.setIsSystem(true);
                 t.setId(System.currentTimeMillis());
                 t.setAuthor(user);
                 t.setDescription("description of crqms" + i);
