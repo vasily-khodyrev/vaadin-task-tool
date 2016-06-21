@@ -53,7 +53,8 @@ public class SchemaElement {
         INTEGER("INTEGER"),
         DOMAIN("DOMAIN"),
         MULTI_ENUM("MULTI_ENUM"),
-        MULTI_STRING("MULTI_STRING");
+        MULTI_STRING("MULTI_STRING"),
+        MULTI_TEXT("MULTI_TEXT");
 
         private String type;
 

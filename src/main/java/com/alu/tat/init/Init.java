@@ -140,7 +140,7 @@ public class Init extends HttpServlet {
             FolderService.createFolder(f1);
             FolderService.createFolder(f2);
 
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 5; i++) {
                 Task t = new Task();
                 t.setId(System.currentTimeMillis());
                 t.setAuthor(imalolet);

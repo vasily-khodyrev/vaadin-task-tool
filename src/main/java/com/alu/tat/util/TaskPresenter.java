@@ -1,5 +1,6 @@
 package com.alu.tat.util;
 
+import com.alu.tat.component.BooleanItemBean;
 import com.alu.tat.component.MultiStringBean;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.schema.Schema;
@@ -10,6 +11,7 @@ import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
 
@@ -42,18 +44,22 @@ public class TaskPresenter {
                 Object value = valueMap.get(se.getName());
                 switch (se.getType()) {
                     case BOOLEAN: {
-                        Map.Entry<Boolean, Integer> bi = (Map.Entry) value;
-                        if (!bi.getKey()) {
+                        BooleanItemBean bi = (BooleanItemBean) value;
+                        if (!bi.getValue()) {
                             continue;
                         }
-                        Integer multi = bi.getValue();
+                        Integer multi = bi.getMulti();
                         if (multi == null) {
                             multi = se.getMultiplier();
                         }
+                        String comment = bi.getComments();
                         estim += multi;
                         result.append("<b>" + se.getName() + ":</b> " + "yes");
                         if (se.getMultiplier() > 0) {
                             result.append(" - " + getDaysPrint(multi));
+                        }
+                        if (!StringUtils.isBlank(comment)) {
+                            result.append("<br/> Comment: " + comment);
                         }
                         break;
                     }
@@ -87,6 +93,7 @@ public class TaskPresenter {
                         }
                         break;
                     }
+                    case MULTI_TEXT:
                     case MULTI_STRING: {
                         MultiStringBean bean = (MultiStringBean) value;
                         LinkedHashMap<String, Integer> items = bean.getValues();
@@ -157,6 +164,7 @@ public class TaskPresenter {
                     json.put(se.getName(), jo);
                     break;
                 }
+                case MULTI_TEXT:
                 case MULTI_STRING: {
                     MultiStringBean bean = (MultiStringBean) fieldMap.get(se.getName()).getValue();
                     LinkedHashMap<String, Integer> items = bean.getValues();
@@ -179,12 +187,14 @@ public class TaskPresenter {
                 case STRING:
                 case BOOLEAN: {
                     Object value = fieldMap.get(se.getName()).getValue();
-                    if (value instanceof Map.Entry) {
-                        Map.Entry<Boolean, Integer> bi = (Map.Entry) value;
-                        Boolean v = bi.getKey();
-                        Integer m = bi.getValue();
+                    if (value instanceof BooleanItemBean) {
+                        BooleanItemBean bi = (BooleanItemBean) value;
+                        Boolean v = bi.getValue();
+                        Integer m = bi.getMulti();
+                        String c = bi.getComments();
                         jo.put("value", v);
                         jo.put("multi", m);
+                        jo.put("comment", c);
                         json.put(se.getName(), jo);
                     }
                     break;
@@ -222,6 +232,7 @@ public class TaskPresenter {
                             result.put(se.getName(), items);
                             break;
                         }
+                        case MULTI_TEXT:
                         case MULTI_STRING: {
                             JSONObject jo = jso.getJSONObject(se.getName());
                             JSONArray ja = jo.getJSONArray("value");
@@ -265,7 +276,12 @@ public class TaskPresenter {
                             if (m != null) {
                                 i = Integer.parseInt(m.toString());
                             }
-                            result.put(se.getName(), new AbstractMap.SimpleEntry<Boolean, Integer>(o, i));
+                            String c = null;
+                            Object co = jo.get("comment");
+                            if (co != null) {
+                                c = co.toString();
+                            }
+                            result.put(se.getName(), new BooleanItemBean(o, i, c));
                             break;
                         }
                         default:

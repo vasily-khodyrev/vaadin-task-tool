@@ -4,22 +4,19 @@ import com.alu.tat.entity.schema.SchemaElement;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.converter.Converter;
-import com.vaadin.data.util.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.ui.*;
-
-import java.util.AbstractMap;
-import java.util.Map;
 
 /**
  * Created by
  * User: Vasily Khodyrev
  * Date: 19.06.2016
  */
-public class BooleanItemComponent extends CustomField<Map.Entry<Boolean,Integer>> {
-    private HorizontalLayout main;
+public class BooleanItemComponent extends CustomField<BooleanItemBean> {
+    private GridLayout main;
     private CheckBox value;
     private TextField multi;
+    private TextArea comment;
 
     private SchemaElement element;
     private String header;
@@ -31,7 +28,11 @@ public class BooleanItemComponent extends CustomField<Map.Entry<Boolean,Integer>
 
     @Override
     protected Component initContent() {
-        main = new HorizontalLayout();
+        main = new GridLayout(3,1);
+        main.setColumnExpandRatio(1, 4);
+        main.setColumnExpandRatio(2, 1);
+        main.setColumnExpandRatio(3, 4);
+        main.setWidth("600px");
         value = new CheckBox(header);
         multi = new TextField();
         //Label caption = new com.vaadin.ui.Label(header);
@@ -40,46 +41,59 @@ public class BooleanItemComponent extends CustomField<Map.Entry<Boolean,Integer>
         multi.addValidator(new IntegerRangeValidator("You can only put numbers between 0 and 80", 0, 80));
         multi.setWidth(3f, Unit.EM);
         multi.setEnabled(false);
+        comment = new TextArea();
+        comment.setWidth("200px");
+        comment.setWordwrap(false);
+        comment.setEnabled(false);
+        comment.setSizeFull();
         value.addValueChangeListener(new ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 if ((Boolean) event.getProperty().getValue()) {
                     multi.setEnabled(true);
+                    comment.setEnabled(true);
                 } else {
                     multi.setValue(element.getMultiplier().toString());
                     multi.setEnabled(false);
+                    comment.setValue("");
+                    comment.setEnabled(false);
                 }
             }
         });
 
         main.addComponent(value);
-        main.addComponent(new HSeparator(20));
+        //main.addComponent(new HSeparator(20));
         main.addComponent(multi);
-        main.setComponentAlignment(value,Alignment.MIDDLE_LEFT);
-        main.setComponentAlignment(multi,Alignment.MIDDLE_LEFT);
+        //main.addComponent(new HSeparator(20));
+        main.addComponent(comment);
+        main.setComponentAlignment(value,Alignment.MIDDLE_CENTER);
+        main.setComponentAlignment(multi,Alignment.MIDDLE_CENTER);
+        main.setComponentAlignment(comment,Alignment.MIDDLE_CENTER);
         main.setImmediate(true);
-
         return main;
     }
 
     @Override
     public Class getType() {
-        return Map.Entry.class;
+        return BooleanItemBean.class;
     }
 
     @Override
-    public void setValue(Map.Entry<Boolean, Integer> newFieldValue) throws ReadOnlyException, Converter.ConversionException {
-        Boolean b = newFieldValue.getKey();
-        Integer i = newFieldValue.getValue();
+    public void setValue(BooleanItemBean newFieldValue) throws ReadOnlyException, Converter.ConversionException {
+        Boolean b = newFieldValue.getValue();
+        Integer i = newFieldValue.getMulti();
+        String c = newFieldValue.getComments();
         value.setValue(b);
         multi.setValue(i.toString());
+        comment.setValue(c);
     }
 
     @Override
-    public Map.Entry<Boolean, Integer> getValue() throws ReadOnlyException, Converter.ConversionException {
+    public BooleanItemBean getValue() throws ReadOnlyException, Converter.ConversionException {
         Boolean b = value.getValue();
         Integer i = Integer.parseInt(multi.getValue());
-        return new AbstractMap.SimpleEntry<Boolean, Integer>(b,i);
+        String c = comment.getValue();
+        return new BooleanItemBean(b,i,c);
     }
 
     @Override
