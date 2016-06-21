@@ -289,9 +289,12 @@ public class MainView extends VerticalLayout implements View {
         final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
 
         grid.setContainerDataSource(container);
-        grid.setColumnOrder("name", "author", "description");
+        grid.setColumnOrder("name", "author", "updateTime");
 
         grid.removeColumn("id");
+        grid.removeColumn("data");
+        grid.removeColumn("isSystem");
+        grid.removeColumn("description");
 
         grid.addItemClickListener(new TastItemGridClickListener());
 

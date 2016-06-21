@@ -57,11 +57,15 @@ public class Init extends HttpServlet {
             UserService.createUser(admin);
         }
         if (allUsers.isEmpty()) {
-            User user = new User();
-            user.setLogin("imalolet");
-            user.setPasswordHash(PasswordTools.getPwdHash("imalolet"));
-            user.setName("Igor Maloletniy");
-            UserService.createUser(user);
+            User imalolet = createUser ("imalolet","imalolet","Igor Maloletniy");
+            createUser ("ibotian","ibotian","Igor Botian");
+            createUser ("mivanova","mivanova","Maya Ivanova");
+            createUser ("kkharlin","kkharlin","Konstantin Kharlin");
+            createUser ("jkubasov","jkubasov","Julia Vasilieva");
+            createUser ("mdmitrak","mdmitrak","Mikhail Dmitrakh");
+            createUser ("alexeyan","alexeyan","Alexey Antonov");
+            createUser ("valeryp","valeryp","Valery Pavlov");
+            createUser ("vkhodyre","vkhodyre","Vasily Khodyrev");
 
             Schema defaultSchema = new Schema();
             defaultSchema.setIsSystem(true);
@@ -139,7 +143,7 @@ public class Init extends HttpServlet {
             for (int i = 0; i < 7; i++) {
                 Task t = new Task();
                 t.setId(System.currentTimeMillis());
-                t.setAuthor(user);
+                t.setAuthor(imalolet);
                 t.setDescription("description of crqms" + i);
                 t.setName("crqms" + i);
                 t.setSchema(defaultSchema);
@@ -149,5 +153,14 @@ public class Init extends HttpServlet {
             }
         }
 
+    }
+
+    private static User createUser(String login, String pwd, String fullName) {
+        User user = new User();
+        user.setLogin(login);
+        user.setPasswordHash(PasswordTools.getPwdHash(pwd));
+        user.setName(fullName);
+        UserService.createUser(user);
+        return user;
     }
 }

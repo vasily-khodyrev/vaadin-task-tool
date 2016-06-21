@@ -211,8 +211,7 @@ public class TaskView extends AbstractActionView {
                     break;
                 }
                 case MULTI_STRING: {
-                    c = new MultiStringComponent();
-                    ((MultiStringComponent) c).setHeader(se.getName());
+                    c = new MultiStringComponent(se);
                     curForm.addComponent(c);
                     fieldMap.put(se.getName(), c);
                     break;

@@ -1,5 +1,6 @@
 package com.alu.tat.util;
 
+import com.alu.tat.component.MultiStringBean;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
@@ -87,14 +88,21 @@ public class TaskPresenter {
                         break;
                     }
                     case MULTI_STRING: {
-                        LinkedList<String> items = (LinkedList<String>) value;
-                        estim += se.getMultiplier() * items.size();
-                        result.append("<b>" + se.getName() + ":</b> " + getDaysPrint(se.getMultiplier() * items.size()) + "<br>");
+                        MultiStringBean bean = (MultiStringBean) value;
+                        LinkedHashMap<String, Integer> items = bean.getValues();
+                        Integer multi = bean.getMulti();
+                        Integer itemMulti = 0;
+                        for (Map.Entry<String, Integer> item : items.entrySet()) {
+                            itemMulti += item.getValue();
+                        }
+                        result.append("<b>" + se.getName() + ":</b> Total " + getDaysPrint(itemMulti) + "<br>");
                         int i = 1;
-                        for (String item : items) {
-                            result.append("<b> Option " + i + ":</b> " + putString(item) + "<br><br>");
+                        for (Map.Entry<String, Integer> item : items.entrySet()) {
+                            result.append("<b> Option " + i + ":</b> " + getDaysPrint(item.getValue()) + "<br>");
+                            result.append(putString(item.getKey()) + "<br><br>");
                             i++;
                         }
+                        estim += itemMulti;
                         break;
                     }
                     case DOMAIN:
@@ -150,13 +158,19 @@ public class TaskPresenter {
                     break;
                 }
                 case MULTI_STRING: {
-                    List<String> items = (List) fieldMap.get(se.getName()).getValue();
+                    MultiStringBean bean = (MultiStringBean) fieldMap.get(se.getName()).getValue();
+                    LinkedHashMap<String, Integer> items = bean.getValues();
+                    Integer multi = bean.getMulti();
                     if (items != null) {
                         JSONArray ja = new JSONArray();
-                        for (String item : items) {
-                            ja.add(item);
+                        for (Map.Entry<String, Integer> item : items.entrySet()) {
+                            JSONObject itemJo = new JSONObject();
+                            itemJo.put("item", item.getKey());
+                            itemJo.put("multi", item.getValue());
+                            ja.add(itemJo);
                         }
                         jo.put("value", ja);
+                        jo.put("multi", multi);
                         json.put(se.getName(), jo);
                     }
                     break;
@@ -212,12 +226,20 @@ public class TaskPresenter {
                             JSONObject jo = jso.getJSONObject(se.getName());
                             JSONArray ja = jo.getJSONArray("value");
 
-                            LinkedList<String> items = new LinkedList<>();
+                            LinkedHashMap<String, Integer> items = new LinkedHashMap<>();
                             for (int i = 0; i < ja.size(); i++) {
-                                String v = ja.getString(i);
-                                items.add(v);
+                                JSONObject v = ja.getJSONObject(i);
+                                String item = v.getString("item");
+                                Integer multi = v.getInt("multi");
+                                items.put(item, multi);
                             }
-                            result.put(se.getName(), items);
+
+                            Integer i = null;
+                            Object m = jo.get("multi");
+                            if (m != null) {
+                                i = Integer.parseInt(m.toString());
+                            }
+                            result.put(se.getName(), new MultiStringBean(i, items));
                             break;
                         }
                         case INTEGER: {

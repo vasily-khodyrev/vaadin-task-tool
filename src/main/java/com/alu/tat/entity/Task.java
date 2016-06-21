@@ -28,7 +28,7 @@ public class Task extends BaseEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "descr")
+    @Column(name = "descr", columnDefinition = "TEXT")
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
