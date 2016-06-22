@@ -1,7 +1,6 @@
 package com.alu.tat.view;
 
-import com.alu.tat.component.BooleanItemComponent;
-import com.alu.tat.component.MultiStringComponent;
+import com.alu.tat.component.TaskComponentFactory;
 import com.alu.tat.entity.Folder;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.User;
@@ -17,10 +16,11 @@ import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by imalolet on 6/10/2015.
@@ -153,10 +153,10 @@ public class TaskView extends AbstractActionView {
         });
     }
 
-    private boolean isDataValid(Map<String,Property> fieldMap) {
-        for (Map.Entry<String,Property> entry : fieldMap.entrySet()) {
+    private boolean isDataValid(Map<String, Property> fieldMap) {
+        for (Map.Entry<String, Property> entry : fieldMap.entrySet()) {
             if (entry.getValue() instanceof AbstractField) {
-                AbstractField af  =  (AbstractField) entry.getValue();
+                AbstractField af = (AbstractField) entry.getValue();
                 if (!af.isValid()) {
                     return false;
                 }
@@ -171,15 +171,7 @@ public class TaskView extends AbstractActionView {
             Property field = fieldMap.get(fieldName);
             Object vo = valueMap.get(fieldName);
             if (vo != null) {
-                if (field instanceof ListSelect) {
-                    ListSelect sl = (ListSelect) field;
-                    LinkedList<String> ll = (LinkedList<String>) vo;
-                    for (String v : ll) {
-                        sl.select(v);
-                    }
-                } else {
-                    field.setValue(vo);
-                }
+                field.setValue(vo);
             }
         }
     }
@@ -192,43 +184,6 @@ public class TaskView extends AbstractActionView {
         for (SchemaElement se : curSchema.getElementsList()) {
             final AbstractField c;
             switch (se.getType()) {
-                case BOOLEAN: {
-                    c = new BooleanItemComponent(se.getName(),se);
-                    curForm.addComponent(c);
-                    fieldMap.put(se.getName(), c);
-                    break;
-                }
-                case MULTI_ENUM: {
-                    ListSelect cb = new ListSelect(se.getName());
-                    cb.setMultiSelect(true);
-                    String data = se.getData();
-                    String[] options = data.split(";");
-                    cb.setRows(options.length);
-                    cb.addItems(options);
-                    c = cb;
-                    curForm.addComponent(c);
-                    fieldMap.put(se.getName(), c);
-                    break;
-                }
-                case MULTI_STRING: {
-                    c = new MultiStringComponent(se);
-                    curForm.addComponent(c);
-                    fieldMap.put(se.getName(), c);
-                    break;
-                }
-                case INTEGER: {
-                    c = new TextField(se.getName());
-                    c.setConverter(Integer.class);
-                    curForm.addComponent(c);
-                    fieldMap.put(se.getName(), c);
-                    break;
-                }
-                case STRING: {
-                    c = new TextArea(se.getName());
-                    curForm.addComponent(c);
-                    fieldMap.put(se.getName(), c);
-                    break;
-                }
                 case DOMAIN: {
                     if (curForm.getComponentCount() > 0) {
                         ts.addTab(curForm, tabName);
@@ -238,13 +193,12 @@ public class TaskView extends AbstractActionView {
                     continue;
                 }
                 default: {
-                    c = new TextField();
+                    c = TaskComponentFactory.getField(se);
                     curForm.addComponent(c);
                     fieldMap.put(se.getName(), c);
                     break;
                 }
             }
-            c.setDescription(se.getDescription());
         }
         if (curForm.getComponentCount() > 0) {
             ts.addTab(curForm, tabName);
