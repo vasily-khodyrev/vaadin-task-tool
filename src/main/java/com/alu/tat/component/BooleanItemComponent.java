@@ -48,7 +48,7 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
         multi.setEnabled(false);
         comment = new TextArea();
         comment.setWidth("600px");
-        comment.setWordwrap(false);
+        comment.setWordwrap(true);
         comment.setEnabled(false);
         value.addValueChangeListener(new ValueChangeListener() {
             @Override

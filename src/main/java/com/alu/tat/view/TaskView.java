@@ -1,5 +1,6 @@
 package com.alu.tat.view;
 
+import com.alu.tat.component.HSeparator;
 import com.alu.tat.component.TaskComponentFactory;
 import com.alu.tat.entity.Folder;
 import com.alu.tat.entity.Task;
@@ -47,12 +48,13 @@ public class TaskView extends AbstractActionView {
         taskName.setHeight("60px");
         taskName.addValidator(new StringLengthValidator(
                 "Task name must not be empty", 1, 255, false));
+        taskName.setWordwrap(true);
         final TextField taskAuth = new TextField("Author");
         taskAuth.setValue(((User) getSession().getAttribute("user")).getName());
         taskAuth.setEnabled(false);
         final TextArea taskDesc = new TextArea("Description");
         taskDesc.setWidth("100%");
-        taskDesc.setWordwrap(false);
+        taskDesc.setWordwrap(true);
         final ComboBox taskRel = new ComboBox("Folder");
         taskRel.addItems(FolderService.getFolders());
         taskRel.setNullSelectionAllowed(false);
@@ -72,7 +74,7 @@ public class TaskView extends AbstractActionView {
         Button create = UIComponentFactory.getButton(isCreate ? "Create" : "Update", "TASKVIEW_CREATEORUPDATE_BUTTON", FontAwesome.PLUS);
         Button back = UIComponentFactory.getButton("Back", "TASKVIEW_CANCEL_BUTTON", FontAwesome.ARROW_LEFT);
 
-        HorizontalLayout buttonGroup = new HorizontalLayout(create, back);
+        HorizontalLayout buttonGroup = new HorizontalLayout(create, new HSeparator(20), back);
         form.addComponent(buttonGroup);
         hsplit.setFirstComponent(form);
         //Left section end
