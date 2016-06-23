@@ -33,13 +33,20 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
 
     @Override
     protected Component initContent() {
-        main = new GridLayout(3, 1);
-        main.setColumnExpandRatio(1, 4);
-        main.setColumnExpandRatio(2, 1);
-        main.setColumnExpandRatio(3, 4);
+        main = new GridLayout(4, 1);
+        //main.setStyleName("tasktool");
+        main.setSpacing(true);
+        //main.setColumnExpandRatio(0, 0.2f);
+        main.setColumnExpandRatio(1, 0.1f);
+        main.setColumnExpandRatio(2, 0.1f);
+        main.setColumnExpandRatio(3, 0.6f);
         main.setWidth("100%");
-        value = new CheckBox(element.getName());
+        Label cLabel = new Label(element.getName());
+        cLabel.setSizeUndefined();//VAADIN hack for labels inside GridLayout
+
+        value = new CheckBox();
         multi = new TextField();
+        multi.setDescription("Estimate");
         //Label caption = new com.vaadin.ui.Label(header);
         multi.setValue(element.getMultiplier().toString());
         multi.setConverter(Integer.class);
@@ -54,7 +61,9 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 if ((Boolean) event.getProperty().getValue()) {
-                    multi.setEnabled(true);
+                    if (element.getMultiplier()>0) {
+                        multi.setEnabled(true);
+                    }
                     comment.setEnabled(true);
                 } else {
                     multi.setValue(element.getMultiplier().toString());
@@ -64,12 +73,13 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
                 }
             }
         });
-
+        main.addComponent(cLabel);
         main.addComponent(value);
         //main.addComponent(new HSeparator(20));
         main.addComponent(multi);
         //main.addComponent(new HSeparator(20));
         main.addComponent(comment);
+        main.setComponentAlignment(cLabel, Alignment.MIDDLE_CENTER);
         main.setComponentAlignment(value, Alignment.MIDDLE_CENTER);
         main.setComponentAlignment(multi, Alignment.MIDDLE_CENTER);
         main.setComponentAlignment(comment, Alignment.MIDDLE_CENTER);

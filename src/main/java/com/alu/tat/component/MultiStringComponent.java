@@ -85,12 +85,13 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
     private void baseInit() {
         HorizontalLayout hl = new HorizontalLayout();
         Label label = new Label(header);
-        hl.addComponent(label);
         multi = new TextField();
+        multi.setDescription("Estimate per case");
         multi.setValue(element.getMultiplier().toString());
         multi.setConverter(Integer.class);
         multi.addValidator(new IntegerRangeValidator("Estimate should be between 1 and 80", 1, 80));
         multi.setWidth(3f, Unit.EM);
+        hl.addComponent(label);
         hl.addComponent(new HSeparator(20));
         hl.addComponent(multi);
         hl.setComponentAlignment(label, Alignment.MIDDLE_LEFT);
