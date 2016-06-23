@@ -45,6 +45,7 @@ public class TaskComponentFactory {
             }
         }
         c.setDescription(se.getDescription());
+        c.setId(se.getName());
         return c;
     }
 }
