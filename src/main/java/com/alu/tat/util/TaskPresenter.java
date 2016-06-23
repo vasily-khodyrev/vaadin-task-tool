@@ -1,6 +1,7 @@
 package com.alu.tat.util;
 
 import com.alu.tat.component.BooleanItemBean;
+import com.alu.tat.component.MultiEnumBean;
 import com.alu.tat.component.MultiStringBean;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.schema.Schema;
@@ -76,7 +77,8 @@ public class TaskPresenter {
                         result.append("<b>" + se.getName() + ":</b> " + putString(value));
                         break;
                     case MULTI_ENUM: {
-                        LinkedList<String> items = (LinkedList<String>) value;
+                        MultiEnumBean bean = (MultiEnumBean) value;
+                        Collection<String> items = bean.getValue();
                         estim += se.getMultiplier();
                         StringBuilder sb = null;
                         for (String item : items) {
@@ -154,8 +156,8 @@ public class TaskPresenter {
                 case DOMAIN:
                     break;
                 case MULTI_ENUM: {
-                    Object value = fieldMap.get(se.getName()).getValue();
-                    Collection<String> items = (Collection<String>) value;
+                    MultiEnumBean bean = (MultiEnumBean) fieldMap.get(se.getName()).getValue();
+                    Collection<String> items = bean.getValue();
                     JSONArray ja = new JSONArray();
                     for (String item : items) {
                         ja.add(item);
@@ -229,7 +231,7 @@ public class TaskPresenter {
                                 String v = ja.getString(i);
                                 items.add(v);
                             }
-                            result.put(se.getName(), items);
+                            result.put(se.getName(), new MultiEnumBean(items));
                             break;
                         }
                         case MULTI_TEXT:
