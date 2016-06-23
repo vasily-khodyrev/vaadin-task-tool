@@ -20,6 +20,8 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
     private TextField multi;
     private String header;
 
+    private int visualFieldCount = 0;
+
     private SchemaElement element;
 
     /**
@@ -48,6 +50,16 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         main.addComponent(addField(""));
 
         return main;
+    }
+
+    protected int getVisualFieldCount() {
+        return visualFieldCount;
+    }
+    protected void incVisualFieldCount() {
+        visualFieldCount++;
+    }
+    protected void decVisualFieldCount() {
+        visualFieldCount--;
     }
 
 
@@ -101,6 +113,8 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
     }
 
     private GridLayout addField(String value) {
+        incVisualFieldCount();
+
         final TextArea text = new TextArea("", value);
         text.setWordwrap(false);
         text.setCaption("Case description");
@@ -126,7 +140,10 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         removeBtn.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                main.removeComponent(gridLayout);
+                if(getVisualFieldCount()>1) {
+                    main.removeComponent(gridLayout);
+                    decVisualFieldCount();
+                }
             }
         });
 
