@@ -1,0 +1,26 @@
+@include keyframes(animate-in-scale-up) {
+  0% {
+    @include transform(scale(0));
+  }
+}
+
+@mixin tasktool-common {
+
+  .valo-menu {
+    border-right: none;
+
+    .badgewrapper {
+      position: relative;
+      padding: 0 !important;
+    }
+
+    .v-ddwrapper {
+      display: block;
+    }
+  }
+
+  .valo-menu-item {
+    overflow: hidden;
+  }
+
+}

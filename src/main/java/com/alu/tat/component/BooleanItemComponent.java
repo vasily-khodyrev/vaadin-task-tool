@@ -19,21 +19,26 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
     private TextArea comment;
 
     private SchemaElement element;
-    private String header;
 
-    public BooleanItemComponent(String header, SchemaElement element) {
-        this.header = header;
+    /**
+     * Constructor needed for testing purposes only.
+     */
+    public BooleanItemComponent() {
+        element = new SchemaElement("test_bool", "test_desc", SchemaElement.ElemType.BOOLEAN, 0);
+    }
+
+    public BooleanItemComponent(SchemaElement element) {
         this.element = element;
     }
 
     @Override
     protected Component initContent() {
-        main = new GridLayout(3,1);
+        main = new GridLayout(3, 1);
         main.setColumnExpandRatio(1, 4);
         main.setColumnExpandRatio(2, 1);
         main.setColumnExpandRatio(3, 4);
-        main.setWidth("600px");
-        value = new CheckBox(header);
+        main.setWidth("100%");
+        value = new CheckBox(element.getName());
         multi = new TextField();
         //Label caption = new com.vaadin.ui.Label(header);
         multi.setValue(element.getMultiplier().toString());
@@ -42,10 +47,9 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
         multi.setWidth(3f, Unit.EM);
         multi.setEnabled(false);
         comment = new TextArea();
-        comment.setWidth("200px");
+        comment.setWidth("600px");
         comment.setWordwrap(false);
         comment.setEnabled(false);
-        comment.setSizeFull();
         value.addValueChangeListener(new ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
@@ -66,9 +70,9 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
         main.addComponent(multi);
         //main.addComponent(new HSeparator(20));
         main.addComponent(comment);
-        main.setComponentAlignment(value,Alignment.MIDDLE_CENTER);
-        main.setComponentAlignment(multi,Alignment.MIDDLE_CENTER);
-        main.setComponentAlignment(comment,Alignment.MIDDLE_CENTER);
+        main.setComponentAlignment(value, Alignment.MIDDLE_CENTER);
+        main.setComponentAlignment(multi, Alignment.MIDDLE_CENTER);
+        main.setComponentAlignment(comment, Alignment.MIDDLE_CENTER);
         main.setImmediate(true);
         return main;
     }
@@ -93,7 +97,7 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
         Boolean b = value.getValue();
         Integer i = Integer.parseInt(multi.getValue());
         String c = comment.getValue();
-        return new BooleanItemBean(b,i,c);
+        return new BooleanItemBean(b, i, c);
     }
 
     @Override

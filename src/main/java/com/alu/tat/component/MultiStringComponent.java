@@ -22,6 +22,13 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
 
     private SchemaElement element;
 
+    /**
+     * Constructor needed for testing purposes only.
+     */
+    public MultiStringComponent() {
+        element = new SchemaElement("test_ms", "test_desc", SchemaElement.ElemType.MULTI_STRING, 0);
+    }
+
     public MultiStringComponent(SchemaElement element) {
         this.header = element.getName();
         this.element = element;
@@ -86,8 +93,8 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         multi.setWidth(3f, Unit.EM);
         hl.addComponent(new HSeparator(20));
         hl.addComponent(multi);
-        hl.setComponentAlignment(label,Alignment.MIDDLE_LEFT);
-        hl.setComponentAlignment(multi,Alignment.MIDDLE_LEFT);
+        hl.setComponentAlignment(label, Alignment.MIDDLE_LEFT);
+        hl.setComponentAlignment(multi, Alignment.MIDDLE_LEFT);
         main.addComponent(hl);
         main.addComponent(new VSeparator(20));
     }

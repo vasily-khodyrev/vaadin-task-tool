@@ -17,7 +17,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
  * Created by imalolet on 6/10/2015.
  */
 @Title("Task tool")
-@Theme("valo")
+@Theme("tasktool")
 public class Main extends UI {
     static {
         SLF4JBridgeHandler.install();

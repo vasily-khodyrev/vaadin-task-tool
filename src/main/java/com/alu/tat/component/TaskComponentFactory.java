@@ -17,7 +17,7 @@ public class TaskComponentFactory {
         final AbstractField c;
         switch (se.getType()) {
             case BOOLEAN: {
-                c = new BooleanItemComponent(se.getName(), se);
+                c = new BooleanItemComponent(se);
                 break;
             }
             case MULTI_ENUM: {

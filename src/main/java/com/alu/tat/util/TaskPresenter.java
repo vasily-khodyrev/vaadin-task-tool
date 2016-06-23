@@ -59,7 +59,7 @@ public class TaskPresenter {
                             result.append(" - " + getDaysPrint(multi));
                         }
                         if (!StringUtils.isBlank(comment)) {
-                            result.append("<br/> Comment: " + comment);
+                            result.append("<br/> Comment: " + putString(comment));
                         }
                         break;
                     }

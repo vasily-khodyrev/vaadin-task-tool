@@ -42,14 +42,16 @@ public class TaskView extends AbstractActionView {
         final HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
         //Left section begin
         FormLayout form = new FormLayout();
-        final TextField taskName = new TextField("Task Name");
+        final TextArea taskName = new TextArea("Task Name");
+        taskName.setWidth("100%");
+        taskName.setHeight("60px");
         taskName.addValidator(new StringLengthValidator(
                 "Task name must not be empty", 1, 255, false));
         final TextField taskAuth = new TextField("Author");
         taskAuth.setValue(((User) getSession().getAttribute("user")).getName());
         taskAuth.setEnabled(false);
         final TextArea taskDesc = new TextArea("Description");
-        taskDesc.setWidthUndefined();
+        taskDesc.setWidth("100%");
         taskDesc.setWordwrap(false);
         final ComboBox taskRel = new ComboBox("Folder");
         taskRel.addItems(FolderService.getFolders());
@@ -179,6 +181,7 @@ public class TaskView extends AbstractActionView {
     private TabSheet prepareTabDataView(Map<String, Property> fieldMap, Schema curSchema) {
         TabSheet ts = new TabSheet();
         FormLayout curForm = new FormLayout();
+        curForm.setWidth("100%");
         String tabName = "General";
 
         for (SchemaElement se : curSchema.getElementsList()) {
