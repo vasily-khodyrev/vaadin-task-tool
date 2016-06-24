@@ -1,6 +1,7 @@
 package com.alu.tat.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -8,7 +9,7 @@ import java.util.Date;
  * Created by imalolet on 6/10/2015.
  */
 @MappedSuperclass
-public class BaseEntity {
+public class BaseEntity implements Serializable{
 
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
