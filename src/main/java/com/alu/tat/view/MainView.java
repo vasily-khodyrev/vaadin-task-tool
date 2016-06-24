@@ -196,8 +196,10 @@ public class MainView extends VerticalLayout implements View {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 Task t = (Task) taskGrid.getSelectedRow();
-                taskService.removeTask(t.getId());
-                navigator.navigateTo(UIConstants.VIEW_MAIN);
+                if (t != null) {
+                    taskService.removeTask(t.getId());
+                    navigator.navigateTo(UIConstants.VIEW_MAIN);
+                }
             }
         });
 

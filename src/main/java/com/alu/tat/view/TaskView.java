@@ -83,6 +83,7 @@ public class TaskView extends AbstractActionView {
         Schema curSchema = !isCreate ? taskService.getTask(updateId).getSchema() : (Schema) taskSchema.getValue();
         final Map<String, Property> fieldMap = new HashMap<>();
         TabSheet ts = prepareTabDataView(fieldMap, curSchema);
+        ts.setSizeFull();
         hsplit.setSecondComponent(ts);
         //Right section end
 
@@ -90,6 +91,7 @@ public class TaskView extends AbstractActionView {
         hsplit.setSplitPosition(25, Unit.PERCENTAGE);
         hsplit.setSizeFull();
         addComponent(hsplit);
+        this.setSizeFull();
 
         create.addClickListener(new Button.ClickListener() {
             @Override
@@ -183,7 +185,7 @@ public class TaskView extends AbstractActionView {
     private TabSheet prepareTabDataView(Map<String, Property> fieldMap, Schema curSchema) {
         TabSheet ts = new TabSheet();
         FormLayout curForm = new FormLayout();
-        curForm.setWidth("100%");
+        curForm.setSizeFull();
         String tabName = "General";
 
         for (SchemaElement se : curSchema.getElementsList()) {
@@ -191,6 +193,7 @@ public class TaskView extends AbstractActionView {
             switch (se.getType()) {
                 case DOMAIN: {
                     if (curForm.getComponentCount() > 0) {
+                        curForm.setSizeFull();
                         ts.addTab(curForm, tabName);
                     }
                     curForm = new FormLayout();

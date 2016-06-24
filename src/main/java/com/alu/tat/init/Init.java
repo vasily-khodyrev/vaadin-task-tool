@@ -82,9 +82,6 @@ public class Init extends HttpServlet {
             list.add(new SchemaElement("cmsUser/MyProfile/quickUser affected", "Does pseudo models affected?", SchemaElement.ElemType.BOOLEAN, 0));
             list.add(new SchemaElement("Models generation affected?", "Do we need to change model generation part?", SchemaElement.ElemType.BOOLEAN, 8));
 
-            list.add(new SchemaElement("Instances", "All model instances related aspects", SchemaElement.ElemType.DOMAIN, 0));
-            list.add(new SchemaElement("New or changed instances", "Do we need to create new model instances?", SchemaElement.ElemType.BOOLEAN, 2));
-
             list.add(new SchemaElement("Translations", "All localization aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("Models localization", "Do we need to add/change model change localization?", SchemaElement.ElemType.BOOLEAN, 2));
             list.add(new SchemaElement("Exceptions localization", "Do we need to add/change exception localization?", SchemaElement.ElemType.BOOLEAN, 2));
@@ -92,7 +89,7 @@ public class Init extends HttpServlet {
             list.add(new SchemaElement("Business logic", "All business logic aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("Enhancer / CoherenceChecker / Post-pre actions", "Does the new Business logic affects pointed items?", SchemaElement.ElemType.BOOLEAN, 4));
             list.add(new SchemaElement("New or changed behavior?", "Do we need to introduc/change any business logic?", SchemaElement.ElemType.BOOLEAN, 4));
-            list.add(new SchemaElement("New/changed alarams", "Do we need to create/update alarms?", SchemaElement.ElemType.BOOLEAN, 2));
+            list.add(new SchemaElement("New/changed alarms", "Do we need to create/update alarms?", SchemaElement.ElemType.BOOLEAN, 2));
             list.add(new SchemaElement("Describe cases", "Set and describe the number of use cases/scenarios", SchemaElement.ElemType.MULTI_STRING, 4));
 
             list.add(new SchemaElement("EasyAdmin / Migration / Audit", "All easy admin/migration/audit aspects", SchemaElement.ElemType.DOMAIN, 0));
