@@ -6,6 +6,10 @@
 
 @mixin tasktool-common {
 
+  .v-ui > .v-widget {
+    overflow: visible;
+  }
+
   .valo-menu {
     border-right: none;
 

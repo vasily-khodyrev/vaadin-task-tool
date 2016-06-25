@@ -55,20 +55,23 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
         multi.setEnabled(false);
         comment = new TextArea();
         comment.setWidth("600px");
+        comment.setRows(calcRowNum(""));
         comment.setWordwrap(true);
         comment.setEnabled(false);
+        comment.setHeightUndefined();
         value.addValueChangeListener(new ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 if ((Boolean) event.getProperty().getValue()) {
-                    if (element.getMultiplier()>0) {
+                    if (element.getMultiplier() > 0) {
                         multi.setEnabled(true);
                     }
+                    comment.setRows(calcRowNum(comment.getValue()));
                     comment.setEnabled(true);
                 } else {
                     multi.setValue(element.getMultiplier().toString());
                     multi.setEnabled(false);
-                    comment.setValue("");
+                    comment.setRows(calcRowNum(""));
                     comment.setEnabled(false);
                 }
             }
@@ -100,6 +103,13 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
         value.setValue(b);
         multi.setValue(i.toString());
         comment.setValue(c);
+        comment.setRows(calcRowNum(c));
+    }
+
+    private int calcRowNum(String s) {
+        String cut = s.replace("\n", "");
+        int k = s.length() - cut.length() + 3;
+        return k;
     }
 
     @Override

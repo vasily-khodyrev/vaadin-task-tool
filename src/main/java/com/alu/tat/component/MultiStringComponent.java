@@ -119,6 +119,7 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         text.setWordwrap(false);
         text.setCaption("Case description");
         text.setWidth("600px");
+        text.setRows(calcRowNum(value));
 
         final Button addBtn = new Button("", FontAwesome.PLUS);
         final Button removeBtn = new Button("", FontAwesome.MINUS);
@@ -140,7 +141,7 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         removeBtn.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                if(getVisualFieldCount()>1) {
+                if (getVisualFieldCount() > 1) {
                     main.removeComponent(gridLayout);
                     decVisualFieldCount();
                 }
@@ -149,6 +150,12 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
 
         return gridLayout;
 
+    }
+
+    private int calcRowNum(String s) {
+        String cut = s.replace("\n", "");
+        int k = s.length() - cut.length() + 3;
+        return k;
     }
 
     private String getFieldValue(Component c) {

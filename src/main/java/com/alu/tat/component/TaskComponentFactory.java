@@ -36,9 +36,6 @@ public class TaskComponentFactory {
                 c = new TextArea(se.getName());
                 break;
             }
-            case DOMAIN: {
-                return null;
-            }
             default: {
                 c = new TextField();
                 break;

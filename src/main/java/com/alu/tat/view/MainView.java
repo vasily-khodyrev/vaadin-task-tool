@@ -169,7 +169,7 @@ public class MainView extends VerticalLayout implements View {
         container.addComponent(taskGrid);
         container.addComponent(infoPanel);
 
-        container.setExpandRatio(buttonPanel, 2);
+        container.setExpandRatio(buttonPanel, 1);
         container.setExpandRatio(taskGrid, 4);
         container.setExpandRatio(infoPanel, 2);
 
@@ -300,7 +300,7 @@ public class MainView extends VerticalLayout implements View {
 
         grid.addItemClickListener(new TastItemGridClickListener());
 
-
+        infoPanel.setSizeFull();
     }
 
 
@@ -321,7 +321,6 @@ public class MainView extends VerticalLayout implements View {
                         text.setValue(TaskPresenter.getHtmlView(task));
                         text.setReadOnly(true);
 
-                        infoPanel.setSizeFull();
                         infoPanel.setContent(text);
                     }
                 }
@@ -372,7 +371,6 @@ public class MainView extends VerticalLayout implements View {
                         text.setValue(TaskPresenter.getHtmlView(task));
                         text.setReadOnly(true);
 
-                        infoPanel.setSizeFull();
                         infoPanel.setContent(text);
                     }
                 }
@@ -412,7 +410,6 @@ public class MainView extends VerticalLayout implements View {
                         text.setValue(SchemaPresenter.getHtmlView(schema));
                         text.setReadOnly(true);
 
-                        infoPanel.setSizeFull();
                         infoPanel.setContent(text);
                     }
                 }

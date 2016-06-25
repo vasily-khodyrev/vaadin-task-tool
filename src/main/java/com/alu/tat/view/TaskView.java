@@ -10,6 +10,7 @@ import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.FolderService;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.TaskService;
+import com.alu.tat.util.SessionHelper;
 import com.alu.tat.util.TaskPresenter;
 import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.data.Property;
@@ -18,6 +19,8 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,6 +31,9 @@ import java.util.Map;
  * Author Igor Maloletniy & Vasily Khodyrev
  */
 public class TaskView extends AbstractActionView {
+
+    private final static Logger logger =
+            LoggerFactory.getLogger(TaskView.class);
 
     private Navigator navigator;
     private TaskService taskService = TaskService.getInstance();
@@ -50,7 +56,7 @@ public class TaskView extends AbstractActionView {
                 "Task name must not be empty", 1, 255, false));
         taskName.setWordwrap(true);
         final TextField taskAuth = new TextField("Author");
-        taskAuth.setValue(((User) getSession().getAttribute("user")).getName());
+        taskAuth.setValue(SessionHelper.getCurrentUser(getSession()).getName());
         taskAuth.setEnabled(false);
         final TextArea taskDesc = new TextArea("Description");
         taskDesc.setWidth("100%");
@@ -83,8 +89,11 @@ public class TaskView extends AbstractActionView {
         Schema curSchema = !isCreate ? taskService.getTask(updateId).getSchema() : (Schema) taskSchema.getValue();
         final Map<String, Property> fieldMap = new HashMap<>();
         TabSheet ts = prepareTabDataView(fieldMap, curSchema);
-        ts.setSizeFull();
-        hsplit.setSecondComponent(ts);
+        ts.setSizeUndefined();
+        Panel panel = new Panel();
+        panel.setSizeFull();
+        panel.setContent(ts);
+        hsplit.setSecondComponent(panel);
         //Right section end
 
         // Set the position of the splitter as percentage
@@ -118,8 +127,10 @@ public class TaskView extends AbstractActionView {
                 t.setData(TaskPresenter.convertToData((Schema) taskSchema.getValue(), fieldMap));
                 if (!isCreate) {
                     taskService.updateTask(t);
+                    logger.debug("User " + SessionHelper.getCurrentUser(getSession()) + " updated task '" + t.getName()+"'");
                 } else {
                     taskService.addTask(t);
+                    logger.debug("User " + SessionHelper.getCurrentUser(getSession()) + " created task '" + t.getName() + "'");
                 }
 
                 navigator.navigateTo(UIConstants.VIEW_MAIN);
