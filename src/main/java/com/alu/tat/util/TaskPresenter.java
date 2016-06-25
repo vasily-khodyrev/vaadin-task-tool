@@ -76,6 +76,7 @@ public class TaskPresenter {
                     case STRING:
                         result.append("<b>" + se.getName() + ":</b> " + putString(value));
                         break;
+                    case ENUM:
                     case MULTI_ENUM: {
                         MultiEnumBean bean = (MultiEnumBean) value;
                         Collection<String> items = bean.getValue();
@@ -155,6 +156,7 @@ public class TaskPresenter {
             switch (se.getType()) {
                 case DOMAIN:
                     break;
+                case ENUM:
                 case MULTI_ENUM: {
                     MultiEnumBean bean = (MultiEnumBean) fieldMap.get(se.getName()).getValue();
                     Collection<String> items = bean.getValue();
@@ -222,6 +224,7 @@ public class TaskPresenter {
                     switch (se.getType()) {
                         case DOMAIN:
                             break;
+                        case ENUM:
                         case MULTI_ENUM: {
                             JSONObject jo = jso.getJSONObject(se.getName());
                             JSONArray ja = jo.getJSONArray("value");

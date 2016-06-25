@@ -19,6 +19,7 @@ public class TaskComponentFactory {
                 c = new BooleanItemComponent(se);
                 break;
             }
+            case ENUM:
             case MULTI_ENUM: {
                 c = new MultiEnumComponent(se);
                 break;

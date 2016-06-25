@@ -5,7 +5,6 @@ import com.vaadin.data.util.converter.Converter;
 import com.vaadin.ui.*;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,8 +16,6 @@ import java.util.List;
 public class MultiEnumComponent extends CustomField<MultiEnumBean> {
     private HorizontalLayout main;
     private ListSelect value;
-    //private TextField multi;
-    //private TextArea comment;
 
     private SchemaElement element;
 
@@ -38,7 +35,9 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
         main = new HorizontalLayout();
         Label label = new Label(element.getName());
         value = new ListSelect();
-        value.setMultiSelect(true);
+        if (element.getType() == SchemaElement.ElemType.MULTI_ENUM) {
+            value.setMultiSelect(true);
+        }
         String data = element.getData();
         String[] options = data.split(";");
         value.setRows(options.length);
@@ -60,7 +59,14 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
 
     @Override
     public MultiEnumBean getValue() throws ReadOnlyException, Converter.ConversionException {
-        List<String> b = new LinkedList<String>((Collection<String>) value.getValue());
-        return new MultiEnumBean(b);
+        Object o = value.getValue();
+        if (o instanceof Collection) {
+            List<String> b = new LinkedList<String>((Collection<String>) value.getValue());
+            return new MultiEnumBean(b);
+        } else {
+            List<String> l = new LinkedList<>();
+            l.add((String) o);
+            return new MultiEnumBean(l);
+        }
     }
 }
