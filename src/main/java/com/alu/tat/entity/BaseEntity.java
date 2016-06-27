@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by imalolet on 6/10/2015.
  */
 @MappedSuperclass
-public class BaseEntity implements Serializable{
+public class BaseEntity implements Serializable, Comparable {
 
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -85,5 +85,10 @@ public class BaseEntity implements Serializable{
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return id.compareTo(((BaseEntity)o).id);
     }
 }

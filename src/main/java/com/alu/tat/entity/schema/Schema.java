@@ -71,4 +71,9 @@ public class Schema extends BaseEntity {
         result = 31 * result + name.hashCode();
         return result;
     }
+
+    @Override
+    public int compareTo(Object o) {
+        return name.compareTo(((Schema)o).name);
+    }
 }

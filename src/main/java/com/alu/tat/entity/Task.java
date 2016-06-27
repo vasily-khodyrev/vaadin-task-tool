@@ -98,4 +98,9 @@ public class Task extends BaseEntity {
     public String toString() {
         return name;
     }
+
+    @Override
+    public int compareTo(Object o) {
+        return name.compareTo(((Task)o).name);
+    }
 }

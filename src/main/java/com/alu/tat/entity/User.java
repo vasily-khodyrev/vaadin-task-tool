@@ -76,4 +76,9 @@ public class User extends BaseEntity {
             throw new PersistenceException("It's prohibited to remove system objects!");
         }
     }
+
+    @Override
+    public int compareTo(Object o) {
+        return name.compareTo(((User)o).name);
+    }
 }
