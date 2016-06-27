@@ -96,7 +96,7 @@ public class LoginView extends CustomComponent implements View,
         String username = user.getValue();
         String password = this.password.getValue();
         logger.trace("Username " + username);
-        logger.trace("Password = " + password);
+        //logger.trace("Password = " + password); DO NOT LOG PASSWORDS.
         //
         // Validate username and password with database here. For examples sake
         // I use a dummy username and password.
