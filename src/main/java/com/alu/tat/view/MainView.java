@@ -67,11 +67,14 @@ public class MainView extends VerticalLayout implements View {
         Panel leftPanel = getLeftPanel(getCurUser().getIsSystem());
         leftPanel.setSizeFull();
 
-        HorizontalLayout container = new HorizontalLayout(leftPanel, rightPanel);
-
-        container.setExpandRatio(leftPanel, 1);
-        container.setExpandRatio(rightPanel, 4);
+        //HorizontalLayout container = new HorizontalLayout(leftPanel, rightPanel);
+        final HorizontalSplitPanel container = new HorizontalSplitPanel(leftPanel,rightPanel);
+        // Set the position of the splitter as percentage
+        container.setSplitPosition(25, Unit.PERCENTAGE);
         container.setSizeFull();
+        //container.setExpandRatio(leftPanel, 1);
+        //container.setExpandRatio(rightPanel, 4);
+        //container.setSizeFull();
 
         addComponent(container);
         setExpandRatio(container, 1);
