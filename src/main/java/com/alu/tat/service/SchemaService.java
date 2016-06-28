@@ -1,9 +1,13 @@
 package com.alu.tat.service;
 
+import com.alu.tat.entity.User;
 import com.alu.tat.entity.dao.BaseDao;
 import com.alu.tat.entity.schema.Schema;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by
@@ -22,6 +26,13 @@ public class SchemaService {
 
     public static Collection<Schema> getSchemas() {
         return BaseDao.getAll(Schema.class);
+    }
+
+    public static Collection<Schema> getNotDeprecatedSchemas() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("deprecated", false);
+        List<Schema> schemas = BaseDao.find(Schema.class, "findNotDeprecatedSchemas", params);
+        return schemas;
     }
 
     public static Schema getSchema(Long id) {

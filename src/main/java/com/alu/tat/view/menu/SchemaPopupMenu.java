@@ -1,5 +1,6 @@
 package com.alu.tat.view.menu;
 
+import com.alu.tat.component.VSeparator;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.view.UIConstants;
@@ -52,6 +53,19 @@ public class SchemaPopupMenu extends VerticalLayout implements PopupMenuManager.
             }
         });
 
+        Button createCopy = new Button("Create Copy");
+        createCopy.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                if (item != null) {
+                    Schema schema = new Schema().copy(item);
+                    SchemaService.addSchema(schema);
+                    getUI().getCurrent().getNavigator().navigateTo(UIConstants.SCHEMA_UPDATE + schema.getId());
+                }
+                closeWindow();
+            }
+        });
+
         Button deleteFolder = new Button("Delete");
         deleteFolder.addClickListener(new Button.ClickListener() {
             @Override
@@ -70,12 +84,14 @@ public class SchemaPopupMenu extends VerticalLayout implements PopupMenuManager.
             }
         });
         if (item == null) {
+            createCopy.setVisible(false);
             updateFolder.setVisible(false);
             deleteFolder.setVisible(false);
         }
-        layout.addComponents(createFolder, updateFolder, deleteFolder);
+        layout.addComponents(createFolder, new VSeparator(20), updateFolder, new VSeparator(20), createCopy, new VSeparator(20), deleteFolder);
         layout.setComponentAlignment(createFolder, Alignment.MIDDLE_CENTER);
         layout.setComponentAlignment(updateFolder, Alignment.MIDDLE_CENTER);
+        layout.setComponentAlignment(createCopy, Alignment.MIDDLE_CENTER);
         layout.setComponentAlignment(deleteFolder, Alignment.MIDDLE_CENTER);
     }
 }

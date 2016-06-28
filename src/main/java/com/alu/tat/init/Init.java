@@ -7,6 +7,7 @@ import com.alu.tat.entity.dao.BaseDao;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.FolderService;
+import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.HibernateUtil;
 import com.alu.tat.util.PasswordTools;
@@ -29,8 +30,9 @@ public class Init extends HttpServlet {
         super.init();
         try {
             initData();
+            migrateDataIfNeeded();
         } catch (Exception e) {
-            System.err.println("error while initializing data: " +  e.getMessage());
+            System.err.println("error while initializing data: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -41,9 +43,13 @@ public class Init extends HttpServlet {
         try {
             HibernateUtil.shutdown();
         } catch (Exception e) {
-            System.err.println("error while shutting down hibernate: " +  e.getMessage());
+            System.err.println("error while shutting down hibernate: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void migrateDataIfNeeded() {
+        migrateSchemas();
     }
 
     private void initData() {
@@ -57,15 +63,15 @@ public class Init extends HttpServlet {
             UserService.createUser(admin);
         }
         if (allUsers.isEmpty()) {
-            User imalolet = createUser ("imalolet","imalolet","Igor Maloletniy");
-            createUser ("ibotian","ibotian","Igor Botian");
-            createUser ("mivanova","mivanova","Maya Ivanova");
-            createUser ("kkharlin","kkharlin","Konstantin Kharlin");
-            createUser ("jkubasov","jkubasov","Julia Vasilieva");
-            createUser ("mdmitrak","mdmitrak","Mikhail Dmitrakh");
-            createUser ("alexeyan","alexeyan","Alexey Antonov");
-            createUser ("valeryp","valeryp","Valery Pavlov");
-            createUser ("vkhodyre","vkhodyre","Vasily Khodyrev");
+            User imalolet = createUser("imalolet", "imalolet", "Igor Maloletniy");
+            createUser("ibotian", "ibotian", "Igor Botian");
+            createUser("mivanova", "mivanova", "Maya Ivanova");
+            createUser("kkharlin", "kkharlin", "Konstantin Kharlin");
+            createUser("jkubasov", "jkubasov", "Julia Vasilieva");
+            createUser("mdmitrak", "mdmitrak", "Mikhail Dmitrakh");
+            createUser("alexeyan", "alexeyan", "Alexey Antonov");
+            createUser("valeryp", "valeryp", "Valery Pavlov");
+            createUser("vkhodyre", "vkhodyre", "Vasily Khodyrev");
 
             Schema defaultSchema = new Schema();
             defaultSchema.setIsSystem(true);
@@ -74,7 +80,7 @@ public class Init extends HttpServlet {
             List<SchemaElement> list = defaultSchema.getElementsList();
             list.add(new SchemaElement("General", "General aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("SDD", "FSD/FDD/SDD/Testplan needed?", SchemaElement.ElemType.BOOLEAN, 8));
-            list.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM,"OTMS;OTBE;OTMC", 0));
+            list.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM, "OTMS;OTBE;OTMC", 0));
 
             list.add(new SchemaElement("Models", "All model description related aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("New models", "Do we need to create new models?", SchemaElement.ElemType.BOOLEAN, 4));
@@ -125,7 +131,7 @@ public class Init extends HttpServlet {
             secondList.add(new SchemaElement("FSD", "Do we need to provide contribution for the FSD?", SchemaElement.ElemType.BOOLEAN, 5));
             secondList.add(new SchemaElement("FDD", "Do we need to create/update FDD?", SchemaElement.ElemType.BOOLEAN, 5));
             secondList.add(new SchemaElement("SDD", "Do we need a dedicated component SDD or update internal docs?", SchemaElement.ElemType.BOOLEAN, 5));
-            secondList.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM,"OTMS;OTBE;OTMC", 0));
+            secondList.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM, "OTMS;OTBE;OTMC", 0));
             secondList.add(new SchemaElement("Cases", "Cases", SchemaElement.ElemType.DOMAIN, 0));
             secondList.add(new SchemaElement("Cases", "Describe your case here.", SchemaElement.ElemType.MULTI_STRING, 5));
             BaseDao.create(secondSchema);
@@ -159,5 +165,16 @@ public class Init extends HttpServlet {
         user.setName(fullName);
         UserService.createUser(user);
         return user;
+    }
+
+    private void migrateSchemas() {
+        Collection<Schema> schemas = SchemaService.getNotDeprecatedSchemas();
+        if (schemas.isEmpty()) {
+            Collection<Schema> allSchemas = SchemaService.getSchemas();
+            for (Schema schema : allSchemas) {
+                schema.setDeprecated(false);
+                SchemaService.updateSchema(schema);
+            }
+        }
     }
 }

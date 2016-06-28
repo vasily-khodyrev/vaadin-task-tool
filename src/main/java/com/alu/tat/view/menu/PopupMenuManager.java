@@ -36,8 +36,8 @@ public class PopupMenuManager {
         window.setContent(content);
         content.setSizeFull();
         window.setModal(false);
-        window.setWidth("300px");
-        window.setHeight("150px");
+        window.setWidth("200px");
+        window.setHeight("300px");
         window.setPositionX(x);
         window.setPositionY(y);
         window.setClosable(false);

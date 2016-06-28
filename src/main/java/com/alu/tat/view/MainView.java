@@ -68,7 +68,7 @@ public class MainView extends VerticalLayout implements View {
         leftPanel.setSizeFull();
 
         //HorizontalLayout container = new HorizontalLayout(leftPanel, rightPanel);
-        final HorizontalSplitPanel container = new HorizontalSplitPanel(leftPanel,rightPanel);
+        final HorizontalSplitPanel container = new HorizontalSplitPanel(leftPanel, rightPanel);
         // Set the position of the splitter as percentage
         container.setSplitPosition(25, Unit.PERCENTAGE);
         container.setSizeFull();
@@ -119,7 +119,7 @@ public class MainView extends VerticalLayout implements View {
         tabsheet.addTab(new VerticalLayout());
         if (!isSystemUser) {
             schemas.setVisible(false);
-            users.setVisible(false);
+            //users.setVisible(false);
         }
 
         Panel p = new Panel();
@@ -278,9 +278,11 @@ public class MainView extends VerticalLayout implements View {
         tree.expandItem(root);
 
         for (User t : users) {
-            tree.addItem(t);
-            tree.setParent(t, root);
-            tree.setChildrenAllowed(t, false);
+            if (getCurUser().getIsSystem() || t.equals(getCurUser())) {
+                tree.addItem(t);
+                tree.setParent(t, root);
+                tree.setChildrenAllowed(t, false);
+            }
         }
 
         tree.addItemClickListener(new UserTreeItemClickListener());
@@ -426,7 +428,7 @@ public class MainView extends VerticalLayout implements View {
         public void itemClick(ItemClickEvent event) {
             if (event.getItemId() instanceof String) {
                 if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-                    popupManager.showWindow(event.getClientX(), event.getClientY(), new UserPopupMenu(null));
+                    popupManager.showWindow(event.getClientX(), event.getClientY(), new UserPopupMenu(null, getSession()));
                 } else {
                     Collection<Task> tasks = taskService.getTasks();
                     final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
@@ -439,7 +441,7 @@ public class MainView extends VerticalLayout implements View {
                     navigator.navigateTo(UIConstants.USER_UPDATE + user.getId());
                 } else {
                     if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
-                        popupManager.showWindow(event.getClientX(), event.getClientY(), new UserPopupMenu(user));
+                        popupManager.showWindow(event.getClientX(), event.getClientY(), new UserPopupMenu(user, getSession()));
                     } else {
                         List<Task> tasks = taskService.findTaskByUser(user);
                         final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);

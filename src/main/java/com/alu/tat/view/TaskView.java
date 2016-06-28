@@ -64,8 +64,12 @@ public class TaskView extends AbstractActionView {
         final ComboBox taskRel = new ComboBox("Folder");
         taskRel.addItems(FolderService.getFolders());
         taskRel.setNullSelectionAllowed(false);
-
-        Collection<Schema> schemas = schemaService.getSchemas();
+        Collection<Schema> schemas = null;
+        if (isCreate) {
+            schemas = schemaService.getNotDeprecatedSchemas();
+        } else {
+            schemas = schemaService.getSchemas();
+        }
         final ComboBox taskSchema = new ComboBox("Schema", schemas);
         Schema defaultSchema = schemas.iterator().next();
         taskSchema.setValue(defaultSchema);
@@ -153,6 +157,7 @@ public class TaskView extends AbstractActionView {
             taskDesc.setValue(task.getDescription());
             taskRel.setValue(task.getFolder());
             taskSchema.setValue(task.getSchema());
+            taskSchema.setEnabled(false);
             initSchemaData(fieldMap, task.getData(), (Schema) taskSchema.getValue());
         }
 

@@ -11,6 +11,12 @@ import java.util.List;
  * User: vkhodyre
  * Date: 7/8/2015
  */
+@NamedQueries({
+        @NamedQuery(
+                name = "findNotDeprecatedSchemas",
+                query = "from Schema s where s.deprecated = :deprecated"
+        )
+})
 @Entity
 @Table(name = "schema")
 public class Schema extends BaseEntity {
@@ -22,6 +28,9 @@ public class Schema extends BaseEntity {
 
     @ElementCollection (fetch = FetchType.EAGER)
     private List<SchemaElement> elementsList = new LinkedList<>();
+
+    @Column(name = "deprecated")
+    private Boolean deprecated = false;
 
     public String getName() {
         return name;
@@ -45,6 +54,14 @@ public class Schema extends BaseEntity {
 
     public void setElementsList(List<SchemaElement> elementsList) {
         this.elementsList = elementsList;
+    }
+
+    public Boolean getDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(Boolean deprecated) {
+        this.deprecated = deprecated;
     }
 
     @Override
@@ -75,5 +92,12 @@ public class Schema extends BaseEntity {
     @Override
     public int compareTo(Object o) {
         return name.compareTo(((Schema)o).name);
+    }
+
+    public Schema copy(Schema s) {
+        this.name = s.getName() + "(Copy)";
+        this.description = s.getDescription();
+        this.elementsList = new LinkedList(s.getElementsList());
+        return this;
     }
 }
