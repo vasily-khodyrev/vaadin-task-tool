@@ -7,10 +7,15 @@ import com.vaadin.ui.Label;
  * User: Vasily Khodyrev
  * Date: 19.06.2016
  */
-public class HSeparator  extends Label {
+public class HSeparator extends Label {
 
     public HSeparator(int height) {
         this.setWidth(height + "px");
+        this.setHeight(null);
+    }
+
+    public HSeparator(String width) {
+        this.setWidth(width);
         this.setHeight(null);
     }
 }

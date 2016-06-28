@@ -18,6 +18,7 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
     private ListSelect value;
 
     private SchemaElement element;
+    private MultiEnumBean originalState;
 
     /**
      * Constructor needed for testing purposes only.
@@ -43,6 +44,9 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
         value.setRows(options.length);
         value.addItems(options);
         main.addComponents(label, new HSeparator(20), value);
+
+        storeOriginalState();
+
         return main;
     }
 
@@ -55,6 +59,8 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
     public void setValue(MultiEnumBean newFieldValue) throws ReadOnlyException, Converter.ConversionException {
         List<String> b = newFieldValue.getValue();
         value.setValue(b);
+
+        storeOriginalState();
     }
 
     @Override
@@ -68,5 +74,18 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
             l.add((String) o);
             return new MultiEnumBean(l);
         }
+    }
+
+    private void storeOriginalState() {
+        originalState = getValue();
+    }
+
+    private boolean isStateChanged() {
+        return originalState != null && !originalState.equals(getValue());
+    }
+
+    @Override
+    public boolean isModified() {
+        return super.isModified() || isStateChanged();
     }
 }

@@ -129,6 +129,7 @@ public class BaseDao {
         SessionFactory sf = HibernateUtil.getSessionFactory();
         Session session = sf.getCurrentSession();
         if (!session.isOpen()) {
+            logger.debug("Initializing Hibernate session...");
             session.close();
             session = sf.openSession();
         }

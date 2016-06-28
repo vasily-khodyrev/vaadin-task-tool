@@ -18,6 +18,8 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
     private TextField multi;
     private TextArea comment;
 
+    private BooleanItemBean originalState;
+
     private SchemaElement element;
 
     /**
@@ -87,6 +89,8 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
         main.setComponentAlignment(multi, Alignment.MIDDLE_CENTER);
         main.setComponentAlignment(comment, Alignment.MIDDLE_CENTER);
         main.setImmediate(true);
+
+        storeOriginalState();
         return main;
     }
 
@@ -104,6 +108,8 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
         multi.setValue(i.toString());
         comment.setValue(c);
         comment.setRows(calcRowNum(c));
+
+        storeOriginalState();
     }
 
     private int calcRowNum(String s) {
@@ -123,7 +129,24 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
     @Override
     public void validate() throws Validator.InvalidValueException {
         super.validate();
-        value.validate();
-        multi.validate();
+        if (value != null) {
+            value.validate();
+        }
+        if (multi != null) {
+            multi.validate();
+        }
+    }
+
+    private void storeOriginalState() {
+        originalState = getValue();
+    }
+
+    private boolean isStateChanged() {
+        return originalState != null && !originalState.equals(getValue());
+    }
+
+    @Override
+    public boolean isModified() {
+        return super.isModified() || isStateChanged();
     }
 }

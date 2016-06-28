@@ -1,11 +1,13 @@
 package com.alu.tat.view.menu;
 
 import com.vaadin.event.LayoutEvents;
+import com.vaadin.server.Responsive;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -34,16 +36,22 @@ public class PopupMenuManager {
 
         final Window window = new Window();
         window.setContent(content);
+        //window.setPrimaryStyleName("valo-menu");
+        window.setStyleName("valo-menu", true);
+        Responsive.makeResponsive(window);
+        //window.addStyleName(ValoTheme.UI_WITH_MENU);
+        window.setStyleName(ValoTheme.PANEL_BORDERLESS, true);
         content.setSizeFull();
         window.setModal(false);
-        window.setWidth("200px");
-        window.setHeight("300px");
+        window.setWidth("150px");
+        window.setHeight("250px");
         window.setPositionX(x);
         window.setPositionY(y);
         window.setClosable(false);
         window.setResizable(false);
         extraWindows.add(window);
         content.setWindow(window);
+
         UI.getCurrent().addWindow(window);
     }
 

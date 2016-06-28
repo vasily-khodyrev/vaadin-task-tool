@@ -21,6 +21,7 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,6 +50,9 @@ public class TaskView extends AbstractActionView {
         final HorizontalSplitPanel hsplit = new HorizontalSplitPanel();
         //Left section begin
         FormLayout form = new FormLayout();
+        form.setMargin(true);
+        form.setSpacing(true);
+
         final TextArea taskName = new TextArea("Task Name");
         taskName.setWidth("100%");
         taskName.setHeight("60px");
@@ -94,6 +98,7 @@ public class TaskView extends AbstractActionView {
         final Map<String, Property> fieldMap = new HashMap<>();
         TabSheet ts = prepareTabDataView(fieldMap, curSchema);
         ts.setSizeUndefined();
+
         Panel panel = new Panel();
         panel.setSizeFull();
         panel.setContent(ts);
@@ -110,7 +115,6 @@ public class TaskView extends AbstractActionView {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (!isDataValid(fieldMap)) return;
-
                 Task t;
                 if (isCreate) {
                     t = new Task();
@@ -131,7 +135,7 @@ public class TaskView extends AbstractActionView {
                 t.setData(TaskPresenter.convertToData((Schema) taskSchema.getValue(), fieldMap));
                 if (!isCreate) {
                     taskService.updateTask(t);
-                    logger.debug("User " + SessionHelper.getCurrentUser(getSession()) + " updated task '" + t.getName()+"'");
+                    logger.debug("User " + SessionHelper.getCurrentUser(getSession()) + " updated task '" + t.getName() + "'");
                 } else {
                     taskService.addTask(t);
                     logger.debug("User " + SessionHelper.getCurrentUser(getSession()) + " created task '" + t.getName() + "'");
@@ -145,7 +149,18 @@ public class TaskView extends AbstractActionView {
         back.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                navigator.navigateTo(UIConstants.VIEW_MAIN);
+                if (isDataModified(fieldMap)) {
+                    ConfirmDialog.show(getUI(), "All changes will be lost. Are you sure?", new ConfirmDialog.Listener() {
+                        @Override
+                        public void onClose(ConfirmDialog confirmDialog) {
+                            if (confirmDialog.isConfirmed()) {
+                                navigator.navigateTo(UIConstants.VIEW_MAIN);
+                            }
+                        }
+                    });
+                } else {
+                    navigator.navigateTo(UIConstants.VIEW_MAIN);
+                }
             }
         });
 
@@ -185,6 +200,18 @@ public class TaskView extends AbstractActionView {
             }
         }
         return true;
+    }
+
+    private boolean isDataModified(Map<String, Property> fieldMap) {
+        for (Map.Entry<String, Property> entry : fieldMap.entrySet()) {
+            if (entry.getValue() instanceof AbstractField) {
+                AbstractField af = (AbstractField) entry.getValue();
+                if (af.isModified()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void initSchemaData(final Map<String, Property> fieldMap, String jsonData, Schema schema) {

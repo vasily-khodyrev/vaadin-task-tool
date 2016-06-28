@@ -6,7 +6,6 @@ import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,9 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
     private TextField multi;
     private String header;
 
-    private int visualFieldCount = 0;
+    private volatile int visualFieldCount = 0;
+
+    private volatile int initialFieldCount = 0;
 
     private SchemaElement element;
 
@@ -48,16 +49,27 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
 
         main.setImmediate(true);
         main.addComponent(addField(""));
+        storeState();
 
         return main;
+    }
+
+    private void storeState() {
+        initialFieldCount = visualFieldCount;
+    }
+
+    private boolean isFieldCountModified() {
+        return initialFieldCount != visualFieldCount;
     }
 
     protected int getVisualFieldCount() {
         return visualFieldCount;
     }
+
     protected void incVisualFieldCount() {
         visualFieldCount++;
     }
+
     protected void decVisualFieldCount() {
         visualFieldCount--;
     }
@@ -69,7 +81,7 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         Integer m = Integer.parseInt(multi.getValue());
         //skip separator and label
         for (int i = 2; i < main.getComponentCount(); i++) {
-            String v = getFieldValue(main.getComponent(i));
+            String v = getFieldValue(main.getComponent(i)).getValue();
             if (v != null) {
                 value.put(v, m);
             }
@@ -92,9 +104,12 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         } else {
             main.addComponent(addField(""));
         }
+        storeState();
     }
 
     private void baseInit() {
+        visualFieldCount = 0;
+
         HorizontalLayout hl = new HorizontalLayout();
         Label label = new Label(header);
         multi = new TextField();
@@ -158,10 +173,32 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         return k;
     }
 
-    private String getFieldValue(Component c) {
+    private AbstractField<String> getFieldValue(Component c) {
         GridLayout fieldLayout = ((GridLayout) c);
         TextArea text = (TextArea) fieldLayout.getComponent(0, 0);
-        return text.getValue();
+        return text;
+    }
+
+    @Override
+    public boolean isModified() {
+        boolean res = super.isModified();
+        if (!res) {
+            if (main != null) {
+                if (isFieldCountModified()) {
+                    return true;
+                }
+                for (int i = 2; i < main.getComponentCount(); i++) {
+                    AbstractField<String> v = getFieldValue(main.getComponent(i));
+                    if (v.isModified()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
+
     }
 
 }

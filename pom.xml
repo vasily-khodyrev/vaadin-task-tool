@@ -39,6 +39,14 @@
             <version>${vaadin.version}</version>
         </dependency>
 
+        <!-- VAADIN ADDONS BEGIN-->
+        <dependency>
+            <groupId>org.vaadin.addon</groupId>
+            <artifactId>confirmdialog</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+        <!-- VAADIN ADDON END -->
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -77,7 +85,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.187</version>
+            <version>1.4.191</version>
         </dependency>
 
         <dependency>

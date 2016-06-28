@@ -27,4 +27,25 @@ public class BooleanItemBean {
     public String getComments() {
         return comments;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BooleanItemBean that = (BooleanItemBean) o;
+
+        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+        if (multi != null ? !multi.equals(that.multi) : that.multi != null) return false;
+        return !(comments != null ? !comments.equals(that.comments) : that.comments != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = value != null ? value.hashCode() : 0;
+        result = 31 * result + (multi != null ? multi.hashCode() : 0);
+        result = 31 * result + (comments != null ? comments.hashCode() : 0);
+        return result;
+    }
 }

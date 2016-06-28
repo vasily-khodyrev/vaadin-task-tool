@@ -1,5 +1,6 @@
 package com.alu.tat.view;
 
+import com.alu.tat.component.HSeparator;
 import com.alu.tat.entity.Folder;
 import com.alu.tat.entity.Task;
 import com.alu.tat.entity.User;
@@ -37,6 +38,7 @@ public class MainView extends VerticalLayout implements View {
 
     public static final ThemeResource FOLDER_ICON = new ThemeResource("../runo/icons/16/folder.png");
     private Navigator navigator;
+    private PopupMenuManager popupManager;
 
     private TaskService taskService = TaskService.getInstance();
     private SchemaService schemaService = SchemaService.getInstance();
@@ -46,12 +48,6 @@ public class MainView extends VerticalLayout implements View {
     final Tree taskTree = new Tree();
     final Tree schemaTree = new Tree();
     final Tree usersTree = new Tree();
-    final PopupMenuManager popupManager;
-
-    public MainView() {
-        super();
-        popupManager = new PopupMenuManager(this);
-    }
 
     private User getCurUser() {
         return SessionHelper.getCurrentUser(getSession());
@@ -60,6 +56,7 @@ public class MainView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         navigator = getUI().getNavigator();
+        popupManager = new PopupMenuManager(this);
 
         Panel rightPanel = getRightPanel();
         rightPanel.setSizeFull();
@@ -67,14 +64,10 @@ public class MainView extends VerticalLayout implements View {
         Panel leftPanel = getLeftPanel(getCurUser().getIsSystem());
         leftPanel.setSizeFull();
 
-        //HorizontalLayout container = new HorizontalLayout(leftPanel, rightPanel);
         final HorizontalSplitPanel container = new HorizontalSplitPanel(leftPanel, rightPanel);
         // Set the position of the splitter as percentage
         container.setSplitPosition(25, Unit.PERCENTAGE);
         container.setSizeFull();
-        //container.setExpandRatio(leftPanel, 1);
-        //container.setExpandRatio(rightPanel, 4);
-        //container.setSizeFull();
 
         addComponent(container);
         setExpandRatio(container, 1);
@@ -126,9 +119,9 @@ public class MainView extends VerticalLayout implements View {
         HorizontalLayout panelCaption = new HorizontalLayout();
         panelCaption.setStyleName("panelstyle");
         panelCaption.setWidth(100, Unit.PERCENTAGE);
-        Label menuLab = new Label("Menu");
-        panelCaption.addComponent(menuLab);
-        panelCaption.setComponentAlignment(menuLab, Alignment.TOP_LEFT);
+        //Label menuLab = new Label("Menu");
+        //panelCaption.addComponent(menuLab);
+        //panelCaption.setComponentAlignment(menuLab, Alignment.TOP_LEFT);
         Button signout = UIComponentFactory.getButton("Sign Out", "MAINVIEW_SIGNOUT_BUTTON");
         signout.addClickListener(new Button.ClickListener() {
             @Override
@@ -145,6 +138,7 @@ public class MainView extends VerticalLayout implements View {
         panelCaption.setHeight(signout.getHeight(), signout.getHeightUnits());
         VerticalLayout v = new VerticalLayout();
         v.setMargin(true);
+        v.setSpacing(true);
         v.addComponent(panelCaption);
         v.addComponent(tabsheet);
         v.setExpandRatio(tabsheet, 1);
@@ -162,9 +156,12 @@ public class MainView extends VerticalLayout implements View {
 
         final Button createButton = UIComponentFactory.getButton("Create task", "MAINVIEW_CREATE_TASK_BUTTON");
         final Button deleteTaskButton = UIComponentFactory.getButton("Delete task", "MAINVIEW_DEL_TASK_BUTTON");
+        deleteTaskButton.setEnabled(false);
 
         buttonPanel.addComponent(createButton);
+        buttonPanel.addComponent(new HSeparator(20));
         buttonPanel.addComponent(deleteTaskButton);
+        buttonPanel.setComponentAlignment(createButton, Alignment.TOP_LEFT);
         buttonPanel.setComponentAlignment(deleteTaskButton, Alignment.TOP_RIGHT);
 
 
@@ -173,8 +170,8 @@ public class MainView extends VerticalLayout implements View {
         container.addComponent(infoPanel);
 
         container.setExpandRatio(buttonPanel, 1);
-        container.setExpandRatio(taskGrid, 4);
-        container.setExpandRatio(infoPanel, 2);
+        container.setExpandRatio(taskGrid, 12);
+        container.setExpandRatio(infoPanel, 8);
 
         taskGrid.addSelectionListener(new SelectionEvent.SelectionListener() {
             @Override
@@ -206,13 +203,15 @@ public class MainView extends VerticalLayout implements View {
             }
         });
 
-        return new Panel("Content", container);
+        container.setMargin(true);
+        container.setSpacing(true);
+        return new Panel(container);
     }
 
     private void configureTaskTree(Tree tree, Panel infoPanel) {
         final Collection<Task> tasks = taskService.getTasks();
 
-        String root = "Category";
+        String root = "Folder";
 
         tree.addItem(root);
         tree.expandItem(root);
@@ -321,16 +320,20 @@ public class MainView extends VerticalLayout implements View {
                     if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
                         popupManager.showWindow(event.getClientX(), event.getClientY(), new TaskPopupMenu(task));
                     } else {
-                        RichTextArea text = new RichTextArea();
-                        text.setSizeFull();
-                        text.setValue(TaskPresenter.getHtmlView(task));
-                        text.setReadOnly(true);
-
-                        infoPanel.setContent(text);
+                        showTaskInfo(task);
                     }
                 }
             }
         }
+    }
+
+    private void showTaskInfo(Task task) {
+        String s = TaskPresenter.getHtmlView(task);
+        RichTextArea text = new RichTextArea();
+        text.setSizeFull();
+        text.setValue(s);
+        text.setReadOnly(true);
+        infoPanel.setContent(text);
     }
 
     private class TaskTreeItemClickListener implements ItemClickEvent.ItemClickListener {
@@ -371,12 +374,7 @@ public class MainView extends VerticalLayout implements View {
                     if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
                         popupManager.showWindow(event.getClientX(), event.getClientY(), new TaskPopupMenu(task));
                     } else {
-                        RichTextArea text = new RichTextArea();
-                        text.setSizeFull();
-                        text.setValue(TaskPresenter.getHtmlView(task));
-                        text.setReadOnly(true);
-
-                        infoPanel.setContent(text);
+                        showTaskInfo(task);
                     }
                 }
             }

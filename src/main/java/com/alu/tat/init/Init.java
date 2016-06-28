@@ -11,6 +11,8 @@ import com.alu.tat.service.SchemaService;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.HibernateUtil;
 import com.alu.tat.util.PasswordTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,17 +24,19 @@ import java.util.List;
  */
 public class Init extends HttpServlet {
 
-    //private final static Logger logger =
-    //        LoggerFactory.getLogger(Init.class);
+    private final static Logger logger =
+           LoggerFactory.getLogger(Init.class);
 
     @Override
     public void init() throws ServletException {
         super.init();
         try {
+            logger.debug("Preparing initial DB data...");
             initData();
+            logger.debug("Checking if migration needed...");
             migrateDataIfNeeded();
         } catch (Exception e) {
-            System.err.println("error while initializing data: " + e.getMessage());
+            logger.error("error while initializing data: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -41,9 +45,10 @@ public class Init extends HttpServlet {
     public void destroy() {
         super.destroy();
         try {
+            logger.debug("Shutting down Hibernate...");
             HibernateUtil.shutdown();
         } catch (Exception e) {
-            System.err.println("error while shutting down hibernate: " + e.getMessage());
+            logger.error("error while shutting down hibernate: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -60,9 +65,11 @@ public class Init extends HttpServlet {
         admin.setPasswordHash(PasswordTools.getPwdHash("admin"));
         admin.setIsSystem(true);
         if (!allUsers.contains(admin)) {
+            logger.debug("Creating default admin...");
             UserService.createUser(admin);
         }
         if (allUsers.isEmpty()) {
+            logger.debug("Creating users set...");
             User imalolet = createUser("imalolet", "imalolet", "Igor Maloletniy");
             createUser("ibotian", "ibotian", "Igor Botian");
             createUser("mivanova", "mivanova", "Maya Ivanova");
@@ -73,6 +80,7 @@ public class Init extends HttpServlet {
             createUser("valeryp", "valeryp", "Valery Pavlov");
             createUser("vkhodyre", "vkhodyre", "Vasily Khodyrev");
 
+            logger.debug("Creating default schemas...");
             Schema defaultSchema = new Schema();
             defaultSchema.setIsSystem(true);
             defaultSchema.setName("Detailed Analysis");
@@ -80,7 +88,7 @@ public class Init extends HttpServlet {
             List<SchemaElement> list = defaultSchema.getElementsList();
             list.add(new SchemaElement("General", "General aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("SDD", "FSD/FDD/SDD/Testplan needed?", SchemaElement.ElemType.BOOLEAN, 8));
-            list.add(new SchemaElement("Applicable otSolution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM, "OTMS;OTBE;OTMC", 0));
+            list.add(new SchemaElement("Applicable OT Solution", "Define the solution applicable (OTMS/OTBE/OTMC/...)", SchemaElement.ElemType.MULTI_ENUM, "OTMS;OTBE;OTMC", 0));
 
             list.add(new SchemaElement("Models", "All model description related aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("New models", "Do we need to create new models?", SchemaElement.ElemType.BOOLEAN, 4));
@@ -136,6 +144,7 @@ public class Init extends HttpServlet {
             secondList.add(new SchemaElement("Cases", "Describe your case here.", SchemaElement.ElemType.MULTI_STRING, 5));
             BaseDao.create(secondSchema);
 
+            logger.debug("Creating default folders...");
             Folder f1 = new Folder();
             f1.setName("OT10");
             Folder f2 = new Folder();

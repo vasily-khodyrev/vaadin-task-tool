@@ -6,6 +6,7 @@ import com.alu.tat.util.SessionHelper;
 import com.alu.tat.view.UIConstants;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * Created by
@@ -38,6 +39,7 @@ public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.Po
 
     private void initButtons(VerticalLayout layout) {
         Button createFolder = new Button("Create");
+        createFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         createFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -56,6 +58,7 @@ public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.Po
                 closeWindow();
             }
         });
+        updateFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 
         Button deleteFolder = new Button("Delete");
         deleteFolder.addClickListener(new Button.ClickListener() {
@@ -73,6 +76,8 @@ public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.Po
                 }
             }
         });
+        deleteFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+
         if (item == null) {
             updateFolder.setVisible(false);
             deleteFolder.setVisible(false);
@@ -89,5 +94,6 @@ public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.Po
         layout.setComponentAlignment(createFolder, Alignment.MIDDLE_CENTER);
         layout.setComponentAlignment(updateFolder, Alignment.MIDDLE_CENTER);
         layout.setComponentAlignment(deleteFolder, Alignment.MIDDLE_CENTER);
+        //layout.addStyleName("valo-menu-part");
     }
 }
