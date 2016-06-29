@@ -40,6 +40,7 @@ public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.Po
     private void initButtons(VerticalLayout layout) {
         Button createFolder = new Button("Create");
         createFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        createFolder.addStyleName("accordianButton");
         createFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -59,7 +60,7 @@ public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.Po
             }
         });
         updateFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-
+        updateFolder.addStyleName("accordianButton");
         Button deleteFolder = new Button("Delete");
         deleteFolder.addClickListener(new Button.ClickListener() {
             @Override
@@ -77,6 +78,7 @@ public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.Po
             }
         });
         deleteFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        deleteFolder.addStyleName("accordianButton");
 
         if (item == null) {
             updateFolder.setVisible(false);

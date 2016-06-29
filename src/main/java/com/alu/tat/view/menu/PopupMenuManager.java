@@ -2,11 +2,9 @@ package com.alu.tat.view.menu;
 
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.Responsive;
+import com.vaadin.server.Sizeable;
 import com.vaadin.shared.MouseEventDetails;
-import com.vaadin.ui.AbstractOrderedLayout;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.Iterator;
@@ -35,9 +33,16 @@ public class PopupMenuManager {
         closeExtraWindows();
 
         final Window window = new Window();
-        window.setContent(content);
-        //window.setPrimaryStyleName("valo-menu");
+        VerticalSplitPanel vl = new VerticalSplitPanel();
+        Label l = new Label(content.getClass().getSimpleName());
+        VerticalLayout vert = new VerticalLayout(l);
+        vert.setComponentAlignment(l, Alignment.TOP_CENTER);
+        vl.setFirstComponent(vert);
+        vl.setSecondComponent(content);
+        vl.setSplitPosition(10, Sizeable.Unit.PERCENTAGE);
+        window.setContent(vl);
         window.setStyleName("valo-menu", true);
+        window.setStyleName("v-window-top-toolbar", true);
         Responsive.makeResponsive(window);
         //window.addStyleName(ValoTheme.UI_WITH_MENU);
         window.setStyleName(ValoTheme.PANEL_BORDERLESS, true);

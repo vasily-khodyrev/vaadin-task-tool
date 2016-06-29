@@ -37,6 +37,7 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
     private void initButtons(VerticalLayout layout) {
         Button createFolder = new Button("Create");
         createFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        createFolder.addStyleName("accordianButton");
         createFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -47,6 +48,7 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
 
         Button updateFolder = new Button("Update");
         updateFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        updateFolder.addStyleName("accordianButton");
         updateFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -59,6 +61,7 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
 
         Button deleteFolder = new Button("Delete");
         deleteFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        deleteFolder.addStyleName("accordianButton");
         deleteFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
