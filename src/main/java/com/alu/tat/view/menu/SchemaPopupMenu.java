@@ -5,6 +5,7 @@ import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.service.SchemaService;
 import com.alu.tat.view.UIConstants;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * Created by
@@ -34,6 +35,7 @@ public class SchemaPopupMenu extends VerticalLayout implements PopupMenuManager.
 
     private void initButtons(VerticalLayout layout) {
         Button createFolder = new Button("Create");
+        createFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         createFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -43,6 +45,7 @@ public class SchemaPopupMenu extends VerticalLayout implements PopupMenuManager.
         });
 
         Button updateFolder = new Button("Update");
+        updateFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         updateFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -54,6 +57,7 @@ public class SchemaPopupMenu extends VerticalLayout implements PopupMenuManager.
         });
 
         Button createCopy = new Button("Create Copy");
+        createCopy.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         createCopy.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -67,6 +71,7 @@ public class SchemaPopupMenu extends VerticalLayout implements PopupMenuManager.
         });
 
         Button deleteFolder = new Button("Delete");
+        deleteFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         deleteFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {

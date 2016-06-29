@@ -6,6 +6,7 @@ import com.alu.tat.service.TaskService;
 import com.alu.tat.service.UserService;
 import com.alu.tat.view.UIConstants;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * Created by
@@ -35,6 +36,7 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
 
     private void initButtons(VerticalLayout layout) {
         Button createFolder = new Button("Create");
+        createFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         createFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -44,6 +46,7 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
         });
 
         Button updateFolder = new Button("Update");
+        updateFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         updateFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -55,6 +58,7 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
         });
 
         Button deleteFolder = new Button("Delete");
+        deleteFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         deleteFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {

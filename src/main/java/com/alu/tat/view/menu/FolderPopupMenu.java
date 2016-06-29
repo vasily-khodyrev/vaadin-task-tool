@@ -4,6 +4,7 @@ import com.alu.tat.entity.Folder;
 import com.alu.tat.service.FolderService;
 import com.alu.tat.view.UIConstants;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 /**
  * Created by
@@ -33,6 +34,7 @@ public class FolderPopupMenu extends VerticalLayout implements PopupMenuManager.
 
     private void initButtons(VerticalLayout layout) {
         Button createFolder = new Button("Create");
+        createFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         createFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -42,6 +44,7 @@ public class FolderPopupMenu extends VerticalLayout implements PopupMenuManager.
         });
 
         Button updateFolder = new Button("Update");
+        updateFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         updateFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -53,6 +56,7 @@ public class FolderPopupMenu extends VerticalLayout implements PopupMenuManager.
         });
 
         Button deleteFolder = new Button("Delete");
+        deleteFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         deleteFolder.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
