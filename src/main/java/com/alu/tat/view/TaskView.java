@@ -23,10 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.dialogs.ConfirmDialog;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by imalolet on 6/10/2015.
@@ -81,11 +78,17 @@ public class TaskView extends AbstractActionView {
         taskSchema.setValue(defaultSchema);
         taskSchema.setNullSelectionAllowed(false);
 
+        final ComboBox taskStatus = new ComboBox("Status", Arrays.asList(Task.Status.values()));
+        taskStatus.setNullSelectionAllowed(false);
+        taskStatus.setValue(Task.Status.NEW);
+        taskStatus.setEnabled(false);
+
         form.addComponent(taskName);
         form.addComponent(taskAuth);
         form.addComponent(taskDesc);
         form.addComponent(taskRel);
         form.addComponent(taskSchema);
+        form.addComponent(taskStatus);
 
         Button create = UIComponentFactory.getButton(isCreate ? "Create" : "Update", "TASKVIEW_CREATEORUPDATE_BUTTON", FontAwesome.PLUS);
         Button back = UIComponentFactory.getButton("Back", "TASKVIEW_CANCEL_BUTTON", FontAwesome.ARROW_LEFT);
@@ -138,6 +141,7 @@ public class TaskView extends AbstractActionView {
                     t.setFolder((Folder) taskRel.getValue());
                 }
                 t.setSchema((Schema) taskSchema.getValue());
+                t.setStatus((Task.Status) taskStatus.getValue());
                 t.setData(TaskPresenter.convertToData((Schema) taskSchema.getValue(), fieldMap));
                 if (!isCreate) {
                     TaskService.updateTask(t);
@@ -177,6 +181,8 @@ public class TaskView extends AbstractActionView {
             taskAuth.setValue(task.getAuthor().getName());
             taskDesc.setValue(task.getDescription());
             taskRel.setValue(task.getFolder());
+            taskStatus.setValue(task.getStatus());
+            taskStatus.setEnabled(true);
             taskSchema.setValue(task.getSchema());
             taskSchema.setEnabled(false);
             initSchemaData(fieldMap, task.getData(), (Schema) taskSchema.getValue());

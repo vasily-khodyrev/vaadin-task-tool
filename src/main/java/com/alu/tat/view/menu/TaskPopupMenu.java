@@ -76,7 +76,7 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
                         TaskService.removeTask(item.getId());
                         Notification.show("Task '" + item.getName() + "' successfully removed.", Notification.Type.TRAY_NOTIFICATION);
                     } catch (Exception e) {
-                        Notification.show("Failed to remove Task '" + item.getName() + "' due to " + e.getMessage() , Notification.Type.ERROR_MESSAGE);
+                        Notification.show("Failed to remove Task '" + item.getName() + "' due to " + e.getMessage(), Notification.Type.ERROR_MESSAGE);
                     }
                     getUI().getCurrent().getNavigator().navigateTo(UIConstants.VIEW_MAIN);
                 }
@@ -85,6 +85,8 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
         if (item == null) {
             updateFolder.setVisible(false);
             deleteFolder.setVisible(false);
+        } else {
+            createFolder.setVisible(false);
         }
         layout.addComponents(createFolder, updateFolder, deleteFolder);
         layout.setComponentAlignment(createFolder, Alignment.MIDDLE_CENTER);

@@ -53,4 +53,9 @@ public class TaskService {
         params.put("user", user);
         return BaseDao.find(Task.class, "findTaskByUser", params);
     }
+
+    public static List<Task> findTasksWOStatus() {
+        Map<String, Object> params = new HashMap<>();
+        return BaseDao.find(Task.class, "findTasksWOStatus", params);
+    }
 }

@@ -8,6 +8,7 @@ import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.FolderService;
 import com.alu.tat.service.SchemaService;
+import com.alu.tat.service.TaskService;
 import com.alu.tat.service.UserService;
 import com.alu.tat.util.HibernateUtil;
 import com.alu.tat.util.PasswordTools;
@@ -25,7 +26,7 @@ import java.util.List;
 public class Init extends HttpServlet {
 
     private final static Logger logger =
-           LoggerFactory.getLogger(Init.class);
+            LoggerFactory.getLogger(Init.class);
 
     @Override
     public void init() throws ServletException {
@@ -51,10 +52,6 @@ public class Init extends HttpServlet {
             logger.error("error while shutting down hibernate: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    private void migrateDataIfNeeded() {
-        migrateSchemas();
     }
 
     private void initData() {
@@ -177,6 +174,16 @@ public class Init extends HttpServlet {
         return user;
     }
 
+    private void migrateDataIfNeeded() {
+        migrateSchemas();
+        logger.debug("Migrating task...");
+        if (migrateTasks()) {
+            logger.debug("Migration of task completed.");
+        } else {
+            logger.debug("Migration of task not needed.");
+        }
+    }
+
     private void migrateSchemas() {
         Collection<Schema> schemas = SchemaService.getNotDeprecatedSchemas();
         if (schemas.isEmpty()) {
@@ -187,4 +194,20 @@ public class Init extends HttpServlet {
             }
         }
     }
+
+    private boolean migrateTasks() {
+        boolean res = false;
+        List<Task> tasks = TaskService.findTasksWOStatus();
+        if (tasks != null) {
+            for (Task t : tasks) {
+                res = true;
+                logger.debug("Migrating task " + t.getName() + "...");
+                t.setStatus(Task.Status.NEW);
+                TaskService.updateTask(t);
+            }
+        }
+        return res;
+    }
+
+
 }

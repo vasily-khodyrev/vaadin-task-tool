@@ -19,11 +19,31 @@ import javax.persistence.*;
         @NamedQuery(
                 name = "findTaskByUser",
                 query = "from Task t where t.author = :user"
+        ),
+
+        @NamedQuery(
+                name = "findTasksWOStatus",
+                query = "from Task t where t.status is null"
         )
 })
 @Entity
 @Table(name = "task")
 public class Task extends BaseEntity {
+    public enum Status {
+        NEW("NEW"), DONE("DONE");
+
+        private String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    ;
 
     @Column(name = "name")
     private String name;
@@ -38,6 +58,10 @@ public class Task extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "schema_id")
     private Schema schema;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.NEW;
 
     @Column(name = "data", columnDefinition = "TEXT")
     private String data;
@@ -86,6 +110,14 @@ public class Task extends BaseEntity {
         this.schema = schema;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public String getData() {
         return data;
     }
@@ -101,6 +133,6 @@ public class Task extends BaseEntity {
 
     @Override
     public int compareTo(Object o) {
-        return name.compareTo(((Task)o).name);
+        return name.compareTo(((Task) o).name);
     }
 }
