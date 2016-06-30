@@ -15,15 +15,6 @@ import java.util.Map;
  * Date: 7/8/2015
  */
 public class SchemaService {
-    private static SchemaService instance = new SchemaService();
-
-    public static SchemaService getInstance() {
-        return instance;
-    }
-
-    private SchemaService() {
-    }
-
     public static Collection<Schema> getSchemas() {
         return BaseDao.getAll(Schema.class);
     }

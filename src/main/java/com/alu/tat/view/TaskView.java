@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,8 +38,6 @@ public class TaskView extends AbstractActionView {
             LoggerFactory.getLogger(TaskView.class);
 
     private Navigator navigator;
-    private TaskService taskService = TaskService.getInstance();
-    private SchemaService schemaService = SchemaService.getInstance();
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -68,11 +67,11 @@ public class TaskView extends AbstractActionView {
         final ComboBox taskRel = new ComboBox("Folder");
         taskRel.addItems(FolderService.getFolders());
         taskRel.setNullSelectionAllowed(false);
-        Collection<Schema> schemas = null;
+        Collection<Schema> schemas = Collections.EMPTY_LIST;
         if (isCreate) {
-            schemas = schemaService.getNotDeprecatedSchemas();
+            schemas = SchemaService.getNotDeprecatedSchemas();
         } else {
-            schemas = schemaService.getSchemas();
+            schemas = SchemaService.getSchemas();
         }
         final ComboBox taskSchema = new ComboBox("Schema", schemas);
         Schema defaultSchema = schemas.iterator().next();
@@ -94,14 +93,18 @@ public class TaskView extends AbstractActionView {
         //Left section end
 
         //Right section begin
-        Schema curSchema = !isCreate ? taskService.getTask(updateId).getSchema() : (Schema) taskSchema.getValue();
+        Schema curSchema = !isCreate ? TaskService.getTask(updateId).getSchema() : (Schema) taskSchema.getValue();
         final Map<String, Property> fieldMap = new HashMap<>();
         TabSheet ts = prepareTabDataView(fieldMap, curSchema);
         ts.setSizeUndefined();
-
+        VerticalLayout vl = new VerticalLayout();
+        vl.setSpacing(true);
+        vl.setMargin(true);
+        vl.addComponent(ts);
         Panel panel = new Panel();
+
         panel.setSizeFull();
-        panel.setContent(ts);
+        panel.setContent(vl);
         hsplit.setSecondComponent(panel);
         //Right section end
 
@@ -119,7 +122,7 @@ public class TaskView extends AbstractActionView {
                 if (isCreate) {
                     t = new Task();
                 } else {
-                    t = taskService.getTask(updateId);
+                    t = TaskService.getTask(updateId);
                 }
                 if (taskName.isValid()) {
                     t.setName(taskName.getValue());
@@ -134,10 +137,10 @@ public class TaskView extends AbstractActionView {
                 t.setSchema((Schema) taskSchema.getValue());
                 t.setData(TaskPresenter.convertToData((Schema) taskSchema.getValue(), fieldMap));
                 if (!isCreate) {
-                    taskService.updateTask(t);
+                    TaskService.updateTask(t);
                     logger.debug("User " + SessionHelper.getCurrentUser(getSession()) + " updated task '" + t.getName() + "'");
                 } else {
-                    taskService.addTask(t);
+                    TaskService.addTask(t);
                     logger.debug("User " + SessionHelper.getCurrentUser(getSession()) + " created task '" + t.getName() + "'");
                 }
 
@@ -166,7 +169,7 @@ public class TaskView extends AbstractActionView {
 
         //load task fields if its for edit
         if (!isCreate) {
-            Task task = taskService.getTask(updateId);
+            Task task = TaskService.getTask(updateId);
             taskName.setValue(String.valueOf(task.getName()));
             taskAuth.setValue(task.getAuthor().getName());
             taskDesc.setValue(task.getDescription());
@@ -183,7 +186,7 @@ public class TaskView extends AbstractActionView {
                 TabSheet ts = prepareTabDataView(fieldMap, newSchema);
                 hsplit.setSecondComponent(ts);
                 if (!isCreate) {
-                    Task task = taskService.getTask(updateId);
+                    Task task = TaskService.getTask(updateId);
                     initSchemaData(fieldMap, task.getData(), newSchema);
                 }
             }

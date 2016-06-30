@@ -16,15 +16,6 @@ import com.alu.tat.entity.schema.Schema;
  */
 public class TaskService {
 
-    private static TaskService instance = new TaskService();
-
-    public static TaskService getInstance() {
-        return instance;
-    }
-
-    private TaskService() {
-    }
-
     public static Collection<Task> getTasks() {
         return BaseDao.getAll(Task.class);
     }

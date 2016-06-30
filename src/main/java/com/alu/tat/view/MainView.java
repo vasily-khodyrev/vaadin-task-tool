@@ -40,9 +40,6 @@ public class MainView extends VerticalLayout implements View {
     private Navigator navigator;
     private PopupMenuManager popupManager;
 
-    private TaskService taskService = TaskService.getInstance();
-    private SchemaService schemaService = SchemaService.getInstance();
-
     final Grid taskGrid = new Grid();
     final Panel infoPanel = new Panel("Info");
     final Tree taskTree = new Tree();
@@ -197,7 +194,7 @@ public class MainView extends VerticalLayout implements View {
             public void buttonClick(Button.ClickEvent event) {
                 Task t = (Task) taskGrid.getSelectedRow();
                 if (t != null) {
-                    taskService.removeTask(t.getId());
+                    TaskService.removeTask(t.getId());
                     navigator.navigateTo(UIConstants.VIEW_MAIN);
                 }
             }
@@ -209,7 +206,7 @@ public class MainView extends VerticalLayout implements View {
     }
 
     private void configureTaskTree(Tree tree, Panel infoPanel) {
-        final Collection<Task> tasks = taskService.getTasks();
+        final Collection<Task> tasks = TaskService.getTasks();
 
         String root = "Folder";
 
@@ -249,7 +246,7 @@ public class MainView extends VerticalLayout implements View {
     }
 
     private void configureSchemaTree(Tree tree, Panel infoPanel) {
-        final Collection<Schema> schemas = schemaService.getSchemas();
+        final Collection<Schema> schemas = SchemaService.getSchemas();
 
         String root = "Schemas";
 
@@ -289,7 +286,7 @@ public class MainView extends VerticalLayout implements View {
     }
 
     private void configureGrid(Grid grid, final Panel infoPanel) {
-        final Collection<Task> tasks = taskService.getTasks();
+        final Collection<Task> tasks = TaskService.getTasks();
 
         grid.setSizeFull();
         final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
@@ -346,7 +343,7 @@ public class MainView extends VerticalLayout implements View {
                     getUI().getCurrent().getSession().setAttribute("selectedFolder", null);
                     popupManager.showWindow(event.getClientX(), event.getClientY(), new FolderPopupMenu(null));
                 } else {
-                    Collection<Task> tasks = taskService.getTasks();
+                    Collection<Task> tasks = TaskService.getTasks();
                     final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
                     taskGrid.setContainerDataSource(container);
                     taskGrid.markAsDirty();
@@ -359,7 +356,7 @@ public class MainView extends VerticalLayout implements View {
                     getUI().getCurrent().getSession().setAttribute("selectedFolder", folder);
                     popupManager.showWindow(event.getClientX(), event.getClientY(), new FolderPopupMenu(folder));
                 } else {
-                    List<Task> tasks = taskService.findTaskByFolder(folder);
+                    List<Task> tasks = TaskService.findTaskByFolder(folder);
                     final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
                     taskGrid.setContainerDataSource(container);
                     taskGrid.markAsDirty();
@@ -389,7 +386,7 @@ public class MainView extends VerticalLayout implements View {
                 if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
                     popupManager.showWindow(event.getClientX(), event.getClientY(), new SchemaPopupMenu(null));
                 } else {
-                    Collection<Task> tasks = taskService.getTasks();
+                    Collection<Task> tasks = TaskService.getTasks();
                     final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
                     taskGrid.setContainerDataSource(container);
                     taskGrid.markAsDirty();
@@ -403,7 +400,7 @@ public class MainView extends VerticalLayout implements View {
                     if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
                         popupManager.showWindow(event.getClientX(), event.getClientY(), new SchemaPopupMenu(schema));
                     } else {
-                        List<Task> tasks = taskService.findTaskBySchema(schema);
+                        List<Task> tasks = TaskService.findTaskBySchema(schema);
                         final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
                         taskGrid.setContainerDataSource(container);
                         taskGrid.markAsDirty();
@@ -428,7 +425,7 @@ public class MainView extends VerticalLayout implements View {
                 if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
                     popupManager.showWindow(event.getClientX(), event.getClientY(), new UserPopupMenu(null, getSession()));
                 } else {
-                    Collection<Task> tasks = taskService.getTasks();
+                    Collection<Task> tasks = TaskService.getTasks();
                     final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
                     taskGrid.setContainerDataSource(container);
                     taskGrid.markAsDirty();
@@ -441,7 +438,7 @@ public class MainView extends VerticalLayout implements View {
                     if (event.getButton() == MouseEventDetails.MouseButton.RIGHT) {
                         popupManager.showWindow(event.getClientX(), event.getClientY(), new UserPopupMenu(user, getSession()));
                     } else {
-                        List<Task> tasks = taskService.findTaskByUser(user);
+                        List<Task> tasks = TaskService.findTaskByUser(user);
                         final BeanItemContainer<Task> container = new BeanItemContainer<>(Task.class, tasks);
                         taskGrid.setContainerDataSource(container);
                         taskGrid.markAsDirty();

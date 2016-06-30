@@ -38,7 +38,7 @@ public class TaskPresenter {
         Map<String, Object> valueMap = convertFromJSON(task.getData(), schema);
         int estim = 0;
         //TODO: Very strange behavior. If you get elemList through task.schema.elemList you'll get ALL elems from all tasks
-        schema = SchemaService.getInstance().getSchema(schema.getId());
+        schema = SchemaService.getSchema(schema.getId());
         List<SchemaElement> seList = schema.getElementsList();
         for (SchemaElement se : seList) {
             if (valueMap.containsKey(se.getName())) {

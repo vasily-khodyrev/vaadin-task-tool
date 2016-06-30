@@ -41,8 +41,23 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
         }
         String data = element.getData();
         String[] options = data.split(";");
-        value.setRows(options.length);
-        value.addItems(options);
+        List<String> allOptions = new LinkedList<>();
+        List<String> defaultOptions = new LinkedList<>();
+        for (String s : options) {
+             String option;
+             if (s.startsWith("*")){
+                 option = s.substring(1);
+                 defaultOptions.add(option);
+             } else {
+                 option = s;
+             }
+             allOptions.add(option);
+        }
+        value.setRows(allOptions.size());
+        value.addItems(allOptions);
+        for (String s: defaultOptions) {
+            value.select(s);
+        }
         main.addComponents(label, new HSeparator(20), value);
 
         storeOriginalState();
@@ -67,7 +82,7 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
     public MultiEnumBean getValue() throws ReadOnlyException, Converter.ConversionException {
         Object o = value.getValue();
         if (o instanceof Collection) {
-            List<String> b = new LinkedList<String>((Collection<String>) value.getValue());
+            List<String> b = new LinkedList<>((Collection<String>) value.getValue());
             return new MultiEnumBean(b);
         } else {
             List<String> l = new LinkedList<>();

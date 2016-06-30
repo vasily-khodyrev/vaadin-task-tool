@@ -1,17 +1,13 @@
 package com.alu.tat.view;
 
 import com.alu.tat.entity.Folder;
-import com.alu.tat.entity.User;
 import com.alu.tat.service.FolderService;
-import com.alu.tat.service.UserService;
 import com.alu.tat.util.UIComponentFactory;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
-
-import java.util.Arrays;
 
 /**
  * Created by

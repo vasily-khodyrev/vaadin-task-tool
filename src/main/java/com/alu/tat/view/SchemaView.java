@@ -26,7 +26,6 @@ import java.util.List;
  */
 public class SchemaView extends AbstractActionView {
     private Navigator navigator;
-    private SchemaService schemaService = SchemaService.getInstance();
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -65,7 +64,7 @@ public class SchemaView extends AbstractActionView {
                 if (isCreate) {
                     t = new Schema();
                 } else {
-                    t = schemaService.getSchema(updateId);
+                    t = SchemaService.getSchema(updateId);
                 }
                 t.setName(schemaName.getValue());
                 t.setDescription(schemaDesc.getValue());
@@ -75,9 +74,9 @@ public class SchemaView extends AbstractActionView {
                 newlist.clear();
                 newlist.addAll(cse);
                 if (!isCreate) {
-                    schemaService.updateSchema(t);
+                    SchemaService.updateSchema(t);
                 } else {
-                    schemaService.addSchema(t);
+                    SchemaService.addSchema(t);
                 }
 
                 navigator.navigateTo(UIConstants.VIEW_MAIN);
@@ -96,7 +95,7 @@ public class SchemaView extends AbstractActionView {
 
         //load task fields if its for edit
         if (!isCreate) {
-            Schema schema = schemaService.getSchema(updateId);
+            Schema schema = SchemaService.getSchema(updateId);
             schemaName.setValue(schema.getName());
             schemaDesc.setValue(schema.getDescription());
             isDeprecated.setValue(schema.getDeprecated());
@@ -157,7 +156,7 @@ public class SchemaView extends AbstractActionView {
     private void configureGrid(Grid grid) {
         final BeanItemContainer<SchemaElement> container = new BeanItemContainer<>(SchemaElement.class, new LinkedList<SchemaElement>());
         grid.setContainerDataSource(container);
-        grid.setColumnOrder("type", "name", "description","data");
+        grid.setColumnOrder("type", "name", "description", "data");
         grid.setEditorEnabled(true);
         grid.addItemClickListener(new SchemaElementClickListener());
         for (Grid.Column c : grid.getColumns()) {
