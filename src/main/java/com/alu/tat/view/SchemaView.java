@@ -40,10 +40,14 @@ public class SchemaView extends AbstractActionView {
         schemaName.addValidator(new StringLengthValidator(
                 "Schema name must not be empty", 1, 255, false));
         final TextArea schemaDesc = new TextArea("Description");
+        final CheckBox isDefault = new CheckBox("Is Default");
+        isDefault.setDescription("Put default if you want this Schema to be set by default for the new tasks");
         final CheckBox isDeprecated = new CheckBox("Is Deprecated");
         isDeprecated.setDescription("Put deprecated if you do not want this schema to be used for Task analysis");
         form.addComponent(schemaName);
         form.addComponent(schemaDesc);
+        form.addComponent(new VSeparator(20));
+        form.addComponent(isDefault);
         form.addComponent(new VSeparator(20));
         form.addComponent(isDeprecated);
         form.addComponent(new VSeparator(20));
@@ -68,6 +72,7 @@ public class SchemaView extends AbstractActionView {
                 }
                 t.setName(schemaName.getValue());
                 t.setDescription(schemaDesc.getValue());
+                t.setIsdefault(isDefault.getValue());
                 t.setDeprecated(isDeprecated.getValue());
                 List<SchemaElement> newlist = t.getElementsList();
                 Collection<SchemaElement> cse = (Collection<SchemaElement>) grid.getContainerDataSource().getItemIds();
@@ -98,6 +103,7 @@ public class SchemaView extends AbstractActionView {
             Schema schema = SchemaService.getSchema(updateId);
             schemaName.setValue(schema.getName());
             schemaDesc.setValue(schema.getDescription());
+            isDefault.setValue(schema.getIsdefault() != null ? schema.getIsdefault() : false);
             isDeprecated.setValue(schema.getDeprecated());
             for (SchemaElement se : schema.getElementsList()) {
                 grid.getContainerDataSource().addItem(se);

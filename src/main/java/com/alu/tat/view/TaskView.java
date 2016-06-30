@@ -74,7 +74,10 @@ public class TaskView extends AbstractActionView {
             schemas = SchemaService.getSchemas();
         }
         final ComboBox taskSchema = new ComboBox("Schema", schemas);
-        Schema defaultSchema = schemas.iterator().next();
+        Schema defaultSchema = SchemaService.getDefaultSchema();
+        if (defaultSchema == null) {
+            defaultSchema = schemas.iterator().next();
+        }
         taskSchema.setValue(defaultSchema);
         taskSchema.setNullSelectionAllowed(false);
 

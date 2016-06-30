@@ -43,20 +43,26 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
         String[] options = data.split(";");
         List<String> allOptions = new LinkedList<>();
         List<String> defaultOptions = new LinkedList<>();
+        String singleDefOption = null;
         for (String s : options) {
-             String option;
-             if (s.startsWith("*")){
-                 option = s.substring(1);
-                 defaultOptions.add(option);
-             } else {
-                 option = s;
-             }
-             allOptions.add(option);
+            String option;
+            if (s.startsWith("*")) {
+                option = s.substring(1);
+                defaultOptions.add(option);
+                singleDefOption = option;
+            } else {
+                option = s;
+            }
+            allOptions.add(option);
         }
         value.setRows(allOptions.size());
         value.addItems(allOptions);
-        for (String s: defaultOptions) {
-            value.select(s);
+        if (element.getType() == SchemaElement.ElemType.MULTI_ENUM) {
+            value.setValue(defaultOptions);
+        } else {
+            if (singleDefOption != null) {
+                value.setValue(singleDefOption);
+            }
         }
         main.addComponents(label, new HSeparator(20), value);
 

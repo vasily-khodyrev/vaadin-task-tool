@@ -83,6 +83,7 @@ public class Init extends HttpServlet {
             logger.debug("Creating default schemas...");
             Schema defaultSchema = new Schema();
             defaultSchema.setIsSystem(true);
+            defaultSchema.setIsdefault(true);
             defaultSchema.setName("Detailed Analysis");
             defaultSchema.setDescription("Detailed analysis schema");
             List<SchemaElement> list = defaultSchema.getElementsList();

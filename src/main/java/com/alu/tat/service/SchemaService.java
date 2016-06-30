@@ -26,6 +26,17 @@ public class SchemaService {
         return schemas;
     }
 
+    public static Schema getDefaultSchema() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("isdefault", true);
+        List<Schema> schemas = BaseDao.find(Schema.class, "getDefaultSchemas", params);
+        if (schemas.size() > 0) {
+            return schemas.iterator().next();
+        } else {
+            return null;
+        }
+    }
+
     public static Schema getSchema(Long id) {
         return BaseDao.getById(id, Schema.class);
     }

@@ -15,7 +15,13 @@ import java.util.List;
         @NamedQuery(
                 name = "findNotDeprecatedSchemas",
                 query = "from Schema s where s.deprecated = :deprecated"
+        ),
+
+        @NamedQuery(
+                name = "getDefaultSchemas",
+                query = "from Schema s where s.isdefault = :isdefault"
         )
+
 })
 @Entity
 @Table(name = "schema")
@@ -26,8 +32,11 @@ public class Schema extends BaseEntity {
     @Column(name = "desc")
     private String description;
 
-    @ElementCollection (fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<SchemaElement> elementsList = new LinkedList<>();
+
+    @Column(name = "isdefault")
+    private Boolean isdefault = false;
 
     @Column(name = "deprecated")
     private Boolean deprecated = false;
@@ -64,6 +73,14 @@ public class Schema extends BaseEntity {
         this.deprecated = deprecated;
     }
 
+    public Boolean getIsdefault() {
+        return isdefault;
+    }
+
+    public void setIsdefault(Boolean isdefault) {
+        this.isdefault = isdefault;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -91,7 +108,7 @@ public class Schema extends BaseEntity {
 
     @Override
     public int compareTo(Object o) {
-        return name.compareTo(((Schema)o).name);
+        return name.compareTo(((Schema) o).name);
     }
 
     public Schema copy(Schema s) {
