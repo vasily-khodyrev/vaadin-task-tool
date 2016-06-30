@@ -34,8 +34,10 @@ public class PopupMenuManager {
 
         final Window window = new Window();
         VerticalSplitPanel vl = new VerticalSplitPanel();
-        Label l = new Label(content.getClass().getSimpleName());
+        Label l = new Label(content.getTitle());
+        l.setSizeUndefined();
         VerticalLayout vert = new VerticalLayout(l);
+        vert.setWidth(100, Sizeable.Unit.PERCENTAGE);
         vert.setComponentAlignment(l, Alignment.TOP_CENTER);
         vl.setFirstComponent(vert);
         vl.setSecondComponent(content);
@@ -70,6 +72,7 @@ public class PopupMenuManager {
     }
 
     public interface PopupContent extends Component {
+        public String getTitle();
         public void setWindow(Window w);
     }
 }

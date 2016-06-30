@@ -22,6 +22,11 @@ public class FolderPopupMenu extends VerticalLayout implements PopupMenuManager.
     }
 
     @Override
+    public String getTitle() {
+        return "Folder";
+    }
+
+    @Override
     public void setWindow(Window w) {
         this.window = w;
     }

@@ -23,6 +23,11 @@ public class SchemaPopupMenu extends VerticalLayout implements PopupMenuManager.
     }
 
     @Override
+    public String getTitle() {
+        return "Schema";
+    }
+
+    @Override
     public void setWindow(Window w) {
         this.window = w;
     }

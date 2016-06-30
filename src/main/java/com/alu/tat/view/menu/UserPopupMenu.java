@@ -27,6 +27,11 @@ public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.Po
     }
 
     @Override
+    public String getTitle() {
+        return "User";
+    }
+
+    @Override
     public void setWindow(Window w) {
         this.window = w;
     }
@@ -84,7 +89,7 @@ public class UserPopupMenu extends VerticalLayout implements PopupMenuManager.Po
             updateFolder.setVisible(false);
             deleteFolder.setVisible(false);
         } else {
-            if ( !SessionHelper.getCurrentUser(session).getIsSystem()) {
+            if (!SessionHelper.getCurrentUser(session).getIsSystem()) {
                 createFolder.setVisible(false);
                 deleteFolder.setVisible(false);
                 if (!item.equals(SessionHelper.getCurrentUser(session))) {

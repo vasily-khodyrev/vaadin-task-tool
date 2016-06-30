@@ -24,6 +24,11 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
     }
 
     @Override
+    public String getTitle() {
+        return "Task";
+    }
+
+    @Override
     public void setWindow(Window w) {
         this.window = w;
     }
