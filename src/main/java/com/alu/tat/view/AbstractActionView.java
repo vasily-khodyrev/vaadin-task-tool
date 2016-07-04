@@ -17,7 +17,7 @@ public abstract class AbstractActionView extends VerticalLayout implements View 
     protected Long getUpdateId(String params) {
         Long result = null;
         if (params != null && params.startsWith(UIConstants.OP_UPDATE)) {
-            String si = params.substring(UIConstants.OP_UPDATE.length()+1);
+            String si = params.substring(UIConstants.OP_UPDATE.length() + 1);
             try {
                 result = Long.valueOf(si);
             } catch (NumberFormatException e) {
@@ -26,5 +26,18 @@ public abstract class AbstractActionView extends VerticalLayout implements View 
         }
         return result;
 
+    }
+
+    protected Long getShowId(String params) {
+        Long result = null;
+        if (params != null && params.startsWith(UIConstants.OP_SHOW)) {
+            String si = params.substring(UIConstants.OP_SHOW.length() + 1);
+            try {
+                result = Long.valueOf(si);
+            } catch (NumberFormatException e) {
+                // bad luck
+            }
+        }
+        return result;
     }
 }
