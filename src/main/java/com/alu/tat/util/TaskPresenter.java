@@ -29,8 +29,8 @@ public class TaskPresenter {
         StringBuilder result = new StringBuilder();
         result.append("<h2>Task: " + putString(task.getName()) + "</h2>");
         result.append("<br>");
-        String uri = UI.getCurrent().getPage().getLocation().toString() + UIConstants.REPORT_SHOW + task.getId();
-        result.append("<b>Direct Url:</b><a ref=\"" + uri+"\"> " + uri + "</a><br><br>");
+        String uri = getReportUrl(task);
+        result.append("<b>Direct Url:</b><a ref=\"" + uri + "\"> " + uri + "</a><br><br>");
         result.append("<b>Description:</b> " + putString(task.getDescription()));
         result.append("<br>");
         result.append("<b>Folder:</b> " + putString(task.getFolder()));
@@ -134,6 +134,15 @@ public class TaskPresenter {
         result.append("<br>");
         result.append("<b>Total Estimate:</b> " + getDaysPrint(estim));
         return result.toString();
+    }
+
+    private static String getReportUrl(Task task) {
+        String uri = UI.getCurrent().getPage().getLocation().toString();
+        String suffix = UIConstants.REPORT_SHOW + task.getId();
+        if (!uri.contains(suffix)) {
+            uri = uri + suffix;
+        }
+        return uri;
     }
 
     private static String putString(Object s) {
