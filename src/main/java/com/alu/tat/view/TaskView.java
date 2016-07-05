@@ -182,6 +182,7 @@ public class TaskView extends AbstractActionView {
             taskDesc.setValue(task.getDescription());
             taskRel.setValue(task.getFolder());
             taskStatus.setValue(task.getStatus());
+            //TODO: Disable all fields in case Task Status is "Done"
             taskStatus.setEnabled(true);
             taskSchema.setValue(task.getSchema());
             taskSchema.setEnabled(false);
