@@ -7,7 +7,9 @@ import com.alu.tat.entity.Task;
 import com.alu.tat.entity.schema.Schema;
 import com.alu.tat.entity.schema.SchemaElement;
 import com.alu.tat.service.SchemaService;
+import com.alu.tat.view.UIConstants;
 import com.vaadin.data.Property;
+import com.vaadin.ui.UI;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -25,8 +27,10 @@ public class TaskPresenter {
 
     public static String getHtmlView(Task task) {
         StringBuilder result = new StringBuilder();
-        result.append("<h1>Task: " + putString(task.getName()) + "</h1>");
+        result.append("<h2>Task: " + putString(task.getName()) + "</h2>");
         result.append("<br>");
+        String uri = UI.getCurrent().getPage().getLocation().toString() + UIConstants.REPORT_SHOW + task.getId();
+        result.append("<b>Direct Url:</b><a ref=\"" + uri+"\"> " + uri + "</a><br><br>");
         result.append("<b>Description:</b> " + putString(task.getDescription()));
         result.append("<br>");
         result.append("<b>Folder:</b> " + putString(task.getFolder()));
