@@ -135,4 +135,15 @@ public class Task extends BaseEntity {
     public int compareTo(Object o) {
         return name.compareTo(((Task) o).name);
     }
+
+    public Task copy(Task t) {
+        this.name = t.getName() + "(Copy)";
+        this.description = t.getDescription();
+        this.author = t.getAuthor();
+        this.folder = t.getFolder();
+        this.schema = t.getSchema();
+        this.status = Status.NEW;
+        this.data = t.getData();
+        return this;
+    }
 }

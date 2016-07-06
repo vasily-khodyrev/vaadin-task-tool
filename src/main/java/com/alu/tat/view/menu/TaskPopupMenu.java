@@ -1,9 +1,8 @@
 package com.alu.tat.view.menu;
 
 import com.alu.tat.entity.Task;
-import com.alu.tat.entity.User;
 import com.alu.tat.service.TaskService;
-import com.alu.tat.service.UserService;
+import com.alu.tat.util.SessionHelper;
 import com.alu.tat.view.UIConstants;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
@@ -40,17 +39,6 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
     }
 
     private void initButtons(VerticalLayout layout) {
-        Button createFolder = new Button("Create");
-        createFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-        createFolder.addStyleName("accordianButton");
-        createFolder.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                getUI().getCurrent().getNavigator().navigateTo(UIConstants.TASK_CREATE);
-                closeWindow();
-            }
-        });
-
         Button updateFolder = new Button("Update");
         updateFolder.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         updateFolder.addStyleName("accordianButton");
@@ -59,6 +47,22 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
             public void buttonClick(Button.ClickEvent event) {
                 if (item != null) {
                     getUI().getCurrent().getNavigator().navigateTo(UIConstants.TASK_UPDATE + item.getId());
+                }
+                closeWindow();
+            }
+        });
+
+        Button createCopy = new Button("Create Copy");
+        createCopy.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        createCopy.addStyleName("accordianButton");
+        createCopy.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                if (item != null) {
+                    Task task = new Task().copy(item);
+                    task.setAuthor(SessionHelper.getCurrentUser(getSession()));
+                    TaskService.addTask(task);
+                    getUI().getCurrent().getNavigator().navigateTo(UIConstants.TASK_UPDATE + task.getId());
                 }
                 closeWindow();
             }
@@ -85,11 +89,9 @@ public class TaskPopupMenu extends VerticalLayout implements PopupMenuManager.Po
         if (item == null) {
             updateFolder.setVisible(false);
             deleteFolder.setVisible(false);
-        } else {
-            createFolder.setVisible(false);
         }
-        layout.addComponents(createFolder, updateFolder, deleteFolder);
-        layout.setComponentAlignment(createFolder, Alignment.MIDDLE_CENTER);
+        layout.addComponents(updateFolder, createCopy, deleteFolder);
+        layout.setComponentAlignment(createCopy, Alignment.MIDDLE_CENTER);
         layout.setComponentAlignment(updateFolder, Alignment.MIDDLE_CENTER);
         layout.setComponentAlignment(deleteFolder, Alignment.MIDDLE_CENTER);
     }
