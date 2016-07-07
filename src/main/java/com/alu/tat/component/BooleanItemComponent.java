@@ -149,4 +149,12 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
     public boolean isModified() {
         return super.isModified() || isStateChanged();
     }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        value.setEnabled(!readOnly);
+        multi.setEnabled(!readOnly);
+        comment.setEnabled(!readOnly);
+    }
 }

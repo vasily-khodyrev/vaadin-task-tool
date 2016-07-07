@@ -90,10 +90,10 @@ public class TaskView extends AbstractActionView {
         form.addComponent(taskSchema);
         form.addComponent(taskStatus);
 
-        Button create = UIComponentFactory.getButton(isCreate ? "Create" : "Update", "TASKVIEW_CREATEORUPDATE_BUTTON", FontAwesome.PLUS);
-        Button back = UIComponentFactory.getButton("Back", "TASKVIEW_CANCEL_BUTTON", FontAwesome.ARROW_LEFT);
+        Button createButton = UIComponentFactory.getButton(isCreate ? "Create" : "Update", "TASKVIEW_CREATEORUPDATE_BUTTON", FontAwesome.PLUS);
+        Button cancelButton = UIComponentFactory.getButton("Back", "TASKVIEW_CANCEL_BUTTON", FontAwesome.ARROW_LEFT);
 
-        HorizontalLayout buttonGroup = new HorizontalLayout(create, new HSeparator(20), back);
+        HorizontalLayout buttonGroup = new HorizontalLayout(createButton, new HSeparator(20), cancelButton);
         form.addComponent(buttonGroup);
         hsplit.setFirstComponent(form);
         //Left section end
@@ -120,7 +120,7 @@ public class TaskView extends AbstractActionView {
         addComponent(hsplit);
         this.setSizeFull();
 
-        create.addClickListener(new Button.ClickListener() {
+        createButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (!isDataValid(fieldMap)) return;
@@ -156,7 +156,7 @@ public class TaskView extends AbstractActionView {
             }
         });
 
-        back.addClickListener(new Button.ClickListener() {
+        cancelButton.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (isDataModified(fieldMap)) {
@@ -182,11 +182,19 @@ public class TaskView extends AbstractActionView {
             taskDesc.setValue(task.getDescription());
             taskRel.setValue(task.getFolder());
             taskStatus.setValue(task.getStatus());
-            //TODO: Disable all fields in case Task Status is "Done"
             taskStatus.setEnabled(true);
             taskSchema.setValue(task.getSchema());
             taskSchema.setEnabled(false);
-            initSchemaData(fieldMap, task.getData(), (Schema) taskSchema.getValue());
+            boolean isFinished = Task.Status.DONE.equals(task.getStatus());
+            if (isFinished) {
+                taskName.setEnabled(false);
+                taskRel.setEnabled(false);
+                if (!SessionHelper.getCurrentUser(getSession()).getIsSystem()) {
+                    taskStatus.setEnabled(false);
+                    createButton.setEnabled(false);
+                }
+            }
+            initSchemaData(fieldMap, task.getData(), (Schema) taskSchema.getValue(), isFinished);
         }
 
         taskSchema.addValueChangeListener(new Property.ValueChangeListener() {
@@ -197,7 +205,7 @@ public class TaskView extends AbstractActionView {
                 hsplit.setSecondComponent(ts);
                 if (!isCreate) {
                     Task task = TaskService.getTask(updateId);
-                    initSchemaData(fieldMap, task.getData(), newSchema);
+                    initSchemaData(fieldMap, task.getData(), newSchema, Task.Status.DONE.equals(task.getStatus()));
                 }
             }
         });
@@ -227,13 +235,16 @@ public class TaskView extends AbstractActionView {
         return false;
     }
 
-    private void initSchemaData(final Map<String, Property> fieldMap, String jsonData, Schema schema) {
+    private void initSchemaData(final Map<String, Property> fieldMap, String jsonData, Schema schema, boolean isReadonly) {
         Map<String, Object> valueMap = TaskPresenter.convertFromJSON(jsonData, schema);
         for (String fieldName : fieldMap.keySet()) {
             Property field = fieldMap.get(fieldName);
             Object vo = valueMap.get(fieldName);
             if (vo != null) {
                 field.setValue(vo);
+            }
+            if (isReadonly) {
+                field.setReadOnly(isReadonly);
             }
         }
     }

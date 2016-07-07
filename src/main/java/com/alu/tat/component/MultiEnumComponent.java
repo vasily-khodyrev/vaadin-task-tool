@@ -109,4 +109,10 @@ public class MultiEnumComponent extends CustomField<MultiEnumBean> {
     public boolean isModified() {
         return super.isModified() || isStateChanged();
     }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        value.setEnabled(!readOnly);
+    }
 }

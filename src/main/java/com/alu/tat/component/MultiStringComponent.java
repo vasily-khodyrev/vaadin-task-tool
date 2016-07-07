@@ -201,4 +201,14 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
 
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        super.setReadOnly(readOnly);
+        multi.setEnabled(!readOnly);
+        for (int i = 2; i < main.getComponentCount(); i++) {
+            AbstractField f = getFieldValue(main.getComponent(i));
+            f.setEnabled(!readOnly);
+        }
+    }
+
 }
