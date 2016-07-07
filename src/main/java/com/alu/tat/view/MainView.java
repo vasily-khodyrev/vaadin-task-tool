@@ -123,11 +123,14 @@ public class MainView extends VerticalLayout implements View {
         signout.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                // "Logout" the user
-                getSession().setAttribute("user", null);
+                // Close the VaadinServiceSession
+                getUI().getSession().close();
 
-                // Refresh this view, should redirect to login view
-                navigator.navigateTo("");
+                // Invalidate underlying session instead if login info is stored there
+                // VaadinService.getCurrentRequest().getWrappedSession().invalidate();
+
+                // Redirect to avoid keeping the removed UI open in the browser
+                getUI().getPage().setLocation("/");
             }
         });
         panelCaption.addComponent(signout);
