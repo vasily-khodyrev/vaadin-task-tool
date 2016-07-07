@@ -3,4 +3,8 @@
   .v-textarea {
     resize: vertical;
   }
+
+  .v-textarea.v-textarea-normal {
+    resize: none;
+  }
 }

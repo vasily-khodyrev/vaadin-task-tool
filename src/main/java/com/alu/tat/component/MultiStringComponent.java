@@ -131,6 +131,7 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         incVisualFieldCount();
 
         final TextArea text = new TextArea("", value);
+        text.addStyleName("v-textarea-normal");
         text.setWordwrap(false);
         text.setCaption("Case description");
         text.setWidth("600px");

@@ -56,6 +56,7 @@ public class BooleanItemComponent extends CustomField<BooleanItemBean> {
         multi.setWidth(3f, Unit.EM);
         multi.setEnabled(false);
         comment = new TextArea();
+        comment.addStyleName("v-textarea-normal");
         comment.setWidth("600px");
         comment.setRows(calcRowNum(""));
         comment.setWordwrap(true);
