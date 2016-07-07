@@ -40,6 +40,7 @@ public class ReportView extends AbstractActionView {
             RichTextArea text = new RichTextArea();
             text.setValue(s);
             text.setReadOnly(true);
+            text.setWidth(100, Unit.PERCENTAGE);
             infoPanel.setContent(text);
             addComponent(infoPanel);
             setSizeFull();

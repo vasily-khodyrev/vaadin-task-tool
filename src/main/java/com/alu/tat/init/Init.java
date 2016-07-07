@@ -100,7 +100,6 @@ public class Init extends HttpServlet {
 
             list.add(new SchemaElement("Business logic", "All business logic aspects", SchemaElement.ElemType.DOMAIN, 0));
             list.add(new SchemaElement("Enhancer / CoherenceChecker / Post-pre actions", "Does the new Business logic affects pointed items?", SchemaElement.ElemType.BOOLEAN, 4));
-            list.add(new SchemaElement("New or changed behavior?", "Do we need to introduc/change any business logic?", SchemaElement.ElemType.BOOLEAN, 4));
             list.add(new SchemaElement("New/changed alarms", "Do we need to create/update alarms?", SchemaElement.ElemType.BOOLEAN, 2));
             list.add(new SchemaElement("Describe cases", "Describe each business case that must be implemented", SchemaElement.ElemType.MULTI_STRING, 4));
 
