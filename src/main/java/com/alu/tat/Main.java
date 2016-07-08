@@ -43,6 +43,7 @@ public class Main extends UI {
         navigator.addView(UIConstants.VIEW_USER, UserView.class);
         navigator.addView(UIConstants.VIEW_FOLDER, FolderView.class);
         navigator.addView(UIConstants.VIEW_REPORT, ReportView.class);
+        navigator.addView(UIConstants.VIEW_REPORTLIST, ReportListView.class);
         navigator.setErrorView(ErrorView.class);
         //
         // We use a view change handler to ensure the user is always redirected
@@ -57,11 +58,12 @@ public class Main extends UI {
                 boolean isLoggedIn = getSession().getAttribute("user") != null;
                 boolean isLoginView = event.getNewView() instanceof LoginView;
                 boolean isReportView = event.getNewView() instanceof ReportView;
+                boolean isReportListView = event.getNewView() instanceof ReportListView;
 
                 if (!isLoggedIn && !isLoginView) {
                     // Redirect to login view always if a user has not yet
                     // logged in
-                    if (isReportView) {
+                    if (isReportView || isReportListView) {
                         return true;
                     }
                     getNavigator().navigateTo(UIConstants.VIEW_LOGIN);

@@ -1,14 +1,19 @@
 package com.alu.tat.view;
 
+import com.vaadin.server.ThemeResource;
+
 /**
  * Created by
  * User: Vasily Khodyrev
  * Date: 13.07.15
  */
 public interface UIConstants {
+    //Resources
+    public static final ThemeResource FOLDER_ICON = new ThemeResource("../runo/icons/16/folder.png");
 
     //Views
     public final static String VIEW_REPORT = "Report";
+    public final static String VIEW_REPORTLIST = "ReportList";
     public final static String VIEW_TASK = "Task";
     public final static String VIEW_SCHEMA = "Schema";
     public final static String VIEW_USER = "User";

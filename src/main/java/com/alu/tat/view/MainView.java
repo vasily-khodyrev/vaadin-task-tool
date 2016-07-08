@@ -36,7 +36,6 @@ import java.util.Set;
  */
 public class MainView extends VerticalLayout implements View {
 
-    public static final ThemeResource FOLDER_ICON = new ThemeResource("../runo/icons/16/folder.png");
     private Navigator navigator;
     private PopupMenuManager popupManager;
 
@@ -215,13 +214,13 @@ public class MainView extends VerticalLayout implements View {
 
         tree.addItem(root);
         tree.expandItem(root);
-        tree.setItemIcon(root, FOLDER_ICON);
+        tree.setItemIcon(root, UIConstants.FOLDER_ICON);
 
         Set<Folder> foldersSet = new LinkedHashSet<>(FolderService.getFolders());
         //At first add all sub-nodes
         for (Folder r : foldersSet) {
             Item i = tree.addItem(r);
-            tree.setItemIcon(r, FOLDER_ICON);
+            tree.setItemIcon(r, UIConstants.FOLDER_ICON);
         }
         //After we can setup the roots
         for (Folder r : foldersSet) {
@@ -254,7 +253,7 @@ public class MainView extends VerticalLayout implements View {
         String root = "Schemas";
 
         tree.addItem(root);
-        tree.setItemIcon(root, FOLDER_ICON);
+        tree.setItemIcon(root, UIConstants.FOLDER_ICON);
         tree.expandItem(root);
 
         for (Schema t : schemas) {
@@ -273,7 +272,7 @@ public class MainView extends VerticalLayout implements View {
         String root = "Users";
 
         tree.addItem(root);
-        tree.setItemIcon(root, FOLDER_ICON);
+        tree.setItemIcon(root, UIConstants.FOLDER_ICON);
         tree.expandItem(root);
 
         for (User t : users) {
