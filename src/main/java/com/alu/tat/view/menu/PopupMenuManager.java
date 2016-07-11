@@ -7,6 +7,7 @@ import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -15,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * User: vkhodyre
  * Date: 3/23/2016
  */
-public class PopupMenuManager {
+public class PopupMenuManager implements Serializable {
     private CopyOnWriteArrayList<Window> extraWindows = new CopyOnWriteArrayList<>();
 
     public PopupMenuManager(AbstractOrderedLayout layout) {

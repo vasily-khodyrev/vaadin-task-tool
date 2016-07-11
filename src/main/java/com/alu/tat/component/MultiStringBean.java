@@ -1,14 +1,14 @@
 package com.alu.tat.component;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * Created by
  * User: vkhodyre
  * Date: 6/20/2016
  */
-public class MultiStringBean {
+public class MultiStringBean implements Serializable {
     Integer multi;
     LinkedHashMap<String, Integer> values;
 

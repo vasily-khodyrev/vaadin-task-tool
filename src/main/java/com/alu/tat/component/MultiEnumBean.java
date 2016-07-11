@@ -1,5 +1,6 @@
 package com.alu.tat.component;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  * User: Vasily Khodyrev
  * Date: 23.06.2016
  */
-public class MultiEnumBean {
+public class MultiEnumBean implements Serializable {
     List<String> value;
 
     public MultiEnumBean(List<String> value) {

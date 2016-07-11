@@ -1,11 +1,13 @@
 package com.alu.tat.component;
 
+import java.io.Serializable;
+
 /**
  * Created by
  * User: vkhodyre
  * Date: 6/21/2016
  */
-public class BooleanItemBean {
+public class BooleanItemBean implements Serializable {
     Boolean value;
     Integer multi;
     String comments;
