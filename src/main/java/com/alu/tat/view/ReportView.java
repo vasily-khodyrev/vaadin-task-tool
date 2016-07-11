@@ -29,7 +29,9 @@ public class ReportView extends AbstractActionView {
         navigator = getUI().getNavigator();
         Task task = null;
         try {
-            task = TaskService.getTask(showId);
+            if (showId != null) {
+                task = TaskService.getTask(showId);
+            }
         } catch (Exception e) {
             logger.error("Task with id " + showId + " not found");
         }
@@ -45,7 +47,7 @@ public class ReportView extends AbstractActionView {
             addComponent(infoPanel);
             setSizeFull();
         } else {
-            navigator.navigateTo(UIConstants.VIEW_LOGIN);
+            navigator.navigateTo(UIConstants.VIEW_REPORTLIST);
         }
     }
 }
