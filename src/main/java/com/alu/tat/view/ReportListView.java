@@ -50,6 +50,9 @@ public class ReportListView extends VerticalLayout implements View {
     }
 
     private Component getTasksTreeMenu() {
+        Panel panel = new Panel();
+        panel.setSizeFull();
+
         FormLayout layout = new FormLayout();
 
         Button enterTool = new Button("Enter Analysis Tool");
@@ -61,13 +64,12 @@ public class ReportListView extends VerticalLayout implements View {
         });
         layout.addComponent(enterTool);
 
-        Panel p = new Panel();
         Tree taskTree = new Tree();
         configureTaskTree(taskTree, infoPanel);
-        p.setContent(taskTree);
+        layout.addComponent(taskTree);
 
-        layout.addComponent(p);
-        return layout;
+        panel.setContent(layout);
+        return panel;
     }
 
     private void configureTaskTree(Tree tree, Panel infoPanel) {
