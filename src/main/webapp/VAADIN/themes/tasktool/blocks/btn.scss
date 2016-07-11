@@ -1,0 +1,20 @@
+@mixin tasktool-btn {
+
+  .btn-prev {
+
+    .v-button-caption {
+      border-bottom: 1px solid $dark;
+    }
+
+    &:hover {
+      .v-button-caption {
+        border-bottom-color: transparent;
+      }
+    }
+  }
+
+  .accordianButton:hover {
+    color: white;
+  }
+
+}

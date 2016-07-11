@@ -5,13 +5,14 @@ import com.alu.tat.entity.Task;
 import com.alu.tat.service.FolderService;
 import com.alu.tat.service.TaskService;
 import com.alu.tat.util.TaskPresenter;
-import com.alu.tat.view.menu.PopupMenuManager;
 import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -24,14 +25,12 @@ import java.util.Set;
  */
 public class ReportListView extends VerticalLayout implements View {
     private Navigator navigator;
-    private PopupMenuManager popupManager;
 
     private Panel infoPanel;
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         navigator = getUI().getNavigator();
-        popupManager = new PopupMenuManager(this);
 
         infoPanel = new Panel();
         infoPanel.setSizeFull();
@@ -56,6 +55,11 @@ public class ReportListView extends VerticalLayout implements View {
         FormLayout layout = new FormLayout();
 
         Button enterTool = new Button("Enter Analysis Tool");
+        enterTool.addStyleName(ValoTheme.BUTTON_LINK);
+        enterTool.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+        enterTool.addStyleName("btn-prev");
+        enterTool.setIcon(new ThemeResource("img/previous.png"));
+
         enterTool.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
