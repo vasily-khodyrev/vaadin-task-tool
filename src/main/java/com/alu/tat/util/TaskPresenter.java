@@ -139,6 +139,10 @@ public class TaskPresenter {
     private static String getReportUrl(Task task) {
         String uri = UI.getCurrent().getPage().getLocation().toString();
         String suffix = UIConstants.REPORT_SHOW + task.getId();
+        String reportList = UIConstants.VIEW_REPORTLIST;
+        if (uri.contains(reportList)) {
+            uri = uri.substring(0,uri.indexOf(reportList));
+        }
         if (!uri.contains(suffix)) {
             uri = uri + suffix;
         }

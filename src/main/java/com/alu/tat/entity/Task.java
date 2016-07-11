@@ -1,6 +1,8 @@
 package com.alu.tat.entity;
 
 import com.alu.tat.entity.schema.Schema;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 
@@ -52,10 +54,12 @@ public class Task extends BaseEntity {
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "user_id")
     private User author;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "schema_id")
     private Schema schema;
 
@@ -67,6 +71,7 @@ public class Task extends BaseEntity {
     private String data;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "folder_id")
     private Folder folder;
 

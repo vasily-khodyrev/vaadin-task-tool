@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.io.Serializable;
 
 /**
  * Created by
@@ -11,7 +12,7 @@ import javax.persistence.Enumerated;
  * Date: 7/8/2015
  */
 @Embeddable
-public class SchemaElement {
+public class SchemaElement implements Serializable {
     @Enumerated(EnumType.STRING)
     private ElemType type = ElemType.BOOLEAN;
 

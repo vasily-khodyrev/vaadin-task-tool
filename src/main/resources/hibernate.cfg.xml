@@ -7,7 +7,7 @@
         <!--<property name="connection.driver_class">org.hsqldb.jdbcDriver</property>
         <property name="connection.url">jdbc:hsqldb:mem:tool_db</property>-->
         <property name="connection.driver_class">org.h2.Driver</property>
-        <property name="connection.url">jdbc:h2:file:C:/Shared/TASKS/tasks_db</property>
+        <property name="connection.url">jdbc:h2:file:C:/Shared/TASKS/tasks_db;LOCK_MODE=3</property>
         <property name="connection.username">sa</property>
         <property name="connection.password"></property>
         <!-- DB schema will be updated if needed -->
