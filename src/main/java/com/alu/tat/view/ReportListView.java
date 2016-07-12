@@ -119,7 +119,7 @@ public class ReportListView extends VerticalLayout implements View {
     private void showTaskInfo(Task task) {
         String s = TaskPresenter.getHtmlView(task);
         RichTextArea text = new RichTextArea();
-        text.setSizeFull();
+        text.setWidth(100, Unit.PERCENTAGE);
         text.setValue(s);
         text.setReadOnly(true);
         infoPanel.setContent(text);
