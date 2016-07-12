@@ -73,7 +73,7 @@ public class MainView extends VerticalLayout implements View {
     private Component getTasksTreeMenu() {
         Layout container = new VerticalLayout();
 
-        configureTaskTree(taskTree, infoPanel);
+        configureTaskTree(taskTree);
 
         container.addComponent(taskTree);
 
@@ -205,7 +205,7 @@ public class MainView extends VerticalLayout implements View {
         return new Panel(container);
     }
 
-    private void configureTaskTree(Tree tree, Panel infoPanel) {
+    private void configureTaskTree(Tree tree) {
         final Collection<Task> tasks = TaskService.getTasks();
 
         String root = "Folder";

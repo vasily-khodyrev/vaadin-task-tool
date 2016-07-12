@@ -1,5 +1,6 @@
 package com.alu.tat;
 
+import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.ServiceException;
 import com.vaadin.server.SessionInitEvent;
 import com.vaadin.server.SessionInitListener;
@@ -8,12 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 
 /**
  * Created by
  * User: vkhodyre
  * Date: 3/17/2016
  */
+@WebServlet(urlPatterns = "/*", asyncSupported = true)
+@VaadinServletConfiguration(productionMode = true, ui = Main.class)
 public class TaskAnalysisServlet extends VaadinServlet
         implements SessionInitListener {
 

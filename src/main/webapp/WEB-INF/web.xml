@@ -9,6 +9,9 @@
         <param-name>log4j-config</param-name>
         <param-value>log4j.properties</param-value>
     </context-param>
+    <listener>
+        <listener-class>com.alu.tat.util.HttpSessionCollector</listener-class>
+    </listener>
     <servlet>
         <servlet-name>myservlet</servlet-name>
         <servlet-class>
