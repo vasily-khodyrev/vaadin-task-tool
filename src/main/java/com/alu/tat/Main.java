@@ -39,7 +39,7 @@ public class Main extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        int pollint = 10 * 60 * 1000;
+        final int pollint = 5 * 60 * 1000;
         logger.debug("Setting poll interval to " + pollint / 1000 + " sec");
         setPollInterval(pollint);
 
@@ -52,7 +52,7 @@ public class Main extends UI {
                 String view = event.getUI().getNavigator().getCurrentView().getClass().getName();
                 User u = SessionHelper.getCurrentUser(event.getUI().getSession());
                 String user = u != null ? u.getLogin() : "notLoggedIn";
-                logger.debug("TEST POLL: " + counter++ + " user = " + user + " " + loc + " " + view);
+                logger.debug("POLL " + pollint / 1000 + " sec : " + counter++ + " user = " + user + " " + loc + " " + view);
             }
         });
 

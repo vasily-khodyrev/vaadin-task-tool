@@ -33,8 +33,8 @@ public class TaskAnalysisServlet extends VaadinServlet
     @Override
     public void sessionInit(SessionInitEvent event)
             throws ServiceException {
-        //set session timeout to 20 min
-        int timeout = 20 * 60;
+        //set session timeout to 10 min
+        int timeout = 10 * 60;
         logger.debug("New session established. Setting session timeout to " + timeout + "sec");
         event.getSession().getSession().setMaxInactiveInterval(timeout);
     }

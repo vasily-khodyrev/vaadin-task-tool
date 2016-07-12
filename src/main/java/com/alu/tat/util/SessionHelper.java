@@ -1,6 +1,7 @@
 package com.alu.tat.util;
 
 import com.alu.tat.entity.User;
+import com.alu.tat.view.LoginView;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Notification;
@@ -41,11 +42,12 @@ public class SessionHelper {
             for (final UI ui : vSession.getUIs()) {
                 final Page page = ui.getPage();
                 String view = ui.getNavigator().getCurrentView().getClass().getName();
+                boolean isLoginView = ui.getNavigator().getCurrentView() instanceof LoginView;
                 User u = getCurrentUser(ui.getSession());
-                String user = u != null ? u.getLogin() : "notLoggedIn";
-                if (u != null) {
+                String user = u != null ? u.getLogin() : "Anonymous";
+                if (!isLoginView) {
                     logger.debug("Notify user '" + user + "' on page '" + view + "' with msg '" + msg + "'.");
-                    final Notification notification = new Notification("Dear user " + user + " FYI : " + msg, Notification.Type.WARNING_MESSAGE);
+                    final Notification notification = new Notification("Dear user '" + user + "' FYI : " + msg, Notification.Type.WARNING_MESSAGE);
                     ui.access(new Runnable() {
                         @Override
                         public void run() {

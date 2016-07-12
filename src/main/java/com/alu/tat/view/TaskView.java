@@ -145,9 +145,11 @@ public class TaskView extends AbstractActionView {
                 t.setData(TaskPresenter.convertToData((Schema) taskSchema.getValue(), fieldMap));
                 if (!isCreate) {
                     TaskService.updateTask(t);
+                    SessionHelper.notifyAllUsers("Task '" + t.getName() + "' is updated");
                     logger.debug("User " + SessionHelper.getCurrentUser(getSession()) + " updated task '" + t.getName() + "'");
                 } else {
                     TaskService.addTask(t);
+                    SessionHelper.notifyAllUsers("Task '" + t.getName() + "' is created.");
                     logger.debug("User " + SessionHelper.getCurrentUser(getSession()) + " created task '" + t.getName() + "'");
                 }
 

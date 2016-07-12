@@ -115,10 +115,9 @@ public class MainView extends VerticalLayout implements View {
         HorizontalLayout panelCaption = new HorizontalLayout();
         panelCaption.setStyleName("panelstyle");
         panelCaption.setWidth(100, Unit.PERCENTAGE);
-        //Label menuLab = new Label("Menu");
-        //panelCaption.addComponent(menuLab);
-        //panelCaption.setComponentAlignment(menuLab, Alignment.TOP_LEFT);
+
         Button signout = UIComponentFactory.getButton("Sign Out", "MAINVIEW_SIGNOUT_BUTTON");
+
         signout.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -130,6 +129,7 @@ public class MainView extends VerticalLayout implements View {
                 getUI().getPage().setLocation(path);
             }
         });
+
         panelCaption.addComponent(signout);
         panelCaption.setComponentAlignment(signout, Alignment.TOP_RIGHT);
         panelCaption.setHeight(signout.getHeight(), signout.getHeightUnits());
