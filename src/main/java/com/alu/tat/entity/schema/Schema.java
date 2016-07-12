@@ -1,6 +1,8 @@
 package com.alu.tat.entity.schema;
 
 import com.alu.tat.entity.BaseEntity;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -33,6 +35,7 @@ public class Schema extends BaseEntity {
     private String description;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT)
     private List<SchemaElement> elementsList = new LinkedList<>();
 
     @Column(name = "isdefault")
