@@ -125,11 +125,9 @@ public class MainView extends VerticalLayout implements View {
                 // Close the VaadinServiceSession
                 getUI().getSession().close();
 
-                // Invalidate underlying session instead if login info is stored there
-                // VaadinService.getCurrentRequest().getWrappedSession().invalidate();
-
-                // Redirect to avoid keeping the removed UI open in the browser
-                getUI().getPage().setLocation("/");
+                // Redirect to the rool app location to avoid UI freeze
+                String path = getUI().getPage().getLocation().getPath();
+                getUI().getPage().setLocation(path);
             }
         });
         panelCaption.addComponent(signout);
