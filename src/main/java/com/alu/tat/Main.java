@@ -10,6 +10,7 @@ import com.vaadin.event.UIEvents;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.WebBrowser;
 import com.vaadin.ui.UI;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
@@ -49,10 +50,13 @@ public class Main extends UI {
             @Override
             public void poll(UIEvents.PollEvent event) {
                 String loc = event.getUI().getPage().getLocation().toString();
+                WebBrowser browser = event.getUI().getPage().getWebBrowser();
+                String broserApp = browser.getBrowserApplication();
+                String address = browser.getAddress();
                 String view = event.getUI().getNavigator().getCurrentView().getClass().getName();
                 User u = SessionHelper.getCurrentUser(event.getUI().getSession());
                 String user = u != null ? u.getLogin() : "notLoggedIn";
-                logger.debug("POLL " + pollint / 1000 + " sec : " + counter++ + " user = " + user + " " + loc + " " + view);
+                logger.debug("POLL " + pollint / 1000 + " sec : " + counter++ + " user = " + user + " " + loc + " " + view + " Browser: " + broserApp + " Addr: " + address);
             }
         });
 
