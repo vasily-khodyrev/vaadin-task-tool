@@ -16,7 +16,6 @@ import javax.servlet.annotation.WebServlet;
  * User: vkhodyre
  * Date: 3/17/2016
  */
-@WebServlet(urlPatterns = "/*", asyncSupported = true)
 @VaadinServletConfiguration(productionMode = true, ui = Main.class)
 public class TaskAnalysisServlet extends VaadinServlet
         implements SessionInitListener {

@@ -48,6 +48,7 @@ public class SessionHelper {
                 if (!isLoginView) {
                     logger.debug("Notify user '" + user + "' on page '" + view + "' with msg '" + msg + "'.");
                     final Notification notification = new Notification("Dear user '" + user + "' FYI : " + msg, Notification.Type.WARNING_MESSAGE);
+                    notification.setDelayMsec(3*1000);
                     ui.access(new Runnable() {
                         @Override
                         public void run() {
