@@ -9,22 +9,11 @@ import java.util.LinkedHashMap;
  * Date: 6/20/2016
  */
 public class MultiStringBean implements Serializable {
-    Integer multi;
     LinkedHashMap<String, Integer> values;
 
-    public MultiStringBean(Integer multi, LinkedHashMap<String, Integer> values) {
-        this.multi = multi;
+    public MultiStringBean(LinkedHashMap<String, Integer> values) {
         this.values = values;
     }
-
-    public Integer getMulti() {
-        return multi;
-    }
-
-    public void setMulti(Integer multi) {
-        this.multi = multi;
-    }
-
     public LinkedHashMap<String, Integer> getValues() {
         return values;
     }
@@ -40,15 +29,12 @@ public class MultiStringBean implements Serializable {
 
         MultiStringBean that = (MultiStringBean) o;
 
-        if (multi != null ? !multi.equals(that.multi) : that.multi != null) return false;
-        return !(values != null ? !values.equals(that.values) : that.values != null);
+        return values != null ? values.equals(that.values) : that.values == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = multi != null ? multi.hashCode() : 0;
-        result = 31 * result + (values != null ? values.hashCode() : 0);
-        return result;
+        return values != null ? values.hashCode() : 0;
     }
 }

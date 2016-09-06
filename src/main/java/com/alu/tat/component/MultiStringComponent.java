@@ -6,6 +6,7 @@ import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import java.util.Map;
 public class MultiStringComponent extends CustomField<MultiStringBean> {
 
     private VerticalLayout main;
-    private TextField multi;
     private String header;
 
     private volatile int visualFieldCount = 0;
@@ -24,6 +24,8 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
     private volatile int initialFieldCount = 0;
 
     private SchemaElement element;
+
+    private MultiStringBean originalState;
 
     /**
      * Constructor needed for testing purposes only.
@@ -48,14 +50,14 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         baseInit();
 
         main.setImmediate(true);
-        main.addComponent(addField(""));
+        main.addComponent(addField("", element.getMultiplier()));
         storeState();
 
         return main;
     }
 
     private void storeState() {
-        initialFieldCount = visualFieldCount;
+        originalState = getValue();
     }
 
     private boolean isFieldCountModified() {
@@ -78,16 +80,21 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
     @Override
     public MultiStringBean getValue() {
         LinkedHashMap<String, Integer> value = new LinkedHashMap();
-        Integer m = Integer.parseInt(multi.getValue());
         //skip separator and label
         for (int i = 2; i < main.getComponentCount(); i++) {
-            String v = getFieldValue(main.getComponent(i)).getValue();
-            if (v != null) {
-                value.put(v, m);
+            List<AbstractField> lv = getFieldValue(main.getComponent(i));
+            if (lv.get(0).getValue() != null) {
+                Integer m = 0;
+                try {
+                    m = Integer.parseInt((String) lv.get(1).getValue());
+                } catch (Exception e) {
+                    //keep 0
+                }
+                value.put((String) lv.get(0).getValue(), m);
             }
         }
 
-        return new MultiStringBean(m, value);
+        return new MultiStringBean(value);
     }
 
     @Override
@@ -96,38 +103,28 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
 
         baseInit();
         LinkedHashMap<String, Integer> value = bean.getValues();
-
         if (value != null && !value.isEmpty()) {
             for (Map.Entry<String, Integer> v : value.entrySet()) {
-                main.addComponent(addField(v.getKey()));
+                main.addComponent(addField(v.getKey(), v.getValue()));
             }
         } else {
-            main.addComponent(addField(""));
+            main.addComponent(addField("", element.getMultiplier()));
         }
         storeState();
     }
 
     private void baseInit() {
         visualFieldCount = 0;
-
         HorizontalLayout hl = new HorizontalLayout();
         Label label = new Label(header);
-        multi = new TextField();
-        multi.setDescription("Estimate per case");
-        multi.setValue(element.getMultiplier().toString());
-        multi.setConverter(Integer.class);
-        multi.addValidator(new IntegerRangeValidator("Estimate should be between 1 and 80", 1, 80));
-        multi.setWidth(3f, Unit.EM);
         hl.addComponent(label);
         hl.addComponent(new HSeparator(20));
-        hl.addComponent(multi);
         hl.setComponentAlignment(label, Alignment.MIDDLE_LEFT);
-        hl.setComponentAlignment(multi, Alignment.MIDDLE_LEFT);
         main.addComponent(hl);
         main.addComponent(new VSeparator(20));
     }
 
-    private GridLayout addField(String value) {
+    private GridLayout addField(String value, Integer m) {
         incVisualFieldCount();
 
         final TextArea text = new TextArea("", value);
@@ -137,6 +134,13 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         text.setWidth("600px");
         text.setRows(calcRowNum(value));
 
+        TextField cmulti = new TextField();
+        cmulti.setDescription("Estimate per case");
+        cmulti.setValue(m.toString());
+        cmulti.setConverter(Integer.class);
+        cmulti.addValidator(new IntegerRangeValidator("Estimate should be between 1 and 80", 1, 80));
+        cmulti.setWidth(3f, Unit.EM);
+
         final Button addBtn = new Button("", FontAwesome.PLUS);
         final Button removeBtn = new Button("", FontAwesome.MINUS);
 
@@ -144,13 +148,13 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         buttonLayout.setSpacing(true);
         buttonLayout.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 
-        final GridLayout gridLayout = new GridLayout(1, 4, text, new VSeparator(20), buttonLayout, new VSeparator(50));
+        final GridLayout gridLayout = new GridLayout(2, 3, cmulti, text, new VSeparator(20), new VSeparator(20), new VSeparator(50), buttonLayout);
 
         addBtn.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 final int index = main.getComponentIndex(gridLayout);
-                main.addComponent(addField(""), index + 1);
+                main.addComponent(addField("", element.getMultiplier()), index + 1);
             }
         });
 
@@ -174,41 +178,39 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         return k;
     }
 
-    private AbstractField<String> getFieldValue(Component c) {
+    private List<AbstractField> getFieldValue(Component c) {
         GridLayout fieldLayout = ((GridLayout) c);
-        TextArea text = (TextArea) fieldLayout.getComponent(0, 0);
-        return text;
+        TextField cmulti = (TextField) fieldLayout.getComponent(0, 0);
+        TextArea text = (TextArea) fieldLayout.getComponent(1, 0);
+        Integer mint = 0;
+        try {
+            mint = Integer.parseInt(cmulti.getValue());
+        } catch (Exception e) {
+            // wrong value - leave 0
+        }
+        List<AbstractField> result = new ArrayList<>(2);
+        result.add(text);
+        result.add(cmulti);
+        return result;
+    }
+
+    private boolean isStateChanged() {
+        return originalState != null && !originalState.equals(getValue());
     }
 
     @Override
     public boolean isModified() {
-        boolean res = super.isModified();
-        if (!res) {
-            if (main != null) {
-                if (isFieldCountModified()) {
-                    return true;
-                }
-                for (int i = 2; i < main.getComponentCount(); i++) {
-                    AbstractField<String> v = getFieldValue(main.getComponent(i));
-                    if (v.isModified()) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } else {
-            return true;
-        }
-
+        return super.isModified() || isStateChanged();
     }
 
     @Override
     public void setReadOnly(boolean readOnly) {
         super.setReadOnly(readOnly);
-        multi.setEnabled(!readOnly);
         for (int i = 2; i < main.getComponentCount(); i++) {
-            AbstractField f = getFieldValue(main.getComponent(i));
-            f.setEnabled(!readOnly);
+            List<AbstractField> f = getFieldValue(main.getComponent(i));
+            for (AbstractField af : f) {
+                af.setEnabled(!readOnly);
+            }
         }
     }
 

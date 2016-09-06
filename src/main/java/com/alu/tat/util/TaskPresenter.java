@@ -104,7 +104,6 @@ public class TaskPresenter {
                     case MULTI_STRING: {
                         MultiStringBean bean = (MultiStringBean) value;
                         LinkedHashMap<String, Integer> items = bean.getValues();
-                        Integer multi = bean.getMulti();
                         Integer itemMulti = 0;
                         for (Map.Entry<String, Integer> item : items.entrySet()) {
                             itemMulti += item.getValue();
@@ -141,7 +140,7 @@ public class TaskPresenter {
         String suffix = UIConstants.REPORT_SHOW + task.getId();
         String reportList = UIConstants.VIEW_REPORTLIST;
         if (uri.contains(reportList)) {
-            uri = uri.substring(0,uri.indexOf(reportList));
+            uri = uri.substring(0, uri.indexOf(reportList));
         }
         if (!uri.contains(suffix)) {
             uri = uri + suffix;
@@ -189,7 +188,6 @@ public class TaskPresenter {
                 case MULTI_STRING: {
                     MultiStringBean bean = (MultiStringBean) fieldMap.get(se.getName()).getValue();
                     LinkedHashMap<String, Integer> items = bean.getValues();
-                    Integer multi = bean.getMulti();
                     if (items != null) {
                         JSONArray ja = new JSONArray();
                         for (Map.Entry<String, Integer> item : items.entrySet()) {
@@ -199,7 +197,7 @@ public class TaskPresenter {
                             ja.add(itemJo);
                         }
                         jo.put("value", ja);
-                        jo.put("multi", multi);
+                        jo.put("multi", 0);
                         json.put(se.getName(), jo);
                     }
                     break;
@@ -272,7 +270,7 @@ public class TaskPresenter {
                             if (m != null) {
                                 i = Integer.parseInt(m.toString());
                             }
-                            result.put(se.getName(), new MultiStringBean(i, items));
+                            result.put(se.getName(), new MultiStringBean(items));
                             break;
                         }
                         case INTEGER: {
