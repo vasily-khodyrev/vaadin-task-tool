@@ -138,7 +138,7 @@ public class MultiStringComponent extends CustomField<MultiStringBean> {
         cmulti.setDescription("Estimate per case");
         cmulti.setValue(m.toString());
         cmulti.setConverter(Integer.class);
-        cmulti.addValidator(new IntegerRangeValidator("Estimate should be between 1 and 80", 1, 80));
+        cmulti.addValidator(new IntegerRangeValidator("Estimate should be between 1 and 160", 1, 160));
         cmulti.setWidth(3f, Unit.EM);
 
         final Button addBtn = new Button("", FontAwesome.PLUS);
